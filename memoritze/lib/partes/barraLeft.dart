@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memoritze/Pages/addClass.dart';
+import 'package:memoritze/Pages/myClases.dart';
 import 'package:memoritze/setting.dart';
 
 class BarraLeft extends StatelessWidget {
@@ -40,7 +41,13 @@ class BarraLeft extends StatelessWidget {
                 fontSize: 15,
               ),
             ),
-            onTap: () => print("se presiono 'mi clase'"),
+            onTap: () => {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MyClasses()),
+                (Route<dynamic> route) => false,
+              )
+            },
           ),
           ListTile(
             title: Text(
@@ -51,10 +58,28 @@ class BarraLeft extends StatelessWidget {
               ),
             ),
             onTap: () => {
-              Navigator.push(
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => AddClass()),
+                (Route<dynamic> route) => false,
               )
+            },
+          ),
+          ListTile(
+            title: Text(
+              "Light/Night Mode",
+              style: TextStyle(
+                color: mySetting.getColorText(),
+                fontSize: 15,
+              ),
+            ),
+            onTap: () {
+              mySetting.setStateNight();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MyClasses()),
+                (Route<dynamic> route) => false,
+              );
             },
           ),
         ],

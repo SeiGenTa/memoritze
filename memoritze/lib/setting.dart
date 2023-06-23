@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Setting {
   static final Setting _instance = Setting._internal();
 
-  int stateNight = 1;
+  int stateNight = 0;
 
   factory Setting() {
     return _instance;
@@ -12,8 +12,8 @@ class Setting {
   Setting._internal();
 
   static const List<Color> _backGroundColor = [
-    Colors.white,
-    Color.fromARGB(255, 10, 42, 68),
+    Colors.blueGrey,
+    Color.fromARGB(255, 53, 53, 53),
   ];
 
   static const List<Color> _colorsText = [

@@ -1,5 +1,7 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:memoritze/Pages/myClases.dart';
+import 'package:memoritze/db/dataBase.dart';
 import 'package:memoritze/partes/barraLeft.dart';
 import 'package:memoritze/setting.dart';
 
@@ -16,6 +18,8 @@ class _AddClassState extends State<AddClass> {
 
   @override
   Widget build(BuildContext context) {
+    MyDataBase _dataBase = MyDataBase();
+    _dataBase.init();
     final nameClass = TextEditingController();
     final descriptionClass = TextEditingController();
 
@@ -26,7 +30,7 @@ class _AddClassState extends State<AddClass> {
             backgroundColor: mySetting.getColorDrawer(),
             title: const Text('Añadir clases'),
           ),
-          drawer: const BarraLeft(),
+          drawer: BarraLeft(),
           backgroundColor: mySetting.getBackgroundColor(),
           body: ListView(
             children: [
@@ -47,6 +51,7 @@ class _AddClassState extends State<AddClass> {
                             if (value!.isEmpty) {
                               return 'Todo ramo tiene un nombre';
                             }
+                            return null;
                           },
                           controller: nameClass,
                           style: TextStyle(
@@ -92,6 +97,7 @@ class _AddClassState extends State<AddClass> {
                             if (value!.isEmpty) {
                               return "Debes añadir alguna descripcion, ¿no?";
                             }
+                            return null;
                           },
                           controller: descriptionClass,
                           style: TextStyle(
@@ -132,7 +138,7 @@ class _AddClassState extends State<AddClass> {
                             Icons.save_alt,
                             color: mySetting.getColorText(),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             _formKey.currentState!.validate();
                             bool validate = true;
                             if (nameClass.text.isEmpty) {
@@ -141,10 +147,18 @@ class _AddClassState extends State<AddClass> {
                             if (descriptionClass.text.isEmpty) {
                               validate = false;
                             }
-                            print(
-                                "la clase es validada: " + validate.toString());
-                            print("name: " + nameClass.text);
-                            print("descripcion: " + descriptionClass.text);
+
+                            if (validate) {
+                              final bool request = await _dataBase.createClass(
+                                  nameClass.text, descriptionClass.text);
+                              if (request) {
+                                // ignore: use_build_context_synchronously
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MyClasses()));
+                              }
+                            }
                           },
                         ),
                       )

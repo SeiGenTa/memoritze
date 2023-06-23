@@ -1,9 +1,16 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:memoritze/partes/barraLeft.dart';
+import 'package:memoritze/db/dataBase.dart';
 import 'package:memoritze/Pages/myClases.dart';
-import 'package:memoritze/setting.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-void main() {
+Future<void> main() async {
+  // Initialize FFI
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
+
+  MyDataBase myDataBase = MyDataBase();
+  await myDataBase.init();
   runApp(const MainApp());
 }
 
@@ -12,12 +19,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Setting mySetting = Setting();
-
-    print(mySetting.hashCode);
-
-    const myBarra = BarraLeft();
-
-    return MyClasses();
+    return const MyClasses();
   }
 }
