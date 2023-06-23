@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memoritze/partes/barraLeft.dart';
+import 'package:memoritze/Pages/myClases.dart';
 import 'package:memoritze/setting.dart';
 
 void main() {
@@ -17,18 +18,6 @@ class MainApp extends StatelessWidget {
 
     const myBarra = BarraLeft();
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: mySetting.getColorDrawer(),
-          title: const Text(''),
-        ),
-        drawer: myBarra,
-        body: const Center(
-          child: Text('Hello '),
-        ),
-      ),
-    );
+    return MyClasses();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memoritze/Pages/addClass.dart';
 import 'package:memoritze/setting.dart';
 
 class BarraLeft extends StatelessWidget {
@@ -49,7 +50,12 @@ class BarraLeft extends StatelessWidget {
                 fontSize: 15,
               ),
             ),
-            onTap: () => print("se presiono 'Agregar clase'"),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddClass()),
+              )
+            },
           ),
         ],
       ),

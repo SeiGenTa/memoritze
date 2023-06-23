@@ -11,6 +11,11 @@ class Setting {
 
   Setting._internal();
 
+  static const List<Color> _backGroundColor = [
+    Colors.white,
+    Color.fromARGB(255, 10, 42, 68),
+  ];
+
   static const List<Color> _colorsText = [
     Colors.black,
     Colors.white,
@@ -36,6 +41,10 @@ class Setting {
 
   Color getColorDrawerSecundary() {
     return _colorsDrawerSecondary[stateNight];
+  }
+
+  Color getBackgroundColor() {
+    return _backGroundColor[stateNight];
   }
 
   void setStateNight() {
