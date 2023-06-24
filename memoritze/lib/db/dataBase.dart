@@ -47,9 +47,9 @@ class MyDataBase {
         await db.execute('''
           CREATE TABLE pregunta (
           ID_subclass INTEGER,
-          PreguntaID INTEGER PRIMARY KEY AUTOINCREMENT,
           Pregunta TEXT,
-          Descripcion TEXT,
+          nameIMG TEXT,
+          respuesta TEXT,
           FOREIGN KEY (ID_subclass) REFERENCES materia(ID_subclass)
           );
           ''');

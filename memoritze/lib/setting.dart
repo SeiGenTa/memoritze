@@ -12,8 +12,8 @@ class Setting {
   Setting._internal();
 
   static const List<Color> _backGroundColor = [
-    Colors.blueGrey,
-    Color.fromARGB(255, 53, 53, 53),
+    Color.fromRGBO(220, 241, 217, 1),
+    Color.fromRGBO(26, 26, 53, 26),
   ];
 
   static const List<Color> _colorsText = [
@@ -22,13 +22,13 @@ class Setting {
   ];
 
   static const List<Color> _colorsDrawer = [
-    Colors.blue,
-    Color.fromARGB(255, 61, 61, 61),
+    Color.fromRGBO(10, 73, 10, 1),
+    Color.fromRGBO(0, 0, 0, 1),
   ];
 
   static const List<Color> _colorsDrawerSecondary = [
-    Colors.white,
-    Color.fromARGB(255, 83, 83, 83),
+    Color.fromRGBO(42, 146, 53, 1),
+    Color.fromRGBO(73, 150, 70, 1),
   ];
 
   Color getColorText() {

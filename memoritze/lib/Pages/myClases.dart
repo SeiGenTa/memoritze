@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memoritze/Pages/seeClass.dart';
 import 'package:memoritze/db/dataBase.dart';
 import 'package:memoritze/partes/barraLeft.dart';
 import 'package:memoritze/setting.dart';
@@ -32,14 +33,20 @@ class _MyClassesState extends State<MyClasses> {
     } else {
       List<Widget> myCarts = [];
       for (int i = 0; i < lent; i++) {
-        print(result[i]);
-        myCarts.add(SizedBox(height: 15));
+        myCarts.add(const SizedBox(height: 15));
         myCarts.add(
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              print("Se entra al objeto ${result[i]['ID'].toString()}");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SeeClass(number: result[i]['ID'])));
+            },
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    mySetting.getColorDrawerSecundary())),
             child: Container(
-              margin: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).size.height / 10),
               child: Row(
                 children: [
                   Column(
@@ -52,7 +59,7 @@ class _MyClassesState extends State<MyClasses> {
                         ),
                       ),
                       Text(
-                        "${result[i]['Nombre'].toString()}",
+                        result[i]['Nombre'].toString(),
                         style: TextStyle(
                           fontSize: 15,
                           color: mySetting.getColorText(),
@@ -60,25 +67,26 @@ class _MyClassesState extends State<MyClasses> {
                       )
                     ],
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
-                      child: Text("Descripcion: ${result[i]['Descripcion']}")),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.settings)),
-                  SizedBox(width: 5),
+                      child: Text(
+                    "Description: ${result[i]['Descripcion']}",
+                    style: TextStyle(color: mySetting.getColorText()),
+                  )),
+                  IconButton(
+                      onPressed: () {}, icon: const Icon(Icons.settings)),
+                  const SizedBox(width: 5),
                   IconButton(
                       onPressed: () {},
-                      icon: Icon(Icons.phonelink_erase_rounded))
+                      icon: const Icon(Icons.phonelink_erase_rounded))
                 ],
               ),
             ),
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    mySetting.getColorDrawer())),
           ),
         );
       }
       myBody = ListView(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         children: [
           Column(
             children: myCarts,
@@ -113,7 +121,7 @@ class _MyClassesState extends State<MyClasses> {
         backgroundColor: mySetting.getBackgroundColor(),
         drawer: BarraLeft(),
         body: isLoading
-            ? Center(
+            ? const Center(
                 child: Text("Estamos trabajando para usted"),
               )
             : myBody,

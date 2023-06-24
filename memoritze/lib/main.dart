@@ -19,6 +19,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MyClasses();
+    // ignore: prefer_const_constructors
+    return MyClasses();
   }
 }
