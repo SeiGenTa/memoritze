@@ -23,7 +23,7 @@ class Setting {
 
   static const List<Color> _colorsDrawer = [
     Color.fromRGBO(10, 73, 10, 1),
-    Color.fromRGBO(0, 0, 0, 1),
+    Color.fromRGBO(10, 10, 10, 1),
   ];
 
   static const List<Color> _colorsDrawerSecondary = [

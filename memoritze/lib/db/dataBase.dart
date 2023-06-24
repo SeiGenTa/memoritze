@@ -48,8 +48,9 @@ class MyDataBase {
           CREATE TABLE pregunta (
           ID_subclass INTEGER,
           Pregunta TEXT,
-          nameIMG TEXT,
+          nameIMGPreg TEXT,
           respuesta TEXT,
+          nameIMGResp TEXT,
           FOREIGN KEY (ID_subclass) REFERENCES materia(ID_subclass)
           );
           ''');
@@ -75,7 +76,11 @@ class MyDataBase {
   }
 
   Future<List<Map<String, dynamic>>> getClases() async {
-    return await _database.query('clase');
+    return _database.query('clase');
+  }
+
+  Future<List<Map<String, dynamic>>> getClassID(int id) async {
+    return _database.query('clase', where: 'ID = ${id.toString()}');
   }
 
   Future<void> closeDatabase() async {

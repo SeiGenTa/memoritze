@@ -11,15 +11,5 @@ Future<void> main() async {
 
   MyDataBase myDataBase = MyDataBase();
   await myDataBase.init();
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // ignore: prefer_const_constructors
-    return MyClasses();
-  }
+  runApp(const MyClasses());
 }

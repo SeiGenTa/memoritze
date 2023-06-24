@@ -95,6 +95,8 @@ class _MyClassesState extends State<MyClasses> {
       );
     }
 
+    Future.delayed(Duration(seconds: 1));
+
     setState(() {
       isLoading = false; // Indicar que la carga ha finalizado
     });
