@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memoritze/Pages/addQuest.dart';
 import 'package:memoritze/db/dataBase.dart';
 import 'package:memoritze/setting.dart';
 
@@ -108,17 +109,8 @@ class _SeeClassState extends State<SeeClass> {
                                           fontSize: 15,
                                         ),
                                       ),
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                          left: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              50,
-                                          right: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              50,
-                                        ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
                                         child: Text(
                                           myClass[0]['Descripcion'].toString(),
                                           textAlign: TextAlign.left,
@@ -128,6 +120,32 @@ class _SeeClassState extends State<SeeClass> {
                                           ),
                                         ),
                                       ),
+                                      const SizedBox(width: 10),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                100),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AddQuest(
+                                                            id_class: widget
+                                                                .id_class)));
+                                          },
+                                          child: const Text(
+                                              "Agregar Cuestionario"),
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    mySetting.getColorDrawer()),
+                                          ),
+                                        ),
+                                      )
                                     ],
                                   ),
                                   const SizedBox(

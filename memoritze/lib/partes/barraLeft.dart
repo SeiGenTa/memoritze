@@ -21,13 +21,7 @@ class BarraLeft extends StatelessWidget {
               color: mySetting.getColorDrawer(),
             ),
             child: Center(
-              child: Text(
-                'Memoritze',
-                style: TextStyle(
-                  color: mySetting.getColorText(),
-                  fontSize: 24,
-                ),
-              ),
+              child: Image.asset('assets/img/myIcon.png'),
             ),
           ),
 
