@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:memoritze/db/dataBase.dart';
 
 class Setting {
+  MyDataBase database = MyDataBase();
   static final Setting _instance = Setting._internal();
 
   int stateNight = 0;
 
   factory Setting() {
     return _instance;
+  }
+
+  void chargeSetting() async {
+    List<Map<String, dynamic>> config = await database.getSetting();
+    if (config.isEmpty) {
+      database.updatingSetting(0, 1, "Espanol");
+      return;
+    }
+    stateNight = config[0]['NightMode'];
   }
 
   Setting._internal();
@@ -50,5 +61,6 @@ class Setting {
   void setStateNight() {
     stateNight += 1;
     stateNight = stateNight % 2;
+    database.changeSetting(stateNight, 1, "Espanol");
   }
 }

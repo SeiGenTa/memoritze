@@ -25,12 +25,21 @@ class MyDataBase {
       join(await getDatabasesPath(), 'memoritzeDB.db'),
       // Cuando la base de datos se crea por primera vez, crea una tabla para almacenar nuestra info
       onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE setting (
+            NightMode INTEGER,
+            Version INTEGER,
+            Lenguaje TEXT
+          );
+        ''');
         // Ejecuta la sentencia CREATE TABLE en la base de datos
         await db.execute('''
           CREATE TABLE clase (
           ID INTEGER PRIMARY KEY AUTOINCREMENT,
+          cantMateria INTEGER,
           Nombre TEXT,
-          Descripcion TEXT
+          Descripcion TEXT,
+          FechPrio INTEGER
           );
           ''');
 
@@ -38,8 +47,9 @@ class MyDataBase {
           CREATE TABLE materia (
           ID INTEGER,
           ID_subclass INTEGER PRIMARY KEY AUTOINCREMENT,
+          cantPreg INTEGER,
           Nombre TEXT,
-          Descripcion TEXT,
+          FechPrio INTEGER,
           FOREIGN KEY (ID) REFERENCES clase(ID)
           );
           ''');
@@ -48,9 +58,7 @@ class MyDataBase {
           CREATE TABLE pregunta (
           ID_subclass INTEGER,
           Pregunta TEXT,
-          nameIMGPreg TEXT,
           respuesta TEXT,
-          nameIMGResp TEXT,
           FOREIGN KEY (ID_subclass) REFERENCES materia(ID_subclass)
           );
           ''');
@@ -70,17 +78,67 @@ class MyDataBase {
     if (!_database.isOpen) {
       return false;
     }
-    _database.insert("clase", {"Nombre": name, "Descripcion": description});
+    _database.insert("clase", {
+      "Nombre": name,
+      "Descripcion": description,
+      "FechPrio": DateTime.now().difference(DateTime(1970)).inSeconds,
+      "cantMateria": 0,
+    });
 
     return true;
   }
 
+  Future<bool> createNewMateriaDB(String name, int id) async {
+    _database.insert("materia", {
+      "ID": id,
+      "Nombre": name,
+      "FechPrio": DateTime.now().difference(DateTime(1970)).inSeconds,
+      "cantPreg": 0,
+    });
+    List<Map<String, dynamic>> _myMateria = await getClassID(id);
+    print(_myMateria[0]['cantMateria']);
+    _database.update(
+        "clase",
+        {
+          "cantMateria": _myMateria[0]['cantMateria'] + 1,
+        },
+        where: "ID = $id");
+
+    return true;
+  }
+
+  Future<List<Map<String, dynamic>>> getmaterialClas(int id) async {
+    return _database.query('materia',
+        where: 'ID = ${id.toString()}', orderBy: 'FechPrio DESC');
+  }
+
+  Future<List<Map<String, dynamic>>> getSetting() async {
+    return _database.query('setting');
+  }
+
+  void updatingSetting(int nightMode, int version, String language) {
+    _database.insert("setting",
+        {'NightMode': nightMode, 'Version': version, 'Lenguaje': language});
+  }
+
+  void changeSetting(int nightMode, int version, String language) {
+    _database.update("setting",
+        {'NightMode': nightMode, 'Version': version, 'Lenguaje': language},
+        where: 'Version = ${version.toString()}');
+  }
+
   Future<List<Map<String, dynamic>>> getClases() async {
-    return _database.query('clase');
+    return _database.query('clase', orderBy: 'FechPrio DESC');
   }
 
   Future<List<Map<String, dynamic>>> getClassID(int id) async {
     return _database.query('clase', where: 'ID = ${id.toString()}');
+  }
+
+  Future<bool> deletedClass(int idClass) async {
+    await _database.delete('clase', where: 'ID = ${idClass.toString()}');
+    await _database.delete('materia', where: 'ID = ${idClass.toString()}');
+    return true;
   }
 
   Future<void> closeDatabase() async {

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:memoritze/Pages/addQuest.dart';
 import 'package:memoritze/db/dataBase.dart';
 import 'package:memoritze/setting.dart';
 
 // ignore: must_be_immutable
 class SeeClass extends StatefulWidget {
-  // ignore: non_constant_identifier_names
   late int id_class;
 
   SeeClass({super.key, required int number}) {
@@ -24,14 +22,96 @@ class _SeeClassState extends State<SeeClass> {
     chargerData();
   }
 
+  void createNewMateria() {
+    setState(() {
+      showCreate = !showCreate;
+    });
+  }
+
+  void pressX() {
+    setState(() {
+      showCreate = !showCreate;
+    });
+    _nameMaterial.clear();
+  }
+
+  void saveMaterial() async {
+    _formKey.currentState!.validate();
+    if (_nameMaterial.text.isEmpty) return;
+    setState(() {
+      showCreate = !showCreate;
+    });
+    // ignore: await_only_futures
+    await dataBase.createNewMateriaDB(_nameMaterial.text, widget.id_class);
+    _nameMaterial.clear();
+    chargerMaterial();
+  }
+
+  void chargerMaterial() async {
+    material = await dataBase.getmaterialClas(widget.id_class);
+
+    List<Widget> materials = [];
+
+    for (int i = 0; i < material.length; i++) {
+      materials.add(
+        Container(
+          margin: const EdgeInsets.only(
+            top: 2,
+          ),
+          decoration: const BoxDecoration(
+              border: Border.symmetric(
+                  horizontal: BorderSide(
+            width: 1,
+            color: Colors.grey,
+          ))),
+          child: ListTile(
+            onTap: () {},
+            textColor: mySetting.getColorText(),
+            hoverColor: mySetting.getColorDrawer(),
+            title: Row(
+              children: [
+                const Text(
+                  "Nombre materia:    ",
+                ),
+                Text(
+                  material[i]['Nombre'],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    myMaterialClass = Expanded(
+      child: Scrollbar(
+        child: ListView(
+          children: materials,
+        ),
+      ),
+    );
+    //(child: ListView( children: materias,),);
+    setState(() {
+      chargeMaterial = true;
+    }); //recargamos la pagina
+  }
+
   void chargerData() async {
     this.myClass = await dataBase.getClassID(widget.id_class);
     setState(() {
       charge = true;
     });
+    chargerMaterial();
   }
 
+  final TextEditingController _nameMaterial = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  bool showCreate = false;
+  bool chargeMaterial = false;
+
   late List<Map<String, dynamic>> myClass;
+  late Widget myMaterialClass;
+  List<Map<String, dynamic>> material = [];
 
   bool charge = false;
   Setting mySetting = Setting();
@@ -41,36 +121,37 @@ class _SeeClassState extends State<SeeClass> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-            backgroundColor: mySetting.getBackgroundColor(),
-            body: !charge
-                ? Column(
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            iconSize: 50,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: mySetting.getColorText(),
-                            ),
+          backgroundColor: mySetting.getBackgroundColor(),
+          body: !charge
+              ? Column(
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          iconSize: 50,
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: mySetting.getColorText(),
                           ),
-                          const Expanded(child: Text("")),
-                        ],
-                      ),
-                      Expanded(
-                          child: Center(
-                              child: CircularProgressIndicator(
-                        backgroundColor: mySetting.getBackgroundColor(),
-                        valueColor:
-                            AlwaysStoppedAnimation(mySetting.getColorText()),
-                      ))),
-                    ],
-                  )
-                : Container(
-                    child: ListView(
+                        ),
+                        const Expanded(child: Text("")),
+                      ],
+                    ),
+                    Expanded(
+                        child: Center(
+                            child: CircularProgressIndicator(
+                      backgroundColor: mySetting.getBackgroundColor(),
+                      valueColor:
+                          AlwaysStoppedAnimation(mySetting.getColorText()),
+                    ))),
+                  ],
+                )
+              : Stack(
+                  children: [
+                    Column(
                       children: [
                         Stack(
                           children: [
@@ -128,22 +209,14 @@ class _SeeClassState extends State<SeeClass> {
                                                     .width /
                                                 100),
                                         child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        AddQuest(
-                                                            id_class: widget
-                                                                .id_class)));
-                                          },
-                                          child: const Text(
-                                              "Agregar Cuestionario"),
+                                          onPressed: () => createNewMateria(),
                                           style: ButtonStyle(
                                             backgroundColor:
                                                 MaterialStateProperty.all(
                                                     mySetting.getColorDrawer()),
                                           ),
+                                          child: const Text(
+                                              "Agregar Cuestionario"),
                                         ),
                                       )
                                     ],
@@ -157,7 +230,7 @@ class _SeeClassState extends State<SeeClass> {
                             IconButton(
                               iconSize: 40,
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pop(context, true);
                               },
                               icon: Icon(
                                 Icons.arrow_back,
@@ -165,9 +238,98 @@ class _SeeClassState extends State<SeeClass> {
                               ),
                             )
                           ],
-                        )
+                        ),
+                        !chargeMaterial
+                            ? const Center(
+                                child: Text("No tenemos cuestionarios aqui"),
+                              )
+                            : myMaterialClass
                       ],
                     ),
-                  )));
+                    if (showCreate) createNewMaterial(context),
+                  ],
+                ),
+        ));
+  }
+
+  Container createNewMaterial(BuildContext context) {
+    return Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        color: const Color.fromARGB(48, 0, 0, 0),
+        child: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width / 2,
+            height: MediaQuery.of(context).size.width / 3,
+            color: mySetting.getBackgroundColor(),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Expanded(child: Text('')),
+                    Form(
+                      key: _formKey,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return '¿Como sabremos que estamos estudiando?';
+                          }
+                          return null;
+                        },
+                        controller: _nameMaterial,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: mySetting.getColorText(),
+                        ),
+                        decoration: InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: mySetting.getColorText(),
+                            ),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: mySetting.getColorText(),
+                            ),
+                          ),
+                          labelStyle:
+                              TextStyle(color: mySetting.getColorText()),
+                          hintStyle: TextStyle(color: mySetting.getColorText()),
+                          hintText: "Ejm: La peor materia :c",
+                          hoverColor: mySetting.getColorText(),
+                          labelText: "Nombre materia",
+                          icon: Icon(
+                            Icons.width_normal_rounded,
+                            color: mySetting.getColorText(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Expanded(child: Text('')),
+                    Row(
+                      children: [
+                        const Expanded(child: Text('')),
+                        IconButton(
+                          onPressed: () => pressX(),
+                          icon: const Icon(Icons.close),
+                          color: mySetting.getColorText(),
+                        ),
+                        const Expanded(child: Text('')),
+                        IconButton(
+                          onPressed: () => saveMaterial(),
+                          icon: const Icon(Icons.check),
+                          color: mySetting.getColorText(),
+                        ),
+                        const Expanded(child: Text(''))
+                      ],
+                    ),
+                    const Expanded(child: Text('')),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
   }
 }

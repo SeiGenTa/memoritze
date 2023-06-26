@@ -12,6 +12,24 @@ class MyClasses extends StatefulWidget {
 }
 
 class _MyClassesState extends State<MyClasses> {
+  bool eraseClass = false;
+  int deleteClas = 0;
+
+  void deleteClass(id) {
+    setState(() {
+      deleteClas = id;
+      eraseClass = true;
+    });
+  }
+
+  void acceptErase() async {
+    await myDataBase.deletedClass(deleteClas);
+    seeMyClass();
+    setState(() {
+      eraseClass = false;
+    });
+  }
+
   bool isLoading = true;
 
   MyDataBase myDataBase = MyDataBase();
@@ -36,12 +54,13 @@ class _MyClassesState extends State<MyClasses> {
         myCarts.add(const SizedBox(height: 15));
         myCarts.add(
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               print("Se entra al objeto ${result[i]['ID'].toString()}");
-              Navigator.push(
+              bool recargarPagina = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => SeeClass(number: result[i]['ID'])));
+              if (recargarPagina == true) seeMyClass();
             },
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
@@ -49,36 +68,33 @@ class _MyClassesState extends State<MyClasses> {
             child: Container(
               child: Row(
                 children: [
-                  Column(
-                    children: [
-                      Text(
-                        "Nombre:",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: mySetting.getColorText(),
-                        ),
-                      ),
-                      Text(
-                        result[i]['Nombre'].toString(),
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: mySetting.getColorText(),
-                        ),
-                      )
-                    ],
+                  Text(
+                    "Nombre:  ",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: mySetting.getColorText(),
+                    ),
+                  ),
+                  Text(
+                    result[i]['Nombre'].toString(),
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: mySetting.getColorText(),
+                    ),
                   ),
                   const SizedBox(width: 10),
-                  Expanded(
-                      child: Text(
-                    "Description: ${result[i]['Descripcion']}",
-                    style: TextStyle(color: mySetting.getColorText()),
-                  )),
-                  IconButton(
-                      onPressed: () {}, icon: const Icon(Icons.settings)),
+                  const Expanded(child: Text("")),
+                  Text(
+                    "cantidad materia: ${result[i]['cantMateria']}",
+                    style: TextStyle(
+                      color: mySetting.getColorText(),
+                    ),
+                  ),
                   const SizedBox(width: 5),
                   IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.phonelink_erase_rounded))
+                    onPressed: () => deleteClass(result[i]['ID']),
+                    icon: const Icon(Icons.phonelink_erase_rounded),
+                  )
                 ],
               ),
             ),
@@ -86,16 +102,12 @@ class _MyClassesState extends State<MyClasses> {
         );
       }
       myBody = ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        children: [
-          Column(
-            children: myCarts,
-          )
-        ],
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: myCarts,
       );
     }
 
-    Future.delayed(Duration(seconds: 1));
+    Future.delayed(const Duration(seconds: 1));
 
     setState(() {
       isLoading = false; // Indicar que la carga ha finalizado
@@ -121,12 +133,63 @@ class _MyClassesState extends State<MyClasses> {
           title: const Text('Mis Clases'),
         ),
         backgroundColor: mySetting.getBackgroundColor(),
-        drawer: BarraLeft(),
+        drawer: const BarraLeft(),
         body: isLoading
             ? const Center(
                 child: Text("Estamos trabajando para usted"),
               )
-            : myBody,
+            : Stack(
+                children: [
+                  myBody,
+                  if (eraseClass)
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      color: Colors.black26,
+                      child: Center(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 2,
+                          height: MediaQuery.of(context).size.height / 3,
+                          color: mySetting.getBackgroundColor(),
+                          child: Column(
+                            children: [
+                              const Expanded(child: Text('')),
+                              Text(
+                                "¿Estas seguro de eliminar esta clase?",
+                                style: TextStyle(
+                                  color: mySetting.getColorText(),
+                                ),
+                              ),
+                              const Expanded(child: Text('')),
+                              Row(
+                                children: [
+                                  const Expanded(child: Text('')),
+                                  IconButton(
+                                      color: mySetting.getColorText(),
+                                      onPressed: () {
+                                        setState(() {
+                                          eraseClass = false;
+                                        });
+                                      },
+                                      icon: const Icon(Icons.cancel_outlined)),
+                                  const Expanded(child: Text('')),
+                                  IconButton(
+                                      color: mySetting.getColorText(),
+                                      onPressed: () {
+                                        acceptErase();
+                                      },
+                                      icon: const Icon(Icons.check)),
+                                  const Expanded(child: Text('')),
+                                ],
+                              ),
+                              const Expanded(child: Text(''))
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
       ),
     );
   }
