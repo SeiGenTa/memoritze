@@ -246,6 +246,13 @@ class _SeeClassState extends State<SeeClass> {
                             : myMaterialClass
                       ],
                     ),
+                    Container(
+                      alignment: Alignment.bottomRight,
+                      child: Text(
+                        "version: 0.${mySetting.version0.toString()}",
+                        style: TextStyle(color: mySetting.getColorText()),
+                      ),
+                    ),
                     if (showCreate) createNewMaterial(context),
                   ],
                 ),

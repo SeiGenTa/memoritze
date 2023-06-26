@@ -123,8 +123,7 @@ class MyDataBase {
 
   void changeSetting(int nightMode, int version, String language) {
     _database.update("setting",
-        {'NightMode': nightMode, 'Version': version, 'Lenguaje': language},
-        where: 'Version = ${version.toString()}');
+        {'NightMode': nightMode, 'Version': version, 'Lenguaje': language});
   }
 
   Future<List<Map<String, dynamic>>> getClases() async {

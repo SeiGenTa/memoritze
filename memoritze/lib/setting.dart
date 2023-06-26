@@ -6,6 +6,7 @@ class Setting {
   static final Setting _instance = Setting._internal();
 
   int stateNight = 0;
+  int version0 = 2;
 
   factory Setting() {
     return _instance;
@@ -14,10 +15,17 @@ class Setting {
   void chargeSetting() async {
     List<Map<String, dynamic>> config = await database.getSetting();
     if (config.isEmpty) {
-      database.updatingSetting(0, 1, "Espanol");
+      database.updatingSetting(0, 2, "Espanol");
       return;
     }
+
     stateNight = config[0]['NightMode'];
+
+    if (version0 > config[0]['Version']) {
+      print("Se cambiara la base de dato");
+      //Code en caso de que se haga un cambio de la base
+      database.changeSetting(stateNight, 2, "Espanol");
+    }
   }
 
   Setting._internal();

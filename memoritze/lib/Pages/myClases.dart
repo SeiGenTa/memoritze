@@ -141,6 +141,13 @@ class _MyClassesState extends State<MyClasses> {
             : Stack(
                 children: [
                   myBody,
+                  Container(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      "version: 0.${mySetting.version0.toString()}",
+                      style: TextStyle(color: mySetting.getColorText()),
+                    ),
+                  ),
                   if (eraseClass)
                     Container(
                       width: MediaQuery.of(context).size.width,
