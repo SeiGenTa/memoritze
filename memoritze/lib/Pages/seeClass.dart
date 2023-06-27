@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memoritze/Pages/seeMateria.dart';
 import 'package:memoritze/db/dataBase.dart';
 import 'package:memoritze/setting.dart';
 
@@ -53,7 +54,13 @@ class _SeeClassState extends State<SeeClass> {
     chargerMaterial();
   }
 
-  void initSettinMateria(int idMaterial) {}
+  void initSettingMateria(int idMaterial) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => SeeMateria(idMateria: idMaterial)),
+    );
+  }
 
   void chargerMaterial() async {
     material = await dataBase.getmaterialClas(widget.id_class);
@@ -112,7 +119,7 @@ class _SeeClassState extends State<SeeClass> {
                 IconButton(
                   color: mySetting.getColorText(),
                   onPressed: () =>
-                      initSettinMateria(material[i]['ID_subclass']),
+                      initSettingMateria(material[i]['ID_subclass']),
                   icon: Icon(Icons.settings),
                 ),
                 IconButton(

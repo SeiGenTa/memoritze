@@ -116,6 +116,13 @@ class MyDataBase {
         where: 'ID = ${id.toString()}', orderBy: 'FechPrio DESC');
   }
 
+  Future<List<Map<String, dynamic>>> getQuest(int id) async {
+    return await _database.query(
+      'pregunta',
+      where: 'ID_subclass = $id',
+    );
+  }
+
   Future<List<Map<String, dynamic>>> getSetting() async {
     return _database.query('setting');
   }
