@@ -15,7 +15,13 @@ class SeeClass extends StatefulWidget {
 }
 
 class _SeeClassState extends State<SeeClass> {
+  List<int> selected = [];
+
   MyDataBase dataBase = MyDataBase();
+
+  bool showAccept = false;
+
+  Widget initClassUniq = Container();
   @override
   void initState() {
     super.initState();
@@ -47,6 +53,8 @@ class _SeeClassState extends State<SeeClass> {
     chargerMaterial();
   }
 
+  void initSettinMateria(int idMaterial) {}
+
   void chargerMaterial() async {
     material = await dataBase.getmaterialClas(widget.id_class);
 
@@ -65,7 +73,6 @@ class _SeeClassState extends State<SeeClass> {
             color: Colors.grey,
           ))),
           child: ListTile(
-            onTap: () {},
             textColor: mySetting.getColorText(),
             hoverColor: mySetting.getColorDrawer(),
             title: Row(
@@ -76,8 +83,47 @@ class _SeeClassState extends State<SeeClass> {
                 Text(
                   material[i]['Nombre'],
                 ),
+                Expanded(child: Container()),
+                //!Seccion donde se agrega o se quita quest
+                if (selected.contains(material[i]['ID_subclass']))
+                  //? esta selecionado para el cuestionar
+                  IconButton(
+                    color: mySetting.getColorText(),
+                    onPressed: () {
+                      selected.remove((material[i]['ID_subclass']));
+                      setState(() {
+                        chargerMaterial();
+                      });
+                    },
+                    icon: Icon(Icons.check_box),
+                  )
+                else
+                  //? no esta selecionado para el cuestionar
+                  IconButton(
+                    color: mySetting.getColorText(),
+                    onPressed: () {
+                      selected.add(material[i]['ID_subclass']);
+                      setState(() {
+                        chargerMaterial();
+                      });
+                    },
+                    icon: Icon(Icons.check_box_outline_blank),
+                  ),
+                IconButton(
+                  color: mySetting.getColorText(),
+                  onPressed: () =>
+                      initSettinMateria(material[i]['ID_subclass']),
+                  icon: Icon(Icons.settings),
+                ),
+                IconButton(
+                  color: mySetting.getColorText(),
+                  onPressed: () {},
+                  icon: Icon(Icons.play_circle),
+                ),
               ],
             ),
+            subtitle:
+                Text("Cantidad de preguntas:  ${material[i]['cantPreg']}"),
           ),
         ),
       );
@@ -253,7 +299,18 @@ class _SeeClassState extends State<SeeClass> {
                         style: TextStyle(color: mySetting.getColorText()),
                       ),
                     ),
+                    if (selected.isNotEmpty)
+                      Container(
+                        alignment: Alignment.bottomRight,
+                        child: IconButton(
+                          onPressed: () => initQuest(),
+                          color: mySetting.getColorDrawerSecundary(),
+                          iconSize: 50,
+                          icon: Icon(Icons.play_circle_fill),
+                        ),
+                      ),
                     if (showCreate) createNewMaterial(context),
+                    if (showAccept) initClassUniq,
                   ],
                 ),
         ));
@@ -339,4 +396,6 @@ class _SeeClassState extends State<SeeClass> {
           ),
         ));
   }
+
+  void initQuest() {}
 }

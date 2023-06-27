@@ -6,7 +6,7 @@ class Setting {
   static final Setting _instance = Setting._internal();
 
   int stateNight = 0;
-  int version0 = 2;
+  int version0 = 3;
 
   factory Setting() {
     return _instance;

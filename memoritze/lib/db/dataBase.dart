@@ -56,10 +56,14 @@ class MyDataBase {
 
         await db.execute('''
           CREATE TABLE pregunta (
+          ID INTEGER PRIMARY KEY AUTOINCREMENT,
+          ID_class INTEGER,
           ID_subclass INTEGER,
           Pregunta TEXT,
           respuesta TEXT,
+          eval INTEGER,
           FOREIGN KEY (ID_subclass) REFERENCES materia(ID_subclass)
+          FOREIGN KEY (ID_class) REFERENCES clase(ID)
           );
           ''');
 
