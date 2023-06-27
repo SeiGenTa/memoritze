@@ -136,7 +136,7 @@ class _MyClassesState extends State<MyClasses> {
         drawer: const BarraLeft(),
         body: isLoading
             ? const Center(
-                child: Text("Estamos trabajando para usted"),
+                child: CircularProgressIndicator(),
               )
             : Stack(
                 children: [

@@ -58,7 +58,7 @@ class _SeeClassState extends State<SeeClass> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SeeMateria(idMateria: idMaterial)),
+          builder: (context) => SeeMateria(idMateria: idMaterial, idClass: widget.id_class,)),
     );
   }
 

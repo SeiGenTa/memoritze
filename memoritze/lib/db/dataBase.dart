@@ -92,6 +92,22 @@ class MyDataBase {
     return true;
   }
 
+  Future<bool> createPreg(int id_class, int id_materia, String pregunta, String respuesta) async {
+    _database.insert("pregunta", {
+      "ID_class" : id_class,
+      "ID_subclass" : id_materia,
+      "Pregunta" : pregunta,
+      "respuesta" : respuesta,
+      "eval" : 4
+    });
+    List<Map<String, dynamic>> materia = await getmaterialClas(id_materia);
+    _database.update("materia",
+      {"cantPreg" : materia[0]["cantPreg"] + 1
+      }
+    );
+    return true;
+  }
+
   Future<bool> createNewMateriaDB(String name, int id) async {
     _database.insert("materia", {
       "ID": id,
