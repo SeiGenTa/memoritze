@@ -25,11 +25,3 @@ flutter:
   uses-material-design: true
   assets:
     - assets/img/
-
-msix_config:
-  display_name: MemoritzeApp
-  publisher_display_name: Seita
-  identity_name: company.suite.flutterapp
-  msix_version: 0.9.0.0
-  logo_path: E:\Git\memoritze\memoritze\assets\img\myIcon.png
-  capabilities: memory
