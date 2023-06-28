@@ -30,16 +30,12 @@ class _SeeMateriaState extends State<SeeMateria> {
 
   static late Color background;
   static late Color textColor;
-  static late Color drawer;
-  static late Color drawer2;
 
   @override
   void initState() {
     super.initState();
     background = setting.getBackgroundColor();
     textColor = setting.getColorText();
-    drawer = setting.getColorDrawer();
-    drawer2 = setting.getColorDrawerSecundary();
     chargePage();
   }
 
@@ -285,7 +281,7 @@ class _SeeMateriaState extends State<SeeMateria> {
                             ),
                           )
                           ),
-                        )
+                        ),
                 ]
             ),
       ),

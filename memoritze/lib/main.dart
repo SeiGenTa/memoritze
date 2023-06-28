@@ -14,5 +14,5 @@ Future<void> main() async {
   await myDataBase.init();
   Setting setting = Setting();
   setting.chargeSetting();
-  runApp(const MyClasses());
+  runApp(MyClasses());
 }
