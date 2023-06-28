@@ -109,11 +109,12 @@ class _MyClassesState extends State<MyClasses> {
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(mySetting.getColorDrawerSecundary()),
                             ),
-                            onPressed: () {
-                              Navigator.push(
+                            onPressed: () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => SeeClass(number: infClass[index]['ID']))
                                 );
+                                seeMyClass();
                             },
                             child:
                               Container(

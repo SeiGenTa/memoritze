@@ -92,18 +92,23 @@ class MyDataBase {
     return true;
   }
 
-  Future<bool> createPreg(int id_class, int id_materia, String pregunta, String respuesta) async {
-    _database.insert("pregunta", {
-      "ID_class" : id_class,
-      "ID_subclass" : id_materia,
-      "Pregunta" : pregunta,
-      "respuesta" : respuesta,
-      "eval" : 4
+  Future<bool> createPreg(
+      int idClass, int idMateria, String pregunta, String respuesta) async {
+    List<Map<String, dynamic>> materia = await _database.query('materia',
+        where: 'ID_subclass = ${idMateria.toString()}',
+        orderBy: 'FechPrio DESC');
+    await _database.insert("pregunta", {
+      "ID_class": idClass,
+      "ID_subclass": idMateria,
+      "Pregunta": pregunta,
+      "respuesta": respuesta,
+      "eval": 4,
     });
-    List<Map<String, dynamic>> materia = await getmaterialClas(id_materia);
-    _database.update("materia",
-      {"cantPreg" : materia[0]["cantPreg"] + 1
-      }
+
+    await _database.update(
+      "materia",
+      {"cantPreg": materia[0]['cantPreg'] + 1},
+      where: "ID_subclass = $idMateria",
     );
     return true;
   }
@@ -115,15 +120,28 @@ class MyDataBase {
       "FechPrio": DateTime.now().difference(DateTime(1970)).inSeconds,
       "cantPreg": 0,
     });
-    List<Map<String, dynamic>> _myMateria = await getClassID(id);
-    print(_myMateria[0]['cantMateria']);
+    List<Map<String, dynamic>> myMateria = await getClassID(id);
     _database.update(
         "clase",
         {
-          "cantMateria": _myMateria[0]['cantMateria'] + 1,
+          "cantMateria": myMateria[0]['cantMateria'] + 1,
         },
         where: "ID = $id");
 
+    return true;
+  }
+
+  Future<bool> deleteMateria(int id, int idClass) async {
+    List<Map<String, dynamic>> myClass = await getClassID(idClass);
+    await _database.update(
+        "clase",
+        {
+          "cantMateria": myClass[0]['cantMateria'] - 1,
+        },
+        where: "ID = $idClass");
+    myClass = await getClassID(idClass);
+    _database.delete("materia", where: 'ID_subclass = $id');
+    _database.delete('pregunta', where: 'ID_subclass = ${id.toString()}');
     return true;
   }
 
@@ -132,7 +150,7 @@ class MyDataBase {
         where: 'ID = ${id.toString()}', orderBy: 'FechPrio DESC');
   }
 
-  Future<List<Map<String, dynamic>>> getQuest(int id) async {
+  Future<List<Map<String, dynamic>>> getQuests(int id) async {
     return await _database.query(
       'pregunta',
       where: 'ID_subclass = $id',
@@ -162,12 +180,48 @@ class MyDataBase {
   }
 
   Future<bool> deletedClass(int idClass) async {
-    await _database.delete('clase', where: 'ID = ${idClass.toString()}');
-    await _database.delete('materia', where: 'ID = ${idClass.toString()}');
+    _database.delete('clase', where: 'ID = ${idClass.toString()}');
+    _database.delete('materia', where: 'ID = ${idClass.toString()}');
+    _database.delete('pregunta', where: 'ID_class = ${idClass.toString()}');
     return true;
   }
 
   Future<void> closeDatabase() async {
     await _database.close();
+  }
+
+  Future<Map<String, dynamic>> getQuestID(int id) async {
+    List<Map<String, dynamic>> myRequest =
+        await _database.query('pregunta', where: 'ID = ${id.toString()}');
+    return myRequest[0];
+  }
+
+  Future<bool> setQuestID(int id, String newPreg, String newResp) async {
+    await _database.update(
+        'pregunta', {"Pregunta": newPreg, "respuesta": newResp},
+        where: 'ID = ${id.toString()}');
+    return false;
+  }
+
+    Future<Map<String, dynamic>> getMateriaID(int id) async {
+    List<Map<String, dynamic>> myRequest =
+        await _database.query('materia', where: 'ID_subclass = ${id.toString()}');
+    return myRequest[0];
+  }
+
+    Future<bool> deletedQuest(int id) async {
+    Map<String, dynamic> myQuest = await getQuestID(id);
+    Map<String, dynamic> myMateria = await getMateriaID(myQuest['ID_subclass']);
+
+    _database.update(
+        "materia",
+        {
+          "cantPreg": myMateria['cantPreg'] - 1,
+        },
+        where: "ID_subclass = ${myQuest['ID_subclass']}");
+
+    _database.delete('pregunta', where: 'ID = ${id.toString()}');
+   
+    return true;
   }
 }

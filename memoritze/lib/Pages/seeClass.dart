@@ -54,12 +54,13 @@ class _SeeClassState extends State<SeeClass> {
     chargerMaterial();
   }
 
-  void initSettingMateria(int idMaterial) {
-    Navigator.push(
+  Future<void> initSettingMateria(int idMaterial) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => SeeMateria(idMateria: idMaterial, idClass: widget.id_class,)),
     );
+    return;
   }
 
   void chargerMaterial() async {
@@ -118,8 +119,11 @@ class _SeeClassState extends State<SeeClass> {
                   ),
                 IconButton(
                   color: mySetting.getColorText(),
-                  onPressed: () =>
-                      initSettingMateria(material[i]['ID_subclass']),
+                  onPressed: () async {
+                    await initSettingMateria(material[i]['ID_subclass']);
+                    chargerMaterial();
+                  }
+                      ,
                   icon: Icon(Icons.settings),
                 ),
                 IconButton(
