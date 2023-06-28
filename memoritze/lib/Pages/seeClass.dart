@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memoritze/Pages/seeMateria.dart';
+import 'package:memoritze/Pages/viewPregGame.dart';
 import 'package:memoritze/db/dataBase.dart';
 import 'package:memoritze/setting.dart';
 
@@ -21,6 +22,15 @@ class _SeeClassState extends State<SeeClass> {
   MyDataBase dataBase = MyDataBase();
 
   bool showAccept = false;
+
+    void initQuest() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              InitMyQuestsGame(myMaterials: selected)),
+    );
+  }
 
   Widget initClassUniq = Container();
   @override
@@ -58,7 +68,10 @@ class _SeeClassState extends State<SeeClass> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SeeMateria(idMateria: idMaterial, idClass: widget.id_class,)),
+          builder: (context) => SeeMateria(
+                idMateria: idMaterial,
+                idClass: widget.id_class,
+              )),
     );
     return;
   }
@@ -103,7 +116,7 @@ class _SeeClassState extends State<SeeClass> {
                         chargerMaterial();
                       });
                     },
-                    icon: Icon(Icons.check_box),
+                    icon: const Icon(Icons.check_box),
                   )
                 else
                   //? no esta selecionado para el cuestionar
@@ -122,14 +135,20 @@ class _SeeClassState extends State<SeeClass> {
                   onPressed: () async {
                     await initSettingMateria(material[i]['ID_subclass']);
                     chargerMaterial();
-                  }
-                      ,
-                  icon: Icon(Icons.settings),
+                  },
+                  icon: const Icon(Icons.settings),
                 ),
                 IconButton(
                   color: mySetting.getColorText(),
-                  onPressed: () {},
-                  icon: Icon(Icons.play_circle),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InitMyQuestsGame(
+                              myMaterials: [material[i]['ID_subclass']])),
+                    );
+                  },
+                  icon: const Icon(Icons.play_circle),
                 ),
               ],
             ),
@@ -408,5 +427,5 @@ class _SeeClassState extends State<SeeClass> {
         ));
   }
 
-  void initQuest() {}
+
 }

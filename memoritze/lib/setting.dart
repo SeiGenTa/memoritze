@@ -6,7 +6,7 @@ class Setting {
   static final Setting _instance = Setting._internal();
 
   int stateNight = 0;
-  int version0 = 3;
+  int version0 = 9;
 
   factory Setting() {
     return _instance;
@@ -24,7 +24,7 @@ class Setting {
     if (version0 > config[0]['Version']) {
       print("Se cambiara la base de dato");
       //Code en caso de que se haga un cambio de la base
-      database.changeSetting(stateNight, 2, "Espanol");
+      database.changeSetting(stateNight, 9, "Espanol");
     }
   }
 
@@ -49,6 +49,15 @@ class Setting {
     Color.fromRGBO(42, 146, 53, 1),
     Color.fromRGBO(73, 150, 70, 1),
   ];
+
+    static const List<Color> _colorsPaper = [
+    Color.fromRGBO(255, 255, 255, 1),
+    Color.fromRGBO(97, 74, 22, 1),
+  ];
+
+  Color getColorPaper(){
+    return _colorsPaper[stateNight];
+  }
 
   Color getColorText() {
     return _colorsText[stateNight];

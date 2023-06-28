@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -203,13 +204,13 @@ class MyDataBase {
     return false;
   }
 
-    Future<Map<String, dynamic>> getMateriaID(int id) async {
-    List<Map<String, dynamic>> myRequest =
-        await _database.query('materia', where: 'ID_subclass = ${id.toString()}');
+  Future<Map<String, dynamic>> getMateriaID(int id) async {
+    List<Map<String, dynamic>> myRequest = await _database.query('materia',
+        where: 'ID_subclass = ${id.toString()}');
     return myRequest[0];
   }
 
-    Future<bool> deletedQuest(int id) async {
+  Future<bool> deletedQuest(int id) async {
     Map<String, dynamic> myQuest = await getQuestID(id);
     Map<String, dynamic> myMateria = await getMateriaID(myQuest['ID_subclass']);
 
@@ -221,7 +222,20 @@ class MyDataBase {
         where: "ID_subclass = ${myQuest['ID_subclass']}");
 
     _database.delete('pregunta', where: 'ID = ${id.toString()}');
-   
+
+    return true;
+  }
+
+  Future<bool> upDownEvalQuest(int id, int change) async {
+    Map<String, dynamic> myQuest = await getQuestID(id);
+    if (change > 0) {
+      _database.update("pregunta", {"eval": min(myQuest['eval'] + change, 7)},
+          where: 'ID = $id');
+    } else {
+      _database.update("pregunta", {"eval": max(myQuest['eval'] + change, 1)},
+          where: 'ID = $id');
+    }
+
     return true;
   }
 }
