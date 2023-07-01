@@ -1,37 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:memoritze/Settings.dart';
 
 class BarraLeft extends StatelessWidget {
   const BarraLeft({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Setting mySetting = Setting();
+
     return Drawer(
+      backgroundColor: mySetting.getColorDrawerSecundary(),
       child: ListView(
         padding: EdgeInsets.zero,
-        children: const <Widget>[
+        children: <Widget>[
+          //! TITULO SUPERIOR DEL DRAWER
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: mySetting.getColorDrawer(),
             ),
-            child: Text(
-              'Drawer Header',
+            child: Center(
+              child: Image.asset('assets/img/myIcon.png'),
+            ),
+          ),
+
+          //!Inicio botones
+
+          ListTile(
+            title: Text(
+              "Mis Clases",
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
+                color: mySetting.getColorText(),
+                fontSize: 15,
               ),
             ),
+            onTap: () => {
+              //Navigator.pushAndRemoveUntil(
+              //  context,
+              //  MaterialPageRoute(
+              //    builder: (context) => MyClasses(),
+              //  ),
+              //  (Route<dynamic> route) => false,
+              //)
+            },
           ),
           ListTile(
-            leading: Icon(Icons.message),
-            title: Text('Messages'),
+            title: Text(
+              "Agregar clase",
+              style: TextStyle(
+                color: mySetting.getColorText(),
+                fontSize: 15,
+              ),
+            ),
+            onTap: () => {
+              //Navigator.pushAndRemoveUntil(
+              //  context,
+              //  MaterialPageRoute(builder: (context) => AddClass()),
+              //  (Route<dynamic> route) => false,
+              //)
+            },
           ),
           ListTile(
-            leading: Icon(Icons.account_circle),
-            title: Text('Profile'),
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
+            title: Text(
+              "Light/Night Mode",
+              style: TextStyle(
+                color: mySetting.getColorText(),
+                fontSize: 15,
+              ),
+            ),
+            onTap: () {
+              //mySetting.setStateNight();
+              //Navigator.pushAndRemoveUntil(
+              //  context,
+              //  MaterialPageRoute(builder: (context) => MyClasses()),
+              //  (Route<dynamic> route) => false,
+              //);
+            },
           ),
         ],
       ),
