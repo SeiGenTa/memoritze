@@ -14,10 +14,11 @@ class Setting {
 
   Setting._internal();
 
-  void chargeSetting() async {
+  Future<bool> chargeSetting() async {
     Map<String, dynamic> config = await database.getSetting();
     stateNight = config['NightMode'];
     version0 = config['Version'];
+    return true;
   }
 
   static const List<Color> _backGroundColor = [

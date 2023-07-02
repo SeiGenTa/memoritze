@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memoritze/Settings.dart';
+import 'package:memoritze/pages/SeeMyClass.dart';
+import 'package:memoritze/pages/AddClass.dart';
 
 class BarraLeft extends StatelessWidget {
   const BarraLeft({super.key});
@@ -34,13 +36,13 @@ class BarraLeft extends StatelessWidget {
               ),
             ),
             onTap: () => {
-              //Navigator.pushAndRemoveUntil(
-              //  context,
-              //  MaterialPageRoute(
-              //    builder: (context) => MyClasses(),
-              //  ),
-              //  (Route<dynamic> route) => false,
-              //)
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SeeMyClass(),
+                ),
+                (Route<dynamic> route) => false,
+              )
             },
           ),
           ListTile(
@@ -52,11 +54,11 @@ class BarraLeft extends StatelessWidget {
               ),
             ),
             onTap: () => {
-              //Navigator.pushAndRemoveUntil(
-              //  context,
-              //  MaterialPageRoute(builder: (context) => AddClass()),
-              //  (Route<dynamic> route) => false,
-              //)
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const AddClass()),
+                (Route<dynamic> route) => false,
+              )
             },
           ),
           ListTile(

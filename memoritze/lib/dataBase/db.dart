@@ -73,9 +73,9 @@ class ConectioDataBase {
   Future<Map<String, dynamic>> getSetting() async {
     Database data = await connect();
     List<Map<String, dynamic>> inf = await data.query('setting');
-    if (inf.length == 0){
-      data.insert("setting",
-        {'NightMode': 0, 'Version': 10, 'Lenguaje': "Esp"});
+    if (inf.length == 0) {
+      data.insert(
+          "setting", {'NightMode': 0, 'Version': 10, 'Lenguaje': "Esp"});
       close(data);
       return {'NightMode': 0, 'Version': 10, 'Lenguaje': "Esp"};
     }
@@ -83,11 +83,38 @@ class ConectioDataBase {
     return inf[0];
   }
 
-  Future<bool> changeSetting(int nightMode, int version, String language) async {
+  Future<bool> changeSetting(
+      int nightMode, int version, String language) async {
     Database data = await connect();
     data.update("setting",
         {'NightMode': nightMode, 'Version': version, 'Lenguaje': language});
     close(data);
     return true;
+  }
+
+  Future<bool> createClass(String name, String description) async {
+    Database data = await connect();
+    data.insert("clase", {
+      "Nombre": name,
+      "Descripcion": description,
+      "FechPrio": DateTime.now().difference(DateTime(1970)).inSeconds,
+      "cantMateria": 0,
+    });
+    close(data);
+    return true;
+  }
+
+  Future<List<Map<String, dynamic>>> getClass(int id) async {
+    Database data = await connect();
+    late List<Map<String, dynamic>> info;
+    if (id != -1) {
+      info = await data.query('clase',
+          where: 'ID = ${id.toString()}', orderBy: 'FechPrio DESC');
+    } else {
+      info = await data.query('clase', orderBy: 'FechPrio DESC');
+    }
+
+    close(data);
+    return info;
   }
 }
