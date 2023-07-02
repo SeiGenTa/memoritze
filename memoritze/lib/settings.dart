@@ -2,7 +2,7 @@ import 'package:memoritze/dataBase/db.dart';
 import 'package:flutter/material.dart';
 
 class Setting {
-  ConnectionDataBase database = ConnectionDataBase();
+  ConectioDataBase database = ConectioDataBase();
   static final Setting _instance = Setting._internal();
 
   int stateNight = 0;
@@ -68,6 +68,6 @@ class Setting {
   void setStateNight() {
     stateNight += 1;
     stateNight = stateNight % 2;
-    database.changeSetting(stateNight, 1, "Espanol");
+    database.changeSetting(stateNight, 1, "esp");
   }
 }

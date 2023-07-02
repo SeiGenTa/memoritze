@@ -1,27 +1,24 @@
-// ignore: depend_on_referenced_packages
-import 'package:path/path.dart';
+import 'dart:async';
 import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
-class ConnectionDataBase {
-
+class ConectioDataBase {
   bool initiated = false;
-  bool getInitiated() {
-    return initiated;
-  }
 
-  Future<Database> connection() async {
+  Future<Database> connect() async {
     return await openDatabase(join(await getDatabasesPath(), 'memoritzeDB.db'));
   }
 
-  Future<void> closeDatabase(dataBase) async {
-    dataBase.close();
+  void close(Database myDataBase) {
+    myDataBase.close();
   }
 
   Future<void> init() async {
-    initiated = true;
-    Database dataBase =
-        await openDatabase(join(await getDatabasesPath(), 'memoritzeDB.db'),
-            onCreate: (db, version) async {
+    Database database = await openDatabase(
+        // Establece la ruta a la base de datos.
+        join(await getDatabasesPath(), 'memoritzeDB.db'),
+        // Cuando la base de datos se crea por primera vez, crea una tabla para almacenar nuestra info
+        onCreate: (db, version) async {
       await db.execute('''
           CREATE TABLE setting (
             NightMode INTEGER,
@@ -29,7 +26,7 @@ class ConnectionDataBase {
             Lenguaje TEXT
           );
         ''');
-
+      // Ejecuta la sentencia CREATE TABLE en la base de datos
       await db.execute('''
           CREATE TABLE clase (
           ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,30 +60,34 @@ class ConnectionDataBase {
           FOREIGN KEY (ID_class) REFERENCES clase(ID)
           );
           ''');
-    }, version: 1);
 
-    closeDatabase(dataBase);
+      print("se creo la base de datos");
+    },
+        // Establece la versión. Esto ejecuta la función onCreate y proporciona una
+        // ruta para realizar actualizacones y defradaciones en la base de datos.
+        version: 1);
+    initiated = true;
+    close(database);
   }
 
-  //Configurate
   Future<Map<String, dynamic>> getSetting() async {
-    Database myConnection = await connection();
-    List<Map<String, dynamic>> setting = await myConnection.query("setting");
-    if (setting.isEmpty) {
-      myConnection.insert(
-          "setting", {'NightMode': 0, 'Version': 10, 'Lenguaje': "español"});
-      closeDatabase(myConnection);
-      return {'NightMode': 0, 'Version': 10, 'Lenguaje': "español"};
+    Database data = await connect();
+    List<Map<String, dynamic>> inf = await data.query('setting');
+    if (inf.length == 0){
+      data.insert("setting",
+        {'NightMode': 0, 'Version': 10, 'Lenguaje': "Esp"});
+      close(data);
+      return {'NightMode': 0, 'Version': 10, 'Lenguaje': "Esp"};
     }
-    closeDatabase(myConnection);
-    return setting[0];
+    close(data);
+    return inf[0];
   }
 
-  //updating
-  void changeSetting(int newStateNight, int version, String language) async {
-    Database connection = await this.connection();
-    connection.update("setting",
-        {'NightMode': newStateNight, 'Version': version, 'Lenguaje': language});
-    closeDatabase(connection);
+  Future<bool> changeSetting(int nightMode, int version, String language) async {
+    Database data = await connect();
+    data.update("setting",
+        {'NightMode': nightMode, 'Version': version, 'Lenguaje': language});
+    close(data);
+    return true;
   }
 }

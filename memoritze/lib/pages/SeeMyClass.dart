@@ -15,12 +15,13 @@ class SeeMyClass extends StatefulWidget {
 }
 
 class _SeeMyClassState extends State<SeeMyClass> {
-  ConnectionDataBase myData = ConnectionDataBase();
+  ConectioDataBase myData = ConectioDataBase();
   Setting mySetting = Setting();
 
   Future<bool> initApp() async {
-    WidgetsFlutterBinding.ensureInitialized();
+    print("cargando informacion");
     if (Platform.isWindows) {
+      print("Estoy en windows");
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
     }
@@ -35,7 +36,7 @@ class _SeeMyClassState extends State<SeeMyClass> {
   }
 
   void initPage() async {
-    if (!myData.getInitiated()) {
+    if (!widget.prepared) {
       await initApp();
     }
   }
@@ -50,19 +51,12 @@ class _SeeMyClassState extends State<SeeMyClass> {
   Widget build(BuildContext context) {
     Color backGround = mySetting.getBackgroundColor();
 
-    if (!widget.prepared){
-      return const Center(
-        child: Image(image: AssetImage("assets/img/myIcon.png")),
-      );
-    }
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: backGround,
         appBar: AppBar(
-          backgroundColor: mySetting.getColorDrawer(),
-          title: const Text('Mis Clases'),
+          
         ),
         drawer: BarraLeft(),
       ),
