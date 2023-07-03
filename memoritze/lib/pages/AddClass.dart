@@ -51,6 +51,7 @@ class _AddClassState extends State<AddClass> {
                             right: MediaQuery.of(context).size.height / 10,
                           ),
                           child: TextFormField(
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Todo ramo tiene un nombre';
@@ -97,6 +98,9 @@ class _AddClassState extends State<AddClass> {
                             right: MediaQuery.of(context).size.height / 10,
                           ),
                           child: TextFormField(
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            minLines: 1,
+                            maxLines: 5,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Debes añadir alguna descripcion, ¿no?";
@@ -119,10 +123,10 @@ class _AddClassState extends State<AddClass> {
                                     color: mySetting.getColorText(),
                                   ),
                                 ),
-                                labelStyle:
-                                    TextStyle(color: mySetting.getColorText()),
-                                hintStyle:
-                                    TextStyle(color: mySetting.getColorText()),
+                                labelStyle: TextStyle(
+                                    color: mySetting.getColorText()),
+                                hintStyle: TextStyle(
+                                    color: mySetting.getColorText()),
                                 hintText:
                                     "Esto es un cuestionario de una de mis clases favoritas",
                                 labelText: "Descripcion",
@@ -135,7 +139,10 @@ class _AddClassState extends State<AddClass> {
                         const SizedBox(
                           height: 25,
                         ),
-                        Center(
+                        AnimatedContainer(
+                          duration: const Duration(seconds: 1),
+                          
+                          alignment: Alignment.center,
                           child: IconButton(
                             hoverColor: mySetting.getColorDrawerSecundary(),
                             icon: Icon(
@@ -153,9 +160,8 @@ class _AddClassState extends State<AddClass> {
                               }
 
                               if (validate) {
-                                bool request =
-                                    await _dataBase.createClass(
-                                        nameClass.text, descriptionClass.text);
+                                bool request = await _dataBase.createClass(
+                                    nameClass.text, descriptionClass.text);
                                 if (request) {
                                   Navigator.pushAndRemoveUntil(
                                     context,

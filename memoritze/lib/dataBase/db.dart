@@ -117,4 +117,80 @@ class ConectioDataBase {
     close(data);
     return info;
   }
+
+  Future<bool> createNewMateriaDB(String name, int id) async {
+    List<Map<String, dynamic>> myMateria = await getClass(id);
+    Database data = await connect();
+    await data.insert("materia", {
+      "ID": id,
+      "Nombre": name,
+      "FechPrio": DateTime.now().difference(DateTime(1970)).inSeconds,
+      "cantPreg": 0,
+    });
+    await data.update(
+      "clase",
+      {
+        "cantMateria": myMateria[0]['cantMateria'] + 1,
+      },
+      where: "ID = ${myMateria[0]['ID']}",
+    );
+    close(data);
+    return true;
+  }
+
+  Future<List<Map<String, dynamic>>> getMaterialClass(int id) async {
+    Database data = await connect();
+    List<Map<String, dynamic>> inf = await data.query('materia',
+        where: 'ID = ${id.toString()}', orderBy: 'FechPrio DESC');
+    close(data);
+    return inf;
+  }
+
+    Future<Map<String, dynamic>> getMaterialID(int id) async {
+    Database data = await connect();
+    List<Map<String, dynamic>> inf = await data.query('materia',
+        where: 'ID_subclass = ${id.toString()}', orderBy: 'FechPrio DESC');
+    close(data);
+    return inf[0];
+  }
+
+  Future<List<Map<String, dynamic>>> getQuests(int idMateria) async {
+    Database data = await connect();
+    List<Map<String, dynamic>> myRequest =
+        await data.query('pregunta', where: 'ID_subclass = ${idMateria.toString()}');
+    close(data);
+    return myRequest;
+  }
+
+  Future<bool> deletedClass(int idClass) async {
+    Database data = await connect();
+    await data.delete('clase', where: 'ID = ${idClass.toString()}');
+    await data.delete('materia', where: 'ID = ${idClass.toString()}');
+    await data.delete('pregunta', where: 'ID_class = ${idClass.toString()}');
+    close(data);
+    return true;
+  }
+
+  Future<bool> createPreg(
+      int idClass, int idMateria, String pregunta, String respuesta) async {
+    Database data = await connect();
+    List<Map<String, dynamic>> materia = await data.query('materia',
+        where: 'ID_subclass = ${idMateria.toString()}',
+        orderBy: 'FechPrio DESC');
+    await data.insert("pregunta", {
+      "ID_class": idClass,
+      "ID_subclass": idMateria,
+      "Pregunta": pregunta,
+      "respuesta": respuesta,
+      "eval": 4,
+    });
+
+    await data.update(
+      "materia",
+      {"cantPreg": materia[0]['cantPreg'] + 1},
+      where: "ID_subclass = $idMateria",
+    );
+    close(data);
+    return true;
+  }
 }

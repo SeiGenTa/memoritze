@@ -5,7 +5,7 @@ class Setting {
   ConectioDataBase database = ConectioDataBase();
   static final Setting _instance = Setting._internal();
 
-  int stateNight = 0;
+  int stateNight = 1;
   int version0 = 9;
 
   factory Setting() {
@@ -16,7 +16,7 @@ class Setting {
 
   Future<bool> chargeSetting() async {
     Map<String, dynamic> config = await database.getSetting();
-    stateNight = config['NightMode'];
+    //stateNight = config['NightMode'];
     version0 = config['Version'];
     return true;
   }
@@ -41,12 +41,12 @@ class Setting {
     Color.fromRGBO(73, 150, 70, 1),
   ];
 
-    static const List<Color> _colorsPaper = [
+  static const List<Color> _colorsPaper = [
     Color.fromRGBO(255, 255, 255, 1),
     Color.fromRGBO(97, 74, 22, 1),
   ];
 
-  Color getColorPaper(){
+  Color getColorPaper() {
     return _colorsPaper[stateNight];
   }
 

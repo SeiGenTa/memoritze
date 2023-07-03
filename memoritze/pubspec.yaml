@@ -1,7 +1,7 @@
 name: memoritze
 description: A new Flutter project.
 publish_to: 'none'
-version: 0.9.0
+version: 0.3.0
 
 environment:
   sdk: '>=3.0.5 < 4.0.0'
@@ -26,4 +26,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/img/
-    
+    - windows/
+
+msix_config:
+  display_name: Memoritze
+  publisher_display_name: SeitCom
+  identity_name: Seit.MySuite.mem
+  msix_version: 1.0.0.0
+  logo_path: E:\Git\Mejora\memoritze\memoritze\assets\app_icon.ico
+  capabilities: " internetClient,privateNetworkClientServer,internetClientServer,enterpriseAuthentication,documentsLibrary,broadFileSystemAccess"
