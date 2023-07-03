@@ -118,6 +118,7 @@ class _SeeMyClassState extends State<SeeMyClass> {
                                                 color:
                                                     mySetting.getColorText()))),
                                     child: ListTile(
+                                      hoverColor: mySetting.getColorPaper(),
                                       textColor: mySetting.getColorText(),
                                       iconColor: mySetting.getColorText(),
                                       subtitle: Text(

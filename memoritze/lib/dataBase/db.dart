@@ -225,4 +225,13 @@ class ConectioDataBase {
     _close(data);
     return true;
   }
+
+  Future<bool> setQuestID(int id, String newPreg, String newResp) async {
+    Database data = await _connect();
+    await data.update(
+        'pregunta', {"Pregunta": newPreg, "respuesta": newResp},
+        where: 'ID = ${id.toString()}');
+    _close(data);
+    return false;
+  }
 }
