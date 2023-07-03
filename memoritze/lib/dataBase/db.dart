@@ -5,11 +5,11 @@ import 'package:path/path.dart';
 class ConectioDataBase {
   bool initiated = false;
 
-  Future<Database> connect() async {
+  Future<Database> _connect() async {
     return await openDatabase(join(await getDatabasesPath(), 'memoritzeDB.db'));
   }
 
-  void close(Database myDataBase) {
+  void _close(Database myDataBase) {
     myDataBase.close();
   }
 
@@ -67,45 +67,45 @@ class ConectioDataBase {
         // ruta para realizar actualizacones y defradaciones en la base de datos.
         version: 1);
     initiated = true;
-    close(database);
+    _close(database);
   }
 
   Future<Map<String, dynamic>> getSetting() async {
-    Database data = await connect();
+    Database data = await _connect();
     List<Map<String, dynamic>> inf = await data.query('setting');
     if (inf.length == 0) {
       data.insert(
           "setting", {'NightMode': 0, 'Version': 10, 'Lenguaje': "Esp"});
-      close(data);
+      _close(data);
       return {'NightMode': 0, 'Version': 10, 'Lenguaje': "Esp"};
     }
-    close(data);
+    _close(data);
     return inf[0];
   }
 
   Future<bool> changeSetting(
       int nightMode, int version, String language) async {
-    Database data = await connect();
+    Database data = await _connect();
     data.update("setting",
         {'NightMode': nightMode, 'Version': version, 'Lenguaje': language});
-    close(data);
+    _close(data);
     return true;
   }
 
   Future<bool> createClass(String name, String description) async {
-    Database data = await connect();
+    Database data = await _connect();
     data.insert("clase", {
       "Nombre": name,
       "Descripcion": description,
       "FechPrio": DateTime.now().difference(DateTime(1970)).inSeconds,
       "cantMateria": 0,
     });
-    close(data);
+    _close(data);
     return true;
   }
 
   Future<List<Map<String, dynamic>>> getClass(int id) async {
-    Database data = await connect();
+    Database data = await _connect();
     late List<Map<String, dynamic>> info;
     if (id != -1) {
       info = await data.query('clase',
@@ -114,13 +114,13 @@ class ConectioDataBase {
       info = await data.query('clase', orderBy: 'FechPrio DESC');
     }
 
-    close(data);
+    _close(data);
     return info;
   }
 
   Future<bool> createNewMateriaDB(String name, int id) async {
     List<Map<String, dynamic>> myMateria = await getClass(id);
-    Database data = await connect();
+    Database data = await _connect();
     await data.insert("materia", {
       "ID": id,
       "Nombre": name,
@@ -134,46 +134,61 @@ class ConectioDataBase {
       },
       where: "ID = ${myMateria[0]['ID']}",
     );
-    close(data);
+    _close(data);
     return true;
   }
 
   Future<List<Map<String, dynamic>>> getMaterialClass(int id) async {
-    Database data = await connect();
+    Database data = await _connect();
     List<Map<String, dynamic>> inf = await data.query('materia',
         where: 'ID = ${id.toString()}', orderBy: 'FechPrio DESC');
-    close(data);
+    _close(data);
     return inf;
   }
 
-    Future<Map<String, dynamic>> getMaterialID(int id) async {
-    Database data = await connect();
+  Future<Map<String, dynamic>> getMaterialID(int id) async {
+    Database data = await _connect();
     List<Map<String, dynamic>> inf = await data.query('materia',
         where: 'ID_subclass = ${id.toString()}', orderBy: 'FechPrio DESC');
-    close(data);
+    _close(data);
     return inf[0];
   }
 
   Future<List<Map<String, dynamic>>> getQuests(int idMateria) async {
-    Database data = await connect();
-    List<Map<String, dynamic>> myRequest =
-        await data.query('pregunta', where: 'ID_subclass = ${idMateria.toString()}');
-    close(data);
+    Database data = await _connect();
+    List<Map<String, dynamic>> myRequest = await data.query('pregunta',
+        where: 'ID_subclass = ${idMateria.toString()}');
+    _close(data);
     return myRequest;
   }
 
   Future<bool> deletedClass(int idClass) async {
-    Database data = await connect();
+    Database data = await _connect();
     await data.delete('clase', where: 'ID = ${idClass.toString()}');
     await data.delete('materia', where: 'ID = ${idClass.toString()}');
     await data.delete('pregunta', where: 'ID_class = ${idClass.toString()}');
-    close(data);
+    _close(data);
+    return true;
+  }
+
+  Future<bool> deleteMateria(int id, int idClass) async {
+    List<Map<String, dynamic>> myClass = await getClass(idClass);
+    Database data = await _connect();
+    await data.update(
+        "clase",
+        {
+          "cantMateria": myClass[0]['cantMateria'] - 1,
+        },
+        where: "ID = $idClass");
+    await data.delete("materia", where: 'ID_subclass = $id');
+    await data.delete('pregunta', where: 'ID_subclass = ${id.toString()}');
+    _close(data);
     return true;
   }
 
   Future<bool> createPreg(
       int idClass, int idMateria, String pregunta, String respuesta) async {
-    Database data = await connect();
+    Database data = await _connect();
     List<Map<String, dynamic>> materia = await data.query('materia',
         where: 'ID_subclass = ${idMateria.toString()}',
         orderBy: 'FechPrio DESC');
@@ -190,7 +205,24 @@ class ConectioDataBase {
       {"cantPreg": materia[0]['cantPreg'] + 1},
       where: "ID_subclass = $idMateria",
     );
-    close(data);
+    _close(data);
+    return true;
+  }
+
+  Future<bool> deletedQuest(int id) async {
+    Map<String, dynamic> myQuest = (await getQuests(id))[0];
+    Map<String, dynamic> myMateria =
+        await getMaterialID(myQuest['ID_subclass']);
+    Database data = await _connect();
+    data.update(
+        "materia",
+        {
+          "cantPreg": myMateria['cantPreg'] - 1,
+        },
+        where: "ID_subclass = ${myQuest['ID_subclass']}");
+
+    data.delete('pregunta', where: 'ID = ${id.toString()}');
+    _close(data);
     return true;
   }
 }

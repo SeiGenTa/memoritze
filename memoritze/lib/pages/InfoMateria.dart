@@ -104,8 +104,8 @@ class _InfoMateriaState extends State<InfoMateria> {
                               return ListTile(
                                 textColor: setting.getColorText(),
                                 title: Text(infPregMateria[index]['Pregunta']),
-                                subtitle: Text(infPregMateria[index]['respuesta']),
-                                
+                                subtitle:
+                                    Text(infPregMateria[index]['respuesta']),
                               );
                             }),
                       )),
@@ -269,7 +269,58 @@ class _InfoMateriaState extends State<InfoMateria> {
                           ),
                         ),
                       ),
-                    )
+                    ),
+                  if (viewEraseMateria)
+                    Container(
+                      color: Colors.black26,
+                      alignment: Alignment.center,
+                      child: Container(
+                        color: setting.getBackgroundColor(),
+                        padding: EdgeInsets.all(20),
+                        constraints: BoxConstraints(
+                          minHeight: MediaQuery.of(context).size.height / 3,
+                          minWidth: MediaQuery.of(context).size.width / 3,
+                        ),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "¿Estas seguro de querer eliminar esta materia?",
+                                style: TextStyle(color: setting.getColorText()),
+                              ),
+                              Container(
+                                constraints: BoxConstraints(
+                                  minWidth:
+                                      MediaQuery.of(context).size.width / 3,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () => setState(() {
+                                        viewEraseMateria = false;
+                                      }),
+                                      icon: const Icon(Icons.cancel_rounded),
+                                      color: setting.getColorText(),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        await dataBase.deleteMateria(widget.idMateria,idClass);
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.pop(context);
+                                      },
+                                      icon: const Icon(Icons.check_circle),
+                                      color: setting.getColorText(),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ]),
+                      ),
+                    ),
                 ],
               ),
       ),
