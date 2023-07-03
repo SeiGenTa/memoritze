@@ -5,7 +5,7 @@ class Setting {
   ConectioDataBase database = ConectioDataBase();
   static final Setting _instance = Setting._internal();
 
-  int stateNight = 1;
+  int stateNight = 0;
   int version0 = 9;
 
   factory Setting() {
@@ -42,7 +42,7 @@ class Setting {
   ];
 
   static const List<Color> _colorsPaper = [
-    Color.fromRGBO(255, 255, 255, 1),
+    Color.fromRGBO(185, 145, 53, 1),
     Color.fromRGBO(97, 74, 22, 1),
   ];
 

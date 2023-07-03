@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/pages/InfoMateria.dart';
+import 'package:memoritze/pages/InitQuests.dart';
 import 'package:memoritze/settings.dart';
 
 // ignore: must_be_immutable
@@ -23,7 +24,9 @@ class _InfoMyClassState extends State<InfoMyClass> {
   bool showAccept = false;
 
   void initQuest() {
-    print("iniciar clase");
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return InitQuest(IdsMaterials: selected);
+    }));
   }
 
   Widget initClassUniq = Container();
@@ -59,7 +62,10 @@ class _InfoMyClassState extends State<InfoMyClass> {
   }
 
   Future<void> initSettingMateria(int idMaterial) async {
-    await Navigator.push(context, MaterialPageRoute(builder: (context) => InfoMateria(idMateria: idMaterial)));
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => InfoMateria(idMateria: idMaterial)));
     return;
   }
 
@@ -129,12 +135,12 @@ class _InfoMyClassState extends State<InfoMyClass> {
                   color: mySetting.getColorText(),
                   onPressed: () {
                     print("iniciar quis");
-                    //Navigator.push(
-                    //  context,
-                    //  MaterialPageRoute(
-                    //      builder: (context) => InitMyQuestsGame(
-                    //          myMaterials: [material[i]['ID_subclass']])),
-                    //);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InitQuest(
+                              IdsMaterials: [material[i]['ID_subclass']])),
+                    );
                   },
                   icon: const Icon(Icons.play_circle),
                 ),

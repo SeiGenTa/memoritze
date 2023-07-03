@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -233,5 +234,21 @@ class ConectioDataBase {
         where: 'ID = ${id.toString()}');
     _close(data);
     return false;
+  }
+
+    Future<bool> upDownEvalQuest(int id, int change) async {
+    Database data = await _connect();
+    Map<String, dynamic> myQuest = (await data.query('pregunta', where: 'ID = ${id.toString()}'))[0];
+        
+    if (change > 0) {
+      await data.update("pregunta", {"eval": min(myQuest['eval'] + change, 7)},
+          where: 'ID = $id');
+    } else {
+      await data.update("pregunta", {"eval": max(myQuest['eval'] + change, 1)},
+          where: 'ID = $id');
+    }
+
+    _close(data);
+    return true;
   }
 }
