@@ -56,12 +56,12 @@ class _InfoMateriaState extends State<InfoMateria> {
   }
 
   void saveChangeQuest() {
-    dataBase.setQuestID(infPregMateria[indexQuest]['ID'], preguntaEdit.text, respuestaEdit.text);
+    dataBase.setQuestID(infPregMateria[indexQuest]['ID'], preguntaEdit.text,
+        respuestaEdit.text);
     chargePage();
     setState(() {
       viewEditQuest = false;
     });
-    
   }
 
   saveEditQuest() {}
@@ -79,25 +79,24 @@ class _InfoMateriaState extends State<InfoMateria> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white70,
-          toolbarHeight: 0,
+          backgroundColor: setting.getColorDrawerSecundary(),
+          title: Container(
+            alignment: Alignment.topLeft,
+            child: IconButton(
+              iconSize: 50,
+              color: setting.getColorText(),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back),
+            ),
+          ),
         ),
         backgroundColor: setting.getBackgroundColor(),
         body: charging
             ? Stack(
                 //!Pantalla de carga
                 children: [
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      iconSize: 50,
-                      color: setting.getColorText(),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.arrow_back),
-                    ),
-                  ),
                   Container(
                     alignment: Alignment.center,
                     child: CircularProgressIndicator(
@@ -111,61 +110,27 @@ class _InfoMateriaState extends State<InfoMateria> {
                   //!Parte visual al cargar
                   Column(
                     children: [
-                      Container(
-                        alignment: Alignment.topLeft,
-                        child: IconButton(
-                          iconSize: 50,
-                          color: setting.getColorText(),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(Icons.arrow_back),
-                        ),
-                      ),
                       Expanded(
-                          child: Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 5 / 100),
-                        color: Colors.black26,
-                        child: ListView.builder(
-                            itemCount: infPregMateria.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                onTap: () => initEditQuest(index),
-                                hoverColor: setting.getColorPaper(),
-                                textColor: setting.getColorText(),
-                                title: Text(infPregMateria[index]['Pregunta']),
-                                subtitle:
-                                    Text(infPregMateria[index]['respuesta']),
-                              );
-                            }),
-                      )),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                            onPressed: () => setState(() {
-                              viewEraseMateria = true;
-                            }),
-                            icon: Icon(
-                              Icons.delete,
-                              color: setting.getColorText(),
-                            ),
-                            iconSize: 40,
-                          ),
-                          IconButton(
-                            onPressed: () => setState(() {
-                              viewCreateNewQuest = true;
-                            }),
-                            icon: Icon(
-                              Icons.add,
-                              color: setting.getColorText(),
-                            ),
-                            iconSize: 40,
-                          ),
-                        ],
-                      )
+                          child: ListView.builder(
+                              itemCount: infPregMateria.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  onTap: () => initEditQuest(index),
+                                  hoverColor: setting.getColorPaper(),
+                                  textColor: setting.getColorText(),
+                                  title: Text(
+                                    infPregMateria[index]['Pregunta'],
+                                    style: TextStyle(
+                                      color: setting.getColorText(),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Text(
+                                          infPregMateria[index]['respuesta'])),
+                                );
+                              })),
                     ],
                   ),
                   if (viewCreateNewQuest)
@@ -482,6 +447,38 @@ class _InfoMateriaState extends State<InfoMateria> {
                     ),
                 ],
               ),
+        bottomNavigationBar: BottomAppBar(
+          color: setting.getColorDrawerSecundary(),
+          child: charging
+              ? Container(
+                  height: 0,
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      onPressed: () => setState(() {
+                        viewEraseMateria = true;
+                      }),
+                      icon: Icon(
+                        Icons.delete,
+                        color: setting.getColorText(),
+                      ),
+                      iconSize: 40,
+                    ),
+                    IconButton(
+                      onPressed: () => setState(() {
+                        viewCreateNewQuest = true;
+                      }),
+                      icon: Icon(
+                        Icons.add,
+                        color: setting.getColorText(),
+                      ),
+                      iconSize: 40,
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }

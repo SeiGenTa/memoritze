@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:memoritze/Settings.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/pages/InfoMyClass.dart';
 import 'package:memoritze/partes/BarLeft.dart';
+import 'package:memoritze/settings.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // ignore: must_be_immutable
@@ -18,6 +18,7 @@ class SeeMyClass extends StatefulWidget {
 class _SeeMyClassState extends State<SeeMyClass> {
   ConectioDataBase myData = ConectioDataBase();
   Setting mySetting = Setting();
+  
 
   bool charging = true;
   late List<Map<String, dynamic>> infoClass;
@@ -26,6 +27,7 @@ class _SeeMyClassState extends State<SeeMyClass> {
   int idClassErase = 0;
 
   void initEraseClass(int idClass) {
+    print(mySetting.hashCode);
     setState(() {
       idClassErase = idClass;
       optionErase = true;
@@ -40,6 +42,7 @@ class _SeeMyClassState extends State<SeeMyClass> {
       databaseFactory = databaseFactoryFfi;
     }
     await myData.init();
+    print("cargando setting");
     await mySetting.chargeSetting();
 
     setState(() {
@@ -61,6 +64,7 @@ class _SeeMyClassState extends State<SeeMyClass> {
       charging = false;
       this.infoClass = infoClass;
     });
+    print(mySetting.hashCode);
   }
 
   @override
@@ -71,6 +75,18 @@ class _SeeMyClassState extends State<SeeMyClass> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.prepared) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          backgroundColor: Colors.black38,
+          body: Center(
+            child: Image.asset('assets/img/myIcon.png'),
+          ),
+        ),
+      );
+    }
+    print(mySetting.stateNight);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -79,7 +95,9 @@ class _SeeMyClassState extends State<SeeMyClass> {
           title: const Text("Mis clases"),
           backgroundColor: mySetting.getColorDrawerSecundary(),
         ),
-        drawer: const BarraLeft(),
+        drawer: BarLeft(
+          myContext: 1,
+        ),
         body: charging
             ? Center(
                 child: Text(
@@ -97,14 +115,31 @@ class _SeeMyClassState extends State<SeeMyClass> {
                       width: MediaQuery.of(context).size.width,
                       margin: const EdgeInsets.all(10),
                       child: (infoClass.isEmpty)
-                          ? Center(
-                              child: Text(
-                                "Parece que aun no tenemos clases juntos",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: mySetting.getColorText(),
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Parece que aun no tenemos clases juntos",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: mySetting.getColorText(),
+                                  ),
                                 ),
-                              ),
+                                Text(
+                                  "¡Que tal agregar una CLASE!",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: mySetting.getColorText(),
+                                  ),
+                                ),
+                                Text(
+                                  "Entra al navBar",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: mySetting.getColorText(),
+                                  ),
+                                ),
+                              ],
                             )
                           : ListView.builder(
                               itemCount: infoClass.length,

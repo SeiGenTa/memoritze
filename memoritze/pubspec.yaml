@@ -10,7 +10,7 @@ app_installer:
   publish_folder_path
 
 dependencies:
-  sqflite_common_ffi: any
+  sqflite_common_ffi: ^2.2.5
   sqflite: ^2.0.0
   flutter:
     sdk: flutter

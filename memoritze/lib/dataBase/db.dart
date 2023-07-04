@@ -72,9 +72,12 @@ class ConectioDataBase {
   }
 
   Future<Map<String, dynamic>> getSetting() async {
+    print("conectando");
     Database data = await _connect();
+    print("estamos aqui");
     List<Map<String, dynamic>> inf = await data.query('setting');
-    if (inf.length == 0) {
+    print(inf);
+    if (inf.isEmpty) {
       data.insert(
           "setting", {'NightMode': 0, 'Version': 10, 'Lenguaje': "Esp"});
       _close(data);
@@ -229,17 +232,17 @@ class ConectioDataBase {
 
   Future<bool> setQuestID(int id, String newPreg, String newResp) async {
     Database data = await _connect();
-    await data.update(
-        'pregunta', {"Pregunta": newPreg, "respuesta": newResp},
+    await data.update('pregunta', {"Pregunta": newPreg, "respuesta": newResp},
         where: 'ID = ${id.toString()}');
     _close(data);
     return false;
   }
 
-    Future<bool> upDownEvalQuest(int id, int change) async {
+  Future<bool> upDownEvalQuest(int id, int change) async {
     Database data = await _connect();
-    Map<String, dynamic> myQuest = (await data.query('pregunta', where: 'ID = ${id.toString()}'))[0];
-        
+    Map<String, dynamic> myQuest =
+        (await data.query('pregunta', where: 'ID = ${id.toString()}'))[0];
+
     if (change > 0) {
       await data.update("pregunta", {"eval": min(myQuest['eval'] + change, 7)},
           where: 'ID = $id');

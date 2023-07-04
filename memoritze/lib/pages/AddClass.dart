@@ -2,7 +2,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:memoritze/Settings.dart';
+import 'package:memoritze/settings.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/pages/SeeMyClass.dart';
 import 'package:memoritze/partes/BarLeft.dart';
@@ -26,6 +26,8 @@ class _AddClassState extends State<AddClass> {
     final nameClass = TextEditingController();
     final descriptionClass = TextEditingController();
 
+    print(mySetting.hashCode);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -33,7 +35,9 @@ class _AddClassState extends State<AddClass> {
             backgroundColor: mySetting.getColorDrawer(),
             title: const Text('Añadir clases'),
           ),
-          drawer: const BarraLeft(),
+          drawer: BarLeft(
+            myContext: 2,
+          ),
           backgroundColor: mySetting.getBackgroundColor(),
           body: Stack(children: [
             ListView(
@@ -51,7 +55,8 @@ class _AddClassState extends State<AddClass> {
                             right: MediaQuery.of(context).size.height / 10,
                           ),
                           child: TextFormField(
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Todo ramo tiene un nombre';
@@ -98,7 +103,8 @@ class _AddClassState extends State<AddClass> {
                             right: MediaQuery.of(context).size.height / 10,
                           ),
                           child: TextFormField(
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             minLines: 1,
                             maxLines: 5,
                             validator: (value) {
@@ -123,10 +129,10 @@ class _AddClassState extends State<AddClass> {
                                     color: mySetting.getColorText(),
                                   ),
                                 ),
-                                labelStyle: TextStyle(
-                                    color: mySetting.getColorText()),
-                                hintStyle: TextStyle(
-                                    color: mySetting.getColorText()),
+                                labelStyle:
+                                    TextStyle(color: mySetting.getColorText()),
+                                hintStyle:
+                                    TextStyle(color: mySetting.getColorText()),
                                 hintText:
                                     "Esto es un cuestionario de una de mis clases favoritas",
                                 labelText: "Descripcion",
@@ -141,13 +147,13 @@ class _AddClassState extends State<AddClass> {
                         ),
                         AnimatedContainer(
                           duration: const Duration(seconds: 1),
-                          
                           alignment: Alignment.center,
                           child: IconButton(
+                            color: mySetting.getColorText(),
+                            iconSize: 30,
                             hoverColor: mySetting.getColorDrawerSecundary(),
-                            icon: Icon(
-                              Icons.save_alt,
-                              color: mySetting.getColorText(),
+                            icon: const Icon(
+                              Icons.save,
                             ),
                             onPressed: () async {
                               _formKey.currentState!.validate();

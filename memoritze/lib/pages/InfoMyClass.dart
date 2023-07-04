@@ -186,6 +186,8 @@ class _InfoMyClassState extends State<InfoMyClass> {
 
   @override
   Widget build(BuildContext context) {
+    print(mySetting.hashCode);
+
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(

@@ -6,17 +6,19 @@ class Setting {
   static final Setting _instance = Setting._internal();
 
   int stateNight = 0;
-  int version0 = 9;
+  int version0 = 11;
 
   factory Setting() {
     return _instance;
   }
-
+  
   Setting._internal();
 
   Future<bool> chargeSetting() async {
     Map<String, dynamic> config = await database.getSetting();
-    //stateNight = config['NightMode'];
+    print("cargando");
+    stateNight = config['NightMode'];
+    print(config['NightMode']);
     version0 = config['Version'];
     return true;
   }
@@ -69,6 +71,6 @@ class Setting {
   void setStateNight() {
     stateNight += 1;
     stateNight = stateNight % 2;
-    database.changeSetting(stateNight, 1, "esp");
+    database.changeSetting(stateNight, version0, "esp");
   }
 }
