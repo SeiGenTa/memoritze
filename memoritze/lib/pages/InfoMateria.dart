@@ -47,7 +47,6 @@ class _InfoMateriaState extends State<InfoMateria> {
 
   initEditQuest(int ubq) {
     Map<String, dynamic> myPreg = infPregMateria[ubq];
-    print(myPreg);
     indexQuest = ubq;
     preguntaEdit.text = myPreg['Pregunta'];
     respuestaEdit.text = myPreg['respuesta'];
@@ -452,7 +451,6 @@ class _InfoMateriaState extends State<InfoMateria> {
                                   ),
                                   IconButton(
                                     onPressed: () async {
-                                      print("QUEST: ${infPregMateria[indexQuest]['ID']}");
                                       await dataBase.deletedQuest(
                                           infPregMateria[indexQuest]['ID']);
                                       setState(() {

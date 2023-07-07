@@ -1,10 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/pages/InfoMyClass.dart';
 import 'package:memoritze/partes/BarLeft.dart';
 import 'package:memoritze/settings.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // ignore: must_be_immutable
 class SeeMyClass extends StatefulWidget {
@@ -27,7 +25,6 @@ class _SeeMyClassState extends State<SeeMyClass> {
   int idClassErase = 0;
 
   void initEraseClass(int idClass) {
-    print(mySetting.hashCode);
     setState(() {
       idClassErase = idClass;
       optionErase = true;
@@ -35,36 +32,25 @@ class _SeeMyClassState extends State<SeeMyClass> {
   }
 
   Future<bool> initApp() async {
-    print("cargando informacion");
-    if (!Platform.isAndroid) {
-      print("Estoy en windows");
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
-    }
     await myData.init();
-    print("cargando setting");
     await mySetting.chargeSetting();
 
     setState(() {
       widget.prepared = true;
-      print("changeEstate");
     });
 
     return true;
   }
 
   void initPage() async {
-    print(widget.prepared.toString());
     if (!widget.prepared) {
       await initApp();
     }
     infoClass = await myData.getClass(-1);
-    print(infoClass);
     setState(() {
       charging = false;
       this.infoClass = infoClass;
     });
-    print(mySetting.hashCode);
   }
 
   @override
@@ -75,6 +61,7 @@ class _SeeMyClassState extends State<SeeMyClass> {
 
   @override
   Widget build(BuildContext context) {
+
     if (!widget.prepared) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -86,7 +73,6 @@ class _SeeMyClassState extends State<SeeMyClass> {
         ),
       );
     }
-    print(mySetting.stateNight);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(

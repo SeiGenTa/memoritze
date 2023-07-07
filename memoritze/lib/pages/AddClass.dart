@@ -22,17 +22,14 @@ class _AddClassState extends State<AddClass> {
   final nameClass = TextEditingController();
   final descriptionClass = TextEditingController();
 
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _dataBase.init();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     nameClass.dispose();
     descriptionClass.dispose();
@@ -41,7 +38,6 @@ class _AddClassState extends State<AddClass> {
   @override
   Widget build(BuildContext context) {
     // ignore: no_leading_underscores_for_local_identifiers
-
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

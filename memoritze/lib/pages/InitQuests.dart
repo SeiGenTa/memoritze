@@ -33,7 +33,6 @@ class _InitQuestState extends State<InitQuest> {
   void setPreg() {
     int indexSelected = ra.nextInt(amountProbs);
     myIndex = probQuest[indexSelected]['index']!;
-    print(myIndex);
     if (lastQuest == myIndex) {
       return setPreg();
     }
@@ -45,7 +44,6 @@ class _InitQuestState extends State<InitQuest> {
       resp = myQuests[myIndex]['respuesta'];
       charged = true;
     });
-    print(preg);
   }
 
   void chargeData() async {

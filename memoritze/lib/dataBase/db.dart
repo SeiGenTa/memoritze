@@ -1,9 +1,22 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class ConectioDataBase {
+  static final ConectioDataBase _instance = ConectioDataBase._internal();
+
+  bool getInitiated() {
+    return initiated;
+  }
+
+  factory ConectioDataBase() {
+    return _instance;
+  }
+
+  ConectioDataBase._internal();
+
   bool initiated = false;
 
   Future<Database> _connect() async {
@@ -15,6 +28,11 @@ class ConectioDataBase {
   }
 
   Future<void> init() async {
+    if (Platform.isWindows) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+
     Database database = await openDatabase(
         // Establece la ruta a la base de datos.
         join(await getDatabasesPath(), 'memoritzeDB.db'),
@@ -215,7 +233,6 @@ class ConectioDataBase {
     Map<String, dynamic> myMateria = (await data.query('materia',
         where: 'ID_subclass = ${myQuest['ID_subclass'].toString()}',
         orderBy: 'FechPrio DESC'))[0];
-    print("editando cantidad de preguntas materia: $myMateria");
     await data.update(
         "materia",
         {

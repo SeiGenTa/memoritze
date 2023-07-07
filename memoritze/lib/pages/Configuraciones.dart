@@ -13,7 +13,6 @@ class _ConfigurablePageState extends State<ConfigurablePage> {
   Setting setting = Setting();
   @override
   Widget build(BuildContext context) {
-    print(setting.stateNight);
     late bool modeNight;
     if (setting.stateNight == 0) {
       modeNight = false;

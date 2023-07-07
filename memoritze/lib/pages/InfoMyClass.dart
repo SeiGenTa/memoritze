@@ -119,7 +119,6 @@ class _InfoMyClassState extends State<InfoMyClass> {
 
   @override
   Widget build(BuildContext context) {
-    print(_appBarStretchRatio);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
