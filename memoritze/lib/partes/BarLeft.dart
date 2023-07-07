@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:memoritze/Pages/addClass.dart';
-import 'package:memoritze/Pages/myClases.dart';
-import 'package:memoritze/setting.dart';
+import 'package:memoritze/Settings.dart';
+import 'package:memoritze/pages/Configuraciones.dart';
+import 'package:memoritze/pages/SeeMyClass.dart';
+import 'package:memoritze/pages/AddClass.dart';
 
-class BarraLeft extends StatelessWidget {
-  const BarraLeft({super.key});
+class BarLeft extends StatelessWidget {
+  late int myContext;
+  BarLeft({super.key, required this.myContext});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,8 @@ class BarraLeft extends StatelessWidget {
           //!Inicio botones
 
           ListTile(
+            selected: (myContext == 1) ? true : false,
+            selectedColor: Colors.black38,
             title: Text(
               "Mis Clases",
               style: TextStyle(
@@ -36,42 +40,49 @@ class BarraLeft extends StatelessWidget {
               ),
             ),
             onTap: () => {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => MyClasses()),
-                (Route<dynamic> route) => false,
-              )
+              if (myContext == 1)
+                Navigator.pop(context)
+              else
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SeeMyClass(),
+                  ),
+                  (Route<dynamic> route) => false,
+                )
             },
           ),
           ListTile(
             title: Text(
-              "Agregar clase",
+              "Agregar Clase",
               style: TextStyle(
                 color: mySetting.getColorText(),
                 fontSize: 15,
               ),
             ),
             onTap: () => {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => AddClass()),
-                (Route<dynamic> route) => false,
-              )
+              if (myContext == 2)
+                Navigator.pop(context)
+              else
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddClass()),
+                  (Route<dynamic> route) => false,
+                )
             },
           ),
           ListTile(
             title: Text(
-              "Light/Night Mode",
+              "Configuraciones",
               style: TextStyle(
                 color: mySetting.getColorText(),
                 fontSize: 15,
               ),
             ),
-            onTap: () {
-              mySetting.setStateNight();
+            onTap: () async {
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => MyClasses()),
+                MaterialPageRoute(builder: (context) => ConfigurablePage()),
                 (Route<dynamic> route) => false,
               );
             },
