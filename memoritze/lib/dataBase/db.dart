@@ -61,8 +61,6 @@ class ConectioDataBase {
           FOREIGN KEY (ID_class) REFERENCES clase(ID)
           );
           ''');
-
-      print("se creo la base de datos");
     },
         // Establece la versión. Esto ejecuta la función onCreate y proporciona una
         // ruta para realizar actualizacones y defradaciones en la base de datos.
@@ -72,11 +70,8 @@ class ConectioDataBase {
   }
 
   Future<Map<String, dynamic>> getSetting() async {
-    print("conectando");
     Database data = await _connect();
-    print("estamos aqui");
     List<Map<String, dynamic>> inf = await data.query('setting');
-    print(inf);
     if (inf.isEmpty) {
       data.insert(
           "setting", {'NightMode': 0, 'Version': 10, 'Lenguaje': "Esp"});
@@ -214,18 +209,21 @@ class ConectioDataBase {
   }
 
   Future<bool> deletedQuest(int id) async {
-    Map<String, dynamic> myQuest = (await getQuests(id))[0];
-    Map<String, dynamic> myMateria =
-        await getMaterialID(myQuest['ID_subclass']);
     Database data = await _connect();
-    data.update(
+    Map<String, dynamic> myQuest =
+        (await data.query('pregunta', where: 'ID = $id'))[0];
+    Map<String, dynamic> myMateria = (await data.query('materia',
+        where: 'ID_subclass = ${myQuest['ID_subclass'].toString()}',
+        orderBy: 'FechPrio DESC'))[0];
+    print("editando cantidad de preguntas materia: $myMateria");
+    await data.update(
         "materia",
         {
           "cantPreg": myMateria['cantPreg'] - 1,
         },
         where: "ID_subclass = ${myQuest['ID_subclass']}");
 
-    data.delete('pregunta', where: 'ID = ${id.toString()}');
+    await data.delete('pregunta', where: 'ID = ${id.toString()}');
     _close(data);
     return true;
   }

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:memoritze/pages/SeeMyClass.dart';
 import 'package:memoritze/settings.dart';
 
-class Configurate extends StatefulWidget {
-  const Configurate({super.key});
+class ConfigurablePage extends StatefulWidget {
+  const ConfigurablePage({super.key});
 
   @override
-  State<Configurate> createState() => _ConfigurateState();
+  State<ConfigurablePage> createState() => _ConfigurablePageState();
 }
 
-class _ConfigurateState extends State<Configurate> {
+class _ConfigurablePageState extends State<ConfigurablePage> {
   Setting setting = Setting();
   @override
   Widget build(BuildContext context) {
@@ -27,33 +27,88 @@ class _ConfigurateState extends State<Configurate> {
         backgroundColor: setting.getBackgroundColor(),
         appBar: AppBar(
           backgroundColor: setting.getColorDrawerSecundary(),
-          title: Container(
-            alignment: Alignment.topLeft,
-            child: IconButton(
-              iconSize: 50,
-              color: setting.getColorText(),
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SeeMyClass(prepared: true,)), (route) => false);
-              },
-              icon: const Icon(Icons.arrow_back),
-            ),
+          title: IconButton(
+            iconSize: 50,
+            color: setting.getColorText(),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SeeMyClass(
+                            prepared: true,
+                          )),
+                  (route) => false);
+            },
+            icon: const Icon(Icons.arrow_back),
           ),
         ),
-        body: Container(
-            constraints: BoxConstraints(
-                minWidth: MediaQuery.sizeOf(context).width/3,
-                maxWidth: MediaQuery.sizeOf(context).width,
-                minHeight: MediaQuery.sizeOf(context).height,
-                maxHeight: MediaQuery.sizeOf(context).height),
-            child: ListView(
-              children: [Switch(value: modeNight, onChanged: (bool newValue){
-                  setState(() {
-                    setting.setStateNight();
-                    modeNight = !modeNight;
-                    newValue = modeNight;
-                  });
-              } )],
-            )),
+        body: Center(
+          child: Container(
+              padding: const EdgeInsets.all(10),
+              constraints: const BoxConstraints(
+                maxWidth: 600,
+              ),
+              child: ListView(
+                children: [
+                  Text(
+                    "Configuraciones",
+                    style: TextStyle(
+                        color: setting.getColorText(),
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  Divider(color: setting.getColorText()),
+                  Text(
+                    "Cambios visuales",
+                    style: TextStyle(
+                        color: setting.getColorText(),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      Switch(
+                          value: modeNight,
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              setting.setStateNight();
+                              modeNight = !modeNight;
+                              newValue = modeNight;
+                            });
+                          }),
+                      Text(
+                        "Modo nocturna",
+                        style: TextStyle(color: setting.getColorText()),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Switch(
+                          value: false,
+                          onChanged: (bool newValue) {
+                            //setState(() {
+                            //  setting.setStateNight();
+                            //  modeNight = !modeNight;
+                            //  newValue = modeNight;
+                            //});
+                          }),
+                      Text(
+                        "Temas personalizados (PRONTO)",
+                        style: TextStyle(color: setting.getColorText()),
+                      ),
+                    ],
+                  ),
+                  Divider(color: setting.getColorText()),
+                  Text(
+                    "Ajustes a las clases (Proximamente)",
+                    style: TextStyle(
+                        color: setting.getColorText(),
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              )),
+        ),
       ),
     );
   }

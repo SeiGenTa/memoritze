@@ -36,7 +36,7 @@ class _SeeMyClassState extends State<SeeMyClass> {
 
   Future<bool> initApp() async {
     print("cargando informacion");
-    if (Platform.isWindows) {
+    if (!Platform.isAndroid) {
       print("Estoy en windows");
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;

@@ -40,7 +40,7 @@ class Setting {
 
   static const List<Color> _colorsDrawerSecondary = [
     Color.fromRGBO(42, 146, 53, 1),
-    Color.fromRGBO(73, 150, 70, 1),
+    Color.fromRGBO(10, 73, 10, 1),
   ];
 
   static const List<Color> _colorsPaper = [

@@ -6,6 +6,7 @@ import 'package:memoritze/settings.dart';
 
 // ignore: must_be_immutable
 class InitQuest extends StatefulWidget {
+  // ignore: non_constant_identifier_names
   late List<int> IdsMaterials;
   InitQuest({super.key, required this.IdsMaterials});
 
@@ -20,17 +21,25 @@ class _InitQuestState extends State<InitQuest> {
 
   bool charged = false;
   bool seeResp = false;
+  bool _showCaseEspecial = false;
   late final List<Map<String, dynamic>> myQuests;
   List<Map<String, int>> probQuest = [];
   int amountProbs = 0;
   late String preg;
   late String resp;
   late int myIndex;
+  int lastQuest = -1;
 
   void setPreg() {
     int indexSelected = ra.nextInt(amountProbs);
     myIndex = probQuest[indexSelected]['index']!;
     print(myIndex);
+    if (lastQuest == myIndex) {
+      return setPreg();
+    }
+
+    lastQuest = myIndex;
+
     setState(() {
       preg = myQuests[myIndex]['Pregunta'];
       resp = myQuests[myIndex]['respuesta'];
@@ -48,6 +57,12 @@ class _InitQuestState extends State<InitQuest> {
     }
 
     myQuests = List.unmodifiable(myQuestTemp);
+
+    if (myQuests.length < 2) {
+      setState(() {
+        _showCaseEspecial = true;
+      });
+    }
 
     for (int i = 0; i < myQuests.length; i++) {
       for (int j = 0; j < myQuests[i]['eval']; j++) {
@@ -104,6 +119,7 @@ class _InitQuestState extends State<InitQuest> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: setting.getBackgroundColor(),
         appBar: AppBar(
           backgroundColor: setting.getBackgroundColor(),
           toolbarHeight: 0,
@@ -122,90 +138,128 @@ class _InitQuestState extends State<InitQuest> {
                 icon: const Icon(Icons.arrow_back),
               ),
             ),
-            !charged
-                ? Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: setting.getColorText(),
-                      ),
+            _showCaseEspecial
+                ? Center(
+                    child: Text(
+                      "Parece que te faltan preguntas para iniciar este cuestionario",
+                      style: TextStyle(
+                          color: setting.getColorText(),
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
                     ),
                   )
-                : Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(child: Container()),
-                        AnimatedContainer(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: setting.getColorPaper(),
-                          ),
-                          duration: const Duration(seconds: 2),
-                          child: Text(preg,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              )),
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        if (!seeResp)
-                          IconButton(
-                            onPressed: () => setState(() {
-                              seeResp = true;
-                            }),
-                            icon: const Icon(Icons.remove_red_eye),
+                : !charged
+                    ? Expanded(
+                        child: Center(
+                          child: CircularProgressIndicator(
                             color: setting.getColorText(),
                           ),
-                        if (seeResp)
-                          AnimatedContainer(
-                            padding: EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: setting.getColorPaper(),
-                            ),
-                            duration: const Duration(seconds: 2),
-                            child: Text(resp,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
-                          ),
-                        const SizedBox(
-                          height: 40,
                         ),
-                        if (seeResp)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ElevatedButton(
-                                  style: ButtonStyle(
-                                      padding: MaterialStateProperty.all(
-                                          const EdgeInsets.all(30)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.red)),
-                                  onPressed: () {
-                                    setUpEval(myIndex);
-                                  },
-                                  child: Text("Falla..")),
-                              ElevatedButton(
-                                  style: ButtonStyle(
-                                      padding: MaterialStateProperty.all(
-                                          const EdgeInsets.all(30)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.green)),
-                                  onPressed: () {
-                                    setDowEval(myIndex);
-                                  },
-                                  child: const Text("Acerté!")),
-                            ],
-                          ),
-                        Expanded(child: Container()),
-                      ],
-                    ),
-                  ),
+                      )
+                    : Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(child: Container()),
+                            Container(
+                              constraints: BoxConstraints(
+                                maxHeight:
+                                    MediaQuery.of(context).size.height / 3 - 25,
+                                maxWidth: 500,
+                              ),
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: setting.getColorPaper(),
+                              ),
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: [
+                                  Text(
+                                    preg,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 40,
+                            ),
+                            if (!seeResp)
+                              IconButton(
+                                onPressed: () => setState(() {
+                                  seeResp = true;
+                                }),
+                                icon: const Icon(Icons.remove_red_eye),
+                                color: setting.getColorText(),
+                              ),
+                            Container(
+                                height: (seeResp) ? null : 0,
+                                constraints: BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height / 3 -
+                                          25,
+                                  maxWidth: 500,
+                                ),
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: setting.getColorPaper(),
+                                ),
+                                child: ListView(
+                                  shrinkWrap: true,
+                                  children: [
+                                    Text(
+                                      resp,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                )),
+                            const SizedBox(
+                              height: 40,
+                            ),
+                            if (seeResp)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ElevatedButton(
+                                      style: ButtonStyle(
+                                          padding: MaterialStateProperty.all(
+                                              const EdgeInsets.all(30)),
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.red)),
+                                      onPressed: () {
+                                        setUpEval(myIndex);
+                                      },
+                                      child: Text("Falla..")),
+                                  ElevatedButton(
+                                      style: ButtonStyle(
+                                          padding: MaterialStateProperty.all(
+                                              const EdgeInsets.all(30)),
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.green)),
+                                      onPressed: () {
+                                        setDowEval(myIndex);
+                                      },
+                                      child: const Text("Acerté!")),
+                                ],
+                              ),
+                            Expanded(child: Container()),
+                          ],
+                        ),
+                      ),
           ],
         ),
       ),

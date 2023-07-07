@@ -82,7 +82,7 @@ class BarLeft extends StatelessWidget {
             onTap: () async {
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => Configurate()),
+                MaterialPageRoute(builder: (context) => ConfigurablePage()),
                 (Route<dynamic> route) => false,
               );
             },

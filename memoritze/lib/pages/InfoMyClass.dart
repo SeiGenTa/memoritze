@@ -17,15 +17,18 @@ class InfoMyClass extends StatefulWidget {
 }
 
 class _InfoMyClassState extends State<InfoMyClass> {
-  List<int> selected = [];
+  List<int> _selected = [];
 
   ConectioDataBase dataBase = ConectioDataBase();
 
-  bool showAccept = false;
+  bool _showAccept = false;
+
+  late ScrollController _scrollController = ScrollController();
+  double _appBarStretchRatio = 0.0;
 
   void initQuest() {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return InitQuest(IdsMaterials: selected);
+      return InitQuest(IdsMaterials: _selected);
     }));
   }
 
@@ -34,17 +37,24 @@ class _InfoMyClassState extends State<InfoMyClass> {
   void initState() {
     super.initState();
     chargerData();
+    _scrollController.addListener(_updateAppBarStretchRatio);
+  }
+
+  void _updateAppBarStretchRatio() {
+    setState(() {
+      _appBarStretchRatio = _scrollController.offset;
+    });
   }
 
   void createNewMateria() {
     setState(() {
-      showCreate = !showCreate;
+      _showCreate = !_showCreate;
     });
   }
 
   void pressX() {
     setState(() {
-      showCreate = !showCreate;
+      _showCreate = !_showCreate;
     });
     _nameMaterial.clear();
   }
@@ -53,7 +63,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
     _formKey.currentState!.validate();
     if (_nameMaterial.text.isEmpty) return;
     setState(() {
-      showCreate = !showCreate;
+      _showCreate = !_showCreate;
     });
     // ignore: await_only_futures
     await dataBase.createNewMateriaDB(_nameMaterial.text, widget.id_class);
@@ -66,97 +76,12 @@ class _InfoMyClassState extends State<InfoMyClass> {
         context,
         MaterialPageRoute(
             builder: (context) => InfoMateria(idMateria: idMaterial)));
+    chargerMaterial();
     return;
   }
 
   void chargerMaterial() async {
     material = await dataBase.getMaterialClass(widget.id_class);
-
-    List<Widget> materials = [];
-
-    for (int i = 0; i < material.length; i++) {
-      materials.add(
-        Container(
-          margin: const EdgeInsets.only(
-            top: 2,
-          ),
-          decoration: const BoxDecoration(
-              border: Border.symmetric(
-                  horizontal: BorderSide(
-            width: 1,
-            color: Colors.grey,
-          ))),
-          child: ListTile(
-            textColor: mySetting.getColorText(),
-            hoverColor: mySetting.getColorDrawer(),
-            title: Row(
-              children: [
-                const Text(
-                  "Nombre materia:    ",
-                ),
-                Text(
-                  material[i]['Nombre'],
-                ),
-                Expanded(child: Container()),
-                //!Seccion donde se agrega o se quita quest
-                if (selected.contains(material[i]['ID_subclass']))
-                  //? esta selecionado para el cuestionar
-                  IconButton(
-                    color: mySetting.getColorText(),
-                    onPressed: () {
-                      selected.remove((material[i]['ID_subclass']));
-                      setState(() {
-                        chargerMaterial();
-                      });
-                    },
-                    icon: const Icon(Icons.check_box),
-                  )
-                else
-                  //? no esta selecionado para el cuestionar
-                  IconButton(
-                    color: mySetting.getColorText(),
-                    onPressed: () {
-                      selected.add(material[i]['ID_subclass']);
-                      setState(() {
-                        chargerMaterial();
-                      });
-                    },
-                    icon: Icon(Icons.check_box_outline_blank),
-                  ),
-                IconButton(
-                  color: mySetting.getColorText(),
-                  onPressed: () async {
-                    await initSettingMateria(material[i]['ID_subclass']);
-                    chargerMaterial();
-                  },
-                  icon: const Icon(Icons.settings),
-                ),
-                IconButton(
-                  color: mySetting.getColorText(),
-                  onPressed: () {
-                    print("iniciar quis");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InitQuest(
-                              IdsMaterials: [material[i]['ID_subclass']])),
-                    );
-                  },
-                  icon: const Icon(Icons.play_circle),
-                ),
-              ],
-            ),
-            subtitle:
-                Text("Cantidad de preguntas:  ${material[i]['cantPreg']}"),
-          ),
-        ),
-      );
-    }
-    myMaterialClass = Expanded(
-      child: ListView(
-        children: materials,
-      ),
-    );
     //(child: ListView( children: materias,),);
     setState(() {
       chargeMaterial = true;
@@ -166,7 +91,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
   void chargerData() async {
     this.myClass = await dataBase.getClass(widget.id_class);
     setState(() {
-      charge = true;
+      _charge = true;
     });
     chargerMaterial();
   }
@@ -174,20 +99,19 @@ class _InfoMyClassState extends State<InfoMyClass> {
   final TextEditingController _nameMaterial = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  bool showCreate = false;
+  bool _showCreate = false;
   bool chargeMaterial = false;
 
   late List<Map<String, dynamic>> myClass;
   late Widget myMaterialClass;
   List<Map<String, dynamic>> material = [];
 
-  bool charge = false;
+  bool _charge = false;
   Setting mySetting = Setting();
 
   @override
   Widget build(BuildContext context) {
-    print(mySetting.hashCode);
-
+    print(_appBarStretchRatio);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
@@ -196,7 +120,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
             toolbarHeight: 0,
             backgroundColor: mySetting.getColorDrawerSecundary(),
           ),
-          body: !charge
+          body: !_charge
               ? Column(
                   children: [
                     Row(
@@ -225,120 +149,240 @@ class _InfoMyClassState extends State<InfoMyClass> {
                 )
               : Stack(
                   children: [
-                    Column(
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              color: mySetting.getColorDrawerSecundary(),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 60,
-                                    width: MediaQuery.of(context).size.width,
-                                  ),
-                                  Row(
+                    CustomScrollView(
+                      controller: _scrollController,
+                      slivers: [
+                        SliverAppBar(
+                          elevation: 100,
+                          pinned: true,
+                          backgroundColor: mySetting.getColorDrawerSecundary(),
+                          leading: IconButton(
+                            iconSize: 50,
+                            color: mySetting.getColorText(),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.arrow_back),
+                          ),
+                          expandedHeight: 200,
+                          flexibleSpace: Container(
+                            //decoration: const BoxDecoration(
+                            //    image: DecorationImage(
+                            //        fit: BoxFit.cover,
+                            //        image: AssetImage(
+                            //          "assets/img/fondoWhite.jpg", //!CONFIGURAR
+                            //        ))),
+                            width: MediaQuery.of(context).size.width,
+                            height: 300,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                    child: Container(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        myClass[0]['Nombre'].toString(),
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          color: mySetting.getColorText(),
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: (_appBarStretchRatio < 100)
+                                                ? _appBarStretchRatio
+                                                : 100,
+                                          ),
+                                          Container(
+                                            alignment: Alignment.bottomLeft,
+                                            height: (_appBarStretchRatio < 100)
+                                                ? 100 -
+                                                    (_appBarStretchRatio / 2)
+                                                : 50,
+                                            child: Text(
+                                              this.myClass[0]['Nombre'],
+                                              style: TextStyle(
+                                                color: mySetting.getColorText(),
+                                                fontSize: 30,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.clip,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      const Expanded(child: Text(""))
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Descripcion:",
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                          color: mySetting.getColorText(),
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
                                       Expanded(
-                                        child: Text(
-                                          myClass[0]['Descripcion'].toString(),
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            color: mySetting.getColorText(),
-                                            fontSize: 15,
+                                        child: Opacity(
+                                          opacity: (_appBarStretchRatio > 120)
+                                              ? 0
+                                              : (120 - _appBarStretchRatio) /
+                                                  120,
+                                          child: Text(
+                                            "Descripcion: ${this.myClass[0]['Descripcion']} ",
+                                            overflow: TextOverflow.fade,
+                                            style: TextStyle(
+                                                color:
+                                                    mySetting.getColorText()),
                                           ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                100),
-                                        child: ElevatedButton(
-                                          onPressed: () => createNewMateria(),
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    mySetting.getColorDrawer()),
-                                          ),
-                                          child: const Text(
-                                              "Agregar Cuestionario"),
                                         ),
                                       )
                                     ],
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  )
-                                ],
-                              ),
+                                )),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment:
+                                      !(_appBarStretchRatio > 250)
+                                          ? MainAxisAlignment.end
+                                          : MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(child: Container()),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(
+                                          shape: MaterialStatePropertyAll(
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                    (_appBarStretchRatio < 100)
+                                                        ? BorderRadius.circular(
+                                                            10)
+                                                        : BorderRadius.circular(
+                                                            25)),
+                                          ),
+                                          elevation:
+                                              MaterialStatePropertyAll(5),
+                                          iconColor: MaterialStatePropertyAll(
+                                              mySetting.getColorText()),
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  mySetting.getColorPaper()),
+                                        ),
+                                        onPressed: () => setState(() {
+                                          _showCreate = true;
+                                        }),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.add),
+                                            AnimatedContainer(
+                                              duration: const Duration(
+                                                  milliseconds: 300),
+                                              constraints: BoxConstraints(
+                                                maxWidth:
+                                                    (_appBarStretchRatio > 100)
+                                                        ? 0
+                                                        : 200,
+                                              ),
+                                              child: Text(
+                                                "Agregar materia",
+                                                style: TextStyle(
+                                                  color:
+                                                      mySetting.getColorText(),
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
                             ),
-                            IconButton(
-                              iconSize: 40,
-                              onPressed: () {
-                                Navigator.pop(context, true);
-                              },
-                              icon: Icon(
-                                Icons.arrow_back,
-                                color: mySetting.getColorText(),
-                              ),
-                            )
-                          ],
+                          ),
                         ),
-                        !chargeMaterial
-                            ? const Center(
-                                child: Text("No tenemos cuestionarios aqui"),
-                              )
-                            : myMaterialClass
+                        SliverList.builder(
+                            itemCount: material.length,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                children: [
+                                  if (index == 0)
+                                    Divider(
+                                      color: mySetting.getColorText(),
+                                    ),
+                                  ListTile(
+                                    textColor: mySetting.getColorText(),
+                                    iconColor: mySetting.getColorText(),
+                                    subtitle: Text(
+                                      "   Cantidad de preguntas: ${material[index]['cantPreg']}",
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    title: Container(
+                                      height: 50,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                              child: Text(
+                                            "  Materia:  ${material[index]['Nombre']}",
+                                            overflow: TextOverflow.ellipsis,
+                                          )),
+                                          IconButton(
+                                              onPressed: () {
+                                                if (!_selected.any((element) =>
+                                                    element ==
+                                                    material[index]
+                                                        ['ID_subclass'])) {
+                                                  setState(() {
+                                                    _selected.add(
+                                                        material[index]
+                                                            ['ID_subclass']);
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    _selected.remove(
+                                                        material[index]
+                                                            ['ID_subclass']);
+                                                  });
+                                                }
+                                              },
+                                              icon: (_selected.any((element) =>
+                                                      element ==
+                                                      material[index]
+                                                          ['ID_subclass']))
+                                                  ? const Icon(Icons.check_box)
+                                                  : const Icon(Icons.add_box)),
+                                          IconButton(
+                                              onPressed: () {
+                                                initSettingMateria(
+                                                    material[index]
+                                                        ['ID_subclass']);
+                                              },
+                                              icon: const Icon(Icons.settings)),
+                                          IconButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InitQuest(
+                              IdsMaterials: [material[index]['ID_subclass']])),
+                    );
+                                              },
+                                              icon:
+                                                  const Icon(Icons.play_arrow))
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  if (index != material.length)
+                                    Divider(
+                                      color: mySetting.getColorText(),
+                                    ),
+                                ],
+                              );
+                            })
                       ],
                     ),
-                    Container(
-                      alignment: Alignment.bottomRight,
-                      child: Text(
-                        "version: 0.${mySetting.version0.toString()}",
-                        style: TextStyle(color: mySetting.getColorText()),
-                      ),
-                    ),
-                    if (selected.isNotEmpty)
+                    if (_selected.isNotEmpty)
                       Container(
                         alignment: Alignment.bottomRight,
                         child: IconButton(
                           onPressed: () => initQuest(),
                           color: mySetting.getColorDrawerSecundary(),
                           iconSize: 50,
-                          icon: Icon(Icons.play_circle_fill),
+                          icon: const Icon(Icons.play_circle_fill),
                         ),
                       ),
-                    if (showCreate) createNewMaterial(context),
-                    if (showAccept) initClassUniq,
+                    if (_showCreate) createNewMaterial(context),
+                    if (_showAccept) initClassUniq,
                   ],
                 ),
         ));

@@ -118,17 +118,29 @@ class _InfoMateriaState extends State<InfoMateria> {
                                   onTap: () => initEditQuest(index),
                                   hoverColor: setting.getColorPaper(),
                                   textColor: setting.getColorText(),
-                                  title: Text(
-                                    infPregMateria[index]['Pregunta'],
-                                    style: TextStyle(
-                                      color: setting.getColorText(),
-                                      fontWeight: FontWeight.bold,
+                                  title: Container(
+                                    constraints: const BoxConstraints(
+                                      maxHeight: 30,
+                                    ),
+                                    child: Text(
+                                      infPregMateria[index]['Pregunta'],
+                                      style: TextStyle(
+                                        color: setting.getColorText(),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   subtitle: Container(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: Text(
-                                          infPregMateria[index]['respuesta'])),
+                                    constraints: const BoxConstraints(
+                                      maxHeight: 50,
+                                    ),
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      infPregMateria[index]['respuesta'],
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ),
                                 );
                               })),
                     ],
@@ -424,6 +436,22 @@ class _InfoMateriaState extends State<InfoMateria> {
                                       viewEditQuest = false;
                                     }),
                                     icon: const Icon(Icons.cancel),
+                                    iconSize: 40,
+                                    color: textColor,
+                                  ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      print("QUEST: ${infPregMateria[indexQuest]['ID']}");
+                                      await dataBase.deletedQuest(
+                                          infPregMateria[indexQuest]['ID']);
+                                      setState(() {
+                                        pregunta.clear();
+                                        respuesta.clear();
+                                        chargePage();
+                                        viewEditQuest = false;
+                                      });
+                                    },
+                                    icon: Icon(Icons.delete_forever),
                                     iconSize: 40,
                                     color: textColor,
                                   ),
