@@ -33,6 +33,8 @@ class ConectioDataBase {
       databaseFactory = databaseFactoryFfi;
     }
 
+    print(await getDatabasesPath());
+
     Database database = await openDatabase(
         // Establece la ruta a la base de datos.
         join(await getDatabasesPath(), 'memoritzeDB.db'),

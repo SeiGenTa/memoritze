@@ -23,7 +23,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
 
   bool _showAccept = false;
 
-  late ScrollController _scrollController = ScrollController(); 
+  late ScrollController _scrollController = ScrollController();
   double _appBarStretchRatio = 0.0;
 
   void initQuest() {
@@ -102,7 +102,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
     super.dispose();
     _scrollController.dispose();
     _nameMaterial.dispose();
-  }  
+  }
 
   final TextEditingController _nameMaterial = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -210,6 +210,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
                                                 color: mySetting.getColorText(),
                                                 fontSize: 30,
                                                 fontWeight: FontWeight.bold,
+                                                fontFamily: "Raleway",
                                               ),
                                               overflow: TextOverflow.clip,
                                             ),
@@ -357,11 +358,15 @@ class _InfoMyClassState extends State<InfoMyClass> {
                                           IconButton(
                                               onPressed: () {
                                                 Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InitQuest(
-                              IdsMaterials: [material[index]['ID_subclass']])),
-                    );
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          InitQuest(
+                                                              IdsMaterials: [
+                                                                material[index][
+                                                                    'ID_subclass']
+                                                              ])),
+                                                );
                                               },
                                               icon:
                                                   const Icon(Icons.play_arrow))

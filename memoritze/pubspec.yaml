@@ -33,5 +33,4 @@ msix_config:
   publisher_display_name: SeitCom
   identity_name: Seit.MySuite.mem
   msix_version: 1.0.0.0
-  logo_path: E:\Git\Mejora\memoritze\memoritze\assets\app_icon.ico
   capabilities: " internetClient,privateNetworkClientServer,internetClientServer,enterpriseAuthentication,documentsLibrary,broadFileSystemAccess"
