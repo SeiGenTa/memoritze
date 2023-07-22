@@ -15,7 +15,7 @@ class _InfoMateriaState extends State<InfoMateria> {
   late int idClass;
   late List<Map<String, dynamic>> infPregMateria;
   late Map<String, dynamic> infMateria;
-  ConectioDataBase dataBase = ConectioDataBase();
+  ConnectionDataBase dataBase = ConnectionDataBase();
   Setting setting = Setting();
 
   bool charging = true;
@@ -24,7 +24,6 @@ class _InfoMateriaState extends State<InfoMateria> {
   final _formNewQuest = GlobalKey<FormState>();
   final pregunta = TextEditingController();
   final respuesta = TextEditingController();
-
 
   bool viewEditQuest = false;
   final _formEditQuest = GlobalKey<FormState>();
@@ -89,7 +88,7 @@ class _InfoMateriaState extends State<InfoMateria> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: setting.getColorDrawerSecundary(),
+          backgroundColor: setting.getColorDrawerSecondary(),
           title: Container(
             alignment: Alignment.topLeft,
             child: IconButton(
@@ -485,7 +484,7 @@ class _InfoMateriaState extends State<InfoMateria> {
                 ],
               ),
         bottomNavigationBar: BottomAppBar(
-          color: setting.getColorDrawerSecundary(),
+          color: setting.getColorDrawerSecondary(),
           child: charging
               ? Container(
                   height: 0,

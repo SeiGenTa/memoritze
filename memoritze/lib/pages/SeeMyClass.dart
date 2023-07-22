@@ -14,9 +14,8 @@ class SeeMyClass extends StatefulWidget {
 }
 
 class _SeeMyClassState extends State<SeeMyClass> {
-  ConectioDataBase myData = ConectioDataBase();
+  ConnectionDataBase myData = ConnectionDataBase();
   Setting mySetting = Setting();
-  
 
   bool charging = true;
   late List<Map<String, dynamic>> infoClass;
@@ -61,7 +60,6 @@ class _SeeMyClassState extends State<SeeMyClass> {
 
   @override
   Widget build(BuildContext context) {
-
     if (!widget.prepared) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -79,7 +77,7 @@ class _SeeMyClassState extends State<SeeMyClass> {
         backgroundColor: mySetting.getBackgroundColor(),
         appBar: AppBar(
           title: const Text("Mis clases"),
-          backgroundColor: mySetting.getColorDrawerSecundary(),
+          backgroundColor: mySetting.getColorDrawerSecondary(),
         ),
         drawer: BarLeft(
           myContext: 1,

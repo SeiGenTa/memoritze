@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:memoritze/pages/SeeMyClass.dart';
+import 'package:memoritze/pages/MenuClass.dart';
 
 void main() async {
-  runApp(SeeMyClass(prepared: false));
+  runApp(MenuInit(prepared: false));
 }

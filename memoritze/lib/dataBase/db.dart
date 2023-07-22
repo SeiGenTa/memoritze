@@ -4,18 +4,18 @@ import 'dart:math';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class ConectioDataBase {
-  static final ConectioDataBase _instance = ConectioDataBase._internal();
+class ConnectionDataBase {
+  static final ConnectionDataBase _instance = ConnectionDataBase._internal();
 
   bool getInitiated() {
     return initiated;
   }
 
-  factory ConectioDataBase() {
+  factory ConnectionDataBase() {
     return _instance;
   }
 
-  ConectioDataBase._internal();
+  ConnectionDataBase._internal();
 
   bool initiated = false;
 

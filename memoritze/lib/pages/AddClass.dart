@@ -18,7 +18,7 @@ class _AddClassState extends State<AddClass> {
   Setting mySetting = Setting();
   final _formKey = GlobalKey<FormState>();
 
-  ConectioDataBase _dataBase = ConectioDataBase();
+  ConnectionDataBase _dataBase = ConnectionDataBase();
   final nameClass = TextEditingController();
   final descriptionClass = TextEditingController();
 
@@ -162,7 +162,7 @@ class _AddClassState extends State<AddClass> {
                           child: IconButton(
                             color: mySetting.getColorText(),
                             iconSize: 30,
-                            hoverColor: mySetting.getColorDrawerSecundary(),
+                            hoverColor: mySetting.getColorDrawerSecondary(),
                             icon: const Icon(
                               Icons.save,
                             ),

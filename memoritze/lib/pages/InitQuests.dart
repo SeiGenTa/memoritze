@@ -17,7 +17,7 @@ class InitQuest extends StatefulWidget {
 class _InitQuestState extends State<InitQuest> {
   Random ra = Random();
   Setting setting = Setting();
-  ConectioDataBase dataBase = ConectioDataBase();
+  ConnectionDataBase dataBase = ConnectionDataBase();
 
   bool charged = false;
   bool seeResp = false;

@@ -19,7 +19,7 @@ class InfoMyClass extends StatefulWidget {
 class _InfoMyClassState extends State<InfoMyClass> {
   List<int> _selected = [];
 
-  ConectioDataBase dataBase = ConectioDataBase();
+  ConnectionDataBase dataBase = ConnectionDataBase();
 
   bool _showAccept = false;
 
@@ -125,7 +125,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
           backgroundColor: mySetting.getBackgroundColor(),
           appBar: AppBar(
             toolbarHeight: 0,
-            backgroundColor: mySetting.getColorDrawerSecundary(),
+            backgroundColor: mySetting.getColorDrawerSecondary(),
           ),
           body: !_charge
               ? Column(
@@ -162,7 +162,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
                         SliverAppBar(
                           elevation: 100,
                           pinned: true,
-                          backgroundColor: mySetting.getColorDrawerSecundary(),
+                          backgroundColor: mySetting.getColorDrawerSecondary(),
                           leading: IconButton(
                             iconSize: 50,
                             color: mySetting.getColorText(),
@@ -204,15 +204,20 @@ class _InfoMyClassState extends State<InfoMyClass> {
                                                 ? 100 -
                                                     (_appBarStretchRatio / 2)
                                                 : 50,
-                                            child: Text(
-                                              this.myClass[0]['Nombre'],
-                                              style: TextStyle(
-                                                color: mySetting.getColorText(),
-                                                fontSize: 30,
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: "Raleway",
+                                            child: Hero(
+                                              tag:
+                                                  "class_${this.myClass[0]['ID']}",
+                                              child: Text(
+                                                this.myClass[0]['Nombre'],
+                                                style: TextStyle(
+                                                  color:
+                                                      mySetting.getColorText(),
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "Raleway",
+                                                ),
+                                                overflow: TextOverflow.clip,
                                               ),
-                                              overflow: TextOverflow.clip,
                                             ),
                                           ),
                                         ],
@@ -388,7 +393,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
                         alignment: Alignment.bottomRight,
                         child: IconButton(
                           onPressed: () => initQuest(),
-                          color: mySetting.getColorDrawerSecundary(),
+                          color: mySetting.getColorDrawerSecondary(),
                           iconSize: 50,
                           icon: const Icon(Icons.play_circle_fill),
                         ),

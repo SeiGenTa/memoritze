@@ -2,7 +2,7 @@ import 'package:memoritze/dataBase/db.dart';
 import 'package:flutter/material.dart';
 
 class Setting {
-  ConectioDataBase database = ConectioDataBase();
+  ConnectionDataBase database = ConnectionDataBase();
   static final Setting _instance = Setting._internal();
 
   int stateNight = 0;
@@ -11,21 +11,21 @@ class Setting {
   factory Setting() {
     return _instance;
   }
-  
+
   Setting._internal();
 
   Future<bool> chargeSetting() async {
     Map<String, dynamic> config = await database.getSetting();
     print("cargando");
-    stateNight = config['NightMode'];
+    //stateNight = config['NightMode'];
     print(config['NightMode']);
     version0 = config['Version'];
     return true;
   }
 
   static const List<Color> _backGroundColor = [
-    Color.fromRGBO(220, 241, 217, 1),
-    Color.fromRGBO(26, 26, 53, 26),
+    Color.fromRGBO(167, 220, 178, 1),
+    Color.fromRGBO(3, 33, 7, 1),
   ];
 
   static const List<Color> _colorsText = [
@@ -39,13 +39,13 @@ class Setting {
   ];
 
   static const List<Color> _colorsDrawerSecondary = [
-    Color.fromRGBO(42, 146, 53, 1),
-    Color.fromRGBO(10, 73, 10, 1),
+    Color.fromRGBO(58, 118, 88, 1),
+    Color.fromRGBO(35, 84, 52, 1),
   ];
 
   static const List<Color> _colorsPaper = [
-    Color.fromRGBO(185, 145, 53, 1),
-    Color.fromRGBO(97, 74, 22, 1),
+    Color.fromRGBO(129, 190, 77, 1),
+    Color.fromRGBO(58, 118, 88, 1),
   ];
 
   Color getColorPaper() {
@@ -60,7 +60,7 @@ class Setting {
     return _colorsDrawer[stateNight];
   }
 
-  Color getColorDrawerSecundary() {
+  Color getColorDrawerSecondary() {
     return _colorsDrawerSecondary[stateNight];
   }
 

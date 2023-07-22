@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memoritze/Settings.dart';
+import 'package:memoritze/settings.dart';
 import 'package:memoritze/pages/Configuraciones.dart';
 import 'package:memoritze/pages/SeeMyClass.dart';
 import 'package:memoritze/pages/AddClass.dart';
@@ -13,7 +13,7 @@ class BarLeft extends StatelessWidget {
     Setting mySetting = Setting();
 
     return Drawer(
-      backgroundColor: mySetting.getColorDrawerSecundary(),
+      backgroundColor: mySetting.getColorDrawerSecondary(),
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[

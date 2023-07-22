@@ -25,7 +25,7 @@ class _ConfigurablePageState extends State<ConfigurablePage> {
       home: Scaffold(
         backgroundColor: setting.getBackgroundColor(),
         appBar: AppBar(
-          backgroundColor: setting.getColorDrawerSecundary(),
+          backgroundColor: setting.getColorDrawerSecondary(),
           title: IconButton(
             iconSize: 50,
             color: setting.getColorText(),
