@@ -6,7 +6,8 @@ class Setting {
   static final Setting _instance = Setting._internal();
 
   int stateNight = 0;
-  int version0 = 11;
+  int version0 = 14;
+  String languaje = "ESP";
 
   factory Setting() {
     return _instance;
@@ -18,7 +19,12 @@ class Setting {
     Map<String, dynamic> config = await database.getSetting();
     print("cargando");
     //stateNight = config['NightMode'];
-    print(config['NightMode']);
+    stateNight = config['NightMode'];
+    print(config['Version']);
+    if (version0 != config['Version']){
+      await database.changeSetting(stateNight, version0, languaje);
+      print(config['Version']);
+    }
     version0 = config['Version'];
     return true;
   }

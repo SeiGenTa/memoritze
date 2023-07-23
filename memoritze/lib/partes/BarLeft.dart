@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:memoritze/settings.dart';
 import 'package:memoritze/pages/Configuraciones.dart';
-import 'package:memoritze/pages/SeeMyClass.dart';
-import 'package:memoritze/pages/AddClass.dart';
 
-class BarLeft extends StatelessWidget {
-  late int myContext;
-  BarLeft({super.key, required this.myContext});
+// ignore: must_be_immutable
+class MyDrawerLeft extends StatefulWidget {
+  const MyDrawerLeft({super.key});
 
+  @override
+  State<MyDrawerLeft> createState() => _MyDrawerLeftState();
+}
+
+class _MyDrawerLeftState extends State<MyDrawerLeft> {
   @override
   Widget build(BuildContext context) {
     Setting mySetting = Setting();
 
     return Drawer(
       backgroundColor: mySetting.getColorDrawerSecondary(),
-      child: ListView(
-        padding: EdgeInsets.zero,
+      child: Column(
         children: <Widget>[
           //! TITULO SUPERIOR DEL DRAWER
           DrawerHeader(
@@ -26,52 +28,9 @@ class BarLeft extends StatelessWidget {
               child: Image.asset('assets/img/myIcon.png'),
             ),
           ),
-
-          //!Inicio botones
-
+          Expanded(child: Container()),
           ListTile(
-            selected: (myContext == 1) ? true : false,
-            selectedColor: Colors.black38,
-            title: Text(
-              "Mis Clases",
-              style: TextStyle(
-                color: mySetting.getColorText(),
-                fontSize: 15,
-              ),
-            ),
-            onTap: () => {
-              if (myContext == 1)
-                Navigator.pop(context)
-              else
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SeeMyClass(),
-                  ),
-                  (Route<dynamic> route) => false,
-                )
-            },
-          ),
-          ListTile(
-            title: Text(
-              "Agregar Clase",
-              style: TextStyle(
-                color: mySetting.getColorText(),
-                fontSize: 15,
-              ),
-            ),
-            onTap: () => {
-              if (myContext == 2)
-                Navigator.pop(context)
-              else
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AddClass()),
-                  (Route<dynamic> route) => false,
-                )
-            },
-          ),
-          ListTile(
+            leading: const Icon(Icons.settings),
             title: Text(
               "Configuraciones",
               style: TextStyle(
@@ -80,10 +39,19 @@ class BarLeft extends StatelessWidget {
               ),
             ),
             onTap: () async {
-              Navigator.pushAndRemoveUntil(
+              await Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => ConfigurablePage()),
-                (Route<dynamic> route) => false,
+                PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const ConfigurablePage(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    }),
+                (route) => false,
               );
             },
           ),

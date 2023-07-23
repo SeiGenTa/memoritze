@@ -184,7 +184,9 @@ class ConnectionDataBase {
   Future<bool> deletedClass(int idClass) async {
     Database data = await _connect();
     await data.delete('clase', where: 'ID = ${idClass.toString()}');
+    data = await _connect();
     await data.delete('materia', where: 'ID = ${idClass.toString()}');
+    data = await _connect();
     await data.delete('pregunta', where: 'ID_class = ${idClass.toString()}');
     _close(data);
     return true;

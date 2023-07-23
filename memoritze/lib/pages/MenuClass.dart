@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
-import 'package:memoritze/pages/menus/CreateNewClass.dart';
-import 'package:memoritze/pages/menus/Observ.dart';
 import 'package:memoritze/pages/menus/SeeFavClass.dart';
 import 'package:memoritze/pages/menus/SeeMyClass.dart';
+import 'package:memoritze/partes/BarLeft.dart';
 import 'package:memoritze/settings.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
@@ -19,12 +17,7 @@ class MenuInit extends StatefulWidget {
   State<MenuInit> createState() => MenuInitState();
 }
 
-class MenuInitState extends State<MenuInit> implements Observer {
-  @override
-  void notification() {
-    // TODO: implement notification
-  }
-
+class MenuInitState extends State<MenuInit> {
   ConnectionDataBase connection = ConnectionDataBase();
   Setting mySetting = Setting();
   final List<String> nameClass = ["Mis clases", "Favoritos"];
@@ -38,8 +31,8 @@ class MenuInitState extends State<MenuInit> implements Observer {
   int state = 0;
 
   List<Widget> myStates = [
-    MyClass(),
-    FavClass(),
+    const MyClass(),
+    const FavClass(),
   ];
 
   void subscribeToStream(Stream<String> stream) {
@@ -52,8 +45,11 @@ class MenuInitState extends State<MenuInit> implements Observer {
   bool boolChangePage = false;
 
   void initPage() async {
+    if (!widget.prepared){
+    print("carga inicial");
     await connection.init();
     await mySetting.chargeSetting();
+    }
     setState(() {
       charge = true;
     });
@@ -61,7 +57,6 @@ class MenuInitState extends State<MenuInit> implements Observer {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initPage();
   }
@@ -80,17 +75,26 @@ class MenuInitState extends State<MenuInit> implements Observer {
             )
           : Scaffold(
               backgroundColor: mySetting.getBackgroundColor(),
+              drawer: const MyDrawerLeft(),
               appBar: AppBar(
+                iconTheme: IconThemeData(
+                  color: mySetting.getColorText(),
+                ),
+                actions: [],
                 backgroundColor: mySetting.getColorDrawerSecondary(),
                 title: Text(
                   nameClass[state],
                   style: TextStyle(color: mySetting.getColorText()),
                 ),
               ),
-              body: AnimatedOpacity(
-                opacity: !boolChangePage ? 1 : 0,
-                duration: Duration(milliseconds: 300),
-                child: myStates[state],
+              body: Stack(
+                children: [
+                  AnimatedOpacity(
+                    opacity: !boolChangePage ? 1 : 0,
+                    duration: const Duration(milliseconds: 300),
+                    child: myStates[state],
+                  ),
+                ],
               ),
               bottomNavigationBar: MyBottomBar(),
             ),
@@ -102,7 +106,7 @@ class MenuInitState extends State<MenuInit> implements Observer {
     return CurvedNavigationBar(
       key: _bottomNavigationKey,
       color: mySetting.getColorDrawerSecondary(),
-      backgroundColor: Color(0),
+      backgroundColor: const Color(0),
       height: kBottomNavigationBarHeight,
       items: [
         Icon(
@@ -131,3 +135,5 @@ class MenuInitState extends State<MenuInit> implements Observer {
     });
   }
 }
+
+class Navigation {}

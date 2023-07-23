@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
-import 'package:memoritze/pages/menus/Observ.dart';
 import 'package:memoritze/settings.dart';
 
 class CreateClass extends StatefulWidget {
@@ -29,7 +27,6 @@ class _CreateClassState extends State<CreateClass> {
   @override
   void initState() {
     super.initState();
-    _dataBase.init();
   }
 
   @override
