@@ -164,7 +164,6 @@ class _InfoMyClassState extends State<InfoMyClass> {
                           pinned: true,
                           backgroundColor: mySetting.getColorDrawerSecondary(),
                           leading: IconButton(
-                            iconSize: 50,
                             color: mySetting.getColorText(),
                             onPressed: () {
                               Navigator.pop(context);
@@ -173,12 +172,6 @@ class _InfoMyClassState extends State<InfoMyClass> {
                           ),
                           expandedHeight: 200,
                           flexibleSpace: Container(
-                            //decoration: const BoxDecoration(
-                            //    image: DecorationImage(
-                            //        fit: BoxFit.cover,
-                            //        image: AssetImage(
-                            //          "assets/img/fondoWhite.jpg", //!CONFIGURAR
-                            //        ))),
                             width: MediaQuery.of(context).size.width,
                             height: 300,
                             child: Row(

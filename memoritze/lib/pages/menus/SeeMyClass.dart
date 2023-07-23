@@ -71,7 +71,9 @@ class _MyClassState extends State<MyClass> {
 
   @override
   Widget build(BuildContext context) {
-    double deviceWidth = MediaQuery.of(context).size.width;
+    double deviceWidth = MediaQuery.of(context)
+        .size
+        .width; //InfoMyClass(number: myDataBase[index]['ID'])
     return !charge
         ? const CircularProgressIndicator()
         : Stack(
@@ -86,10 +88,26 @@ class _MyClassState extends State<MyClass> {
                     onTap: () async {
                       if (state == 0) {
                         await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => InfoMyClass(
-                                    number: myDataBase[index]['ID'])));
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation,
+                                    secondaryAnimation) =>
+                                InfoMyClass(number: myDataBase[index]['ID']),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              var begin = const Offset(-1.0, 0.0);
+                              var end = Offset.zero;
+                              var curve = Curves.ease;
+                              var tween = Tween(begin: begin, end: end)
+                                  .chain(CurveTween(curve: curve));
+                              var offsetAnimation = animation.drive(tween);
+                              return SlideTransition(
+                                position: offsetAnimation,
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
                         myDataBase = await myData.getClass(-1);
                         setState(() {
                           charge = true;
@@ -113,7 +131,7 @@ class _MyClassState extends State<MyClass> {
                                 horizontal: 8, vertical: 4),
                           ),
                           Transform(
-                            transform: Matrix4.identity()..rotateY(1/14* pi),
+                            transform: Matrix4.identity()..rotateY(1 / 14 * pi),
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),

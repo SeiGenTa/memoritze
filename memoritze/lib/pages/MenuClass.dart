@@ -22,9 +22,9 @@ class MenuInitState extends State<MenuInit> {
   Setting mySetting = Setting();
   final List<String> nameClass = ["Mis clases", "Favoritos"];
 
-  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
+  final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
-  static Duration durationAnimations = Duration(milliseconds: 300);
+  static Duration durationAnimations = const Duration(milliseconds: 300);
 
   late AnimationController controllerChangePage;
 
