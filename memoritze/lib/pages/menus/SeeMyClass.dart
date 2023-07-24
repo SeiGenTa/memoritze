@@ -81,101 +81,7 @@ class _MyClassState extends State<MyClass> {
               GridView.builder(
                 itemCount: myDataBase.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onLongPress: () {
-                      addDelete(myDataBase[index]['ID']);
-                    },
-                    onTap: () async {
-                      if (state == 0) {
-                        await Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation,
-                                    secondaryAnimation) =>
-                                InfoMyClass(number: myDataBase[index]['ID']),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              var begin = const Offset(-1.0, 0.0);
-                              var end = Offset.zero;
-                              var curve = Curves.ease;
-                              var tween = Tween(begin: begin, end: end)
-                                  .chain(CurveTween(curve: curve));
-                              var offsetAnimation = animation.drive(tween);
-                              return SlideTransition(
-                                position: offsetAnimation,
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                        myDataBase = await myData.getClass(-1);
-                        setState(() {
-                          charge = true;
-                        });
-                      } else if (state == 1) {
-                        addDelete(myDataBase[index]['ID']);
-                      }
-                    },
-                    child: Container(
-                      color: deleteIds.contains(myDataBase[index]['ID'])
-                          ? mySetting.getColorDrawerSecondary()
-                          : const Color(0),
-                      child: Stack(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: mySetting.getColorDrawerSecondary(),
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                          ),
-                          Transform(
-                            transform: Matrix4.identity()..rotateY(1 / 14 * pi),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.white,
-                              ),
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 10),
-                            ),
-                          ),
-                          Transform(
-                            transform: Matrix4.identity()..rotateY(1 / 7 * pi),
-                            child: Card(
-                              elevation: 5,
-                              surfaceTintColor: Colors.blue,
-                              color: mySetting.getColorPaper(),
-                              child: Stack(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          myDataBase[index]['Nombre'],
-                                          style: TextStyle(
-                                            color: mySetting.getColorText(),
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Divider(
-                                          color: mySetting.getColorText(),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  return myBook(index);
                 },
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: (deviceWidth / 100).floor(),
@@ -263,5 +169,122 @@ class _MyClassState extends State<MyClass> {
               )
             ],
           );
+  }
+
+  Widget myBook(int index) {
+    bool _entering = false;
+    return GestureDetector(
+      onSecondaryTap: () async {
+        print("se precioso");
+        setState(() {
+          _entering = true;
+        });
+        await Future.delayed(Duration(seconds: 1));
+        setState(() {
+          _entering = false;
+        });
+      },
+      onLongPress: () {
+        addDelete(myDataBase[index]['ID']);
+      },
+      onTap: () async {
+        print("Algo");
+        if (state == 0) {
+          setState(() {
+            _entering = true;
+          });
+          await Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  InfoMyClass(number: myDataBase[index]['ID']),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                var begin = const Offset(-1.0, 0.0);
+                var end = Offset.zero;
+                var curve = Curves.ease;
+                var tween = Tween(begin: begin, end: end)
+                    .chain(CurveTween(curve: curve));
+                var offsetAnimation = animation.drive(tween);
+                return SlideTransition(
+                  position: offsetAnimation,
+                  child: child,
+                );
+              },
+            ),
+          );
+          setState(() {
+            _entering = false;
+          });
+          myDataBase = await myData.getClass(-1);
+          setState(() {
+            charge = true;
+          });
+        } else if (state == 1) {
+          addDelete(myDataBase[index]['ID']);
+        }
+      },
+      child: Container(
+        color: deleteIds.contains(myDataBase[index]['ID'])
+            ? mySetting.getColorDrawerSecondary()
+            : const Color(0),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: mySetting.getColorDrawerSecondary(),
+              ),
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            ),
+            Transform(
+              transform: Matrix4.identity()..rotateY(1 / 14 * pi),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.white,
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              ),
+            ),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              child: Transform(
+                transform: !_entering
+                    ? (Matrix4.identity()..rotateY((2 / 5) * (1 / 2) * pi))
+                    : (Matrix4.identity()..rotateY((3 / 5) * (1 / 2) * pi)),
+                child: Card(
+                  elevation: 5,
+                  surfaceTintColor: Colors.blue,
+                  color: mySetting.getColorPaper(),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              myDataBase[index]['Nombre'],
+                              style: TextStyle(
+                                color: mySetting.getColorText(),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            Divider(
+                              color: mySetting.getColorText(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

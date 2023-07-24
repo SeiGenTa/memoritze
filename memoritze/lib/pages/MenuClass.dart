@@ -26,8 +26,6 @@ class MenuInitState extends State<MenuInit> {
 
   static Duration durationAnimations = const Duration(milliseconds: 300);
 
-  late AnimationController controllerChangePage;
-
   int state = 0;
 
   List<Widget> myStates = [
@@ -59,6 +57,11 @@ class MenuInitState extends State<MenuInit> {
   void initState() {
     super.initState();
     initPage();
+  }
+
+  void dispose(){
+    super.dispose();
+
   }
 
   @override
@@ -121,10 +124,12 @@ class MenuInitState extends State<MenuInit> {
         ),
       ],
       onTap: (value) => changePage(value),
+      
     );
   }
 
   changePage(int value) async {
+    if (value == state) return;
     setState(() {
       boolChangePage = true;
     });
