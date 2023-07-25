@@ -54,6 +54,15 @@ class Setting {
     Color.fromRGBO(58, 118, 88, 1),
   ];
 
+  static const List<Color> _colorsIconButton = [
+    Color.fromRGBO(255, 255, 255, 1),
+    Color.fromRGBO(44, 44, 44, 1),
+  ];
+
+  Color getColorsIconButton(){
+    return _colorsIconButton[stateNight];
+  }
+
   Color getColorPaper() {
     return _colorsPaper[stateNight];
   }

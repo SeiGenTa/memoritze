@@ -103,8 +103,9 @@ class _InfoMyClassState extends State<InfoMyClass> {
   Setting mySetting = Setting();
 
   late ButtonStyle buttonStyle = ButtonStyle(
-    iconColor: MaterialStatePropertyAll(mySetting.getColorText()),
-  );
+      iconColor: MaterialStatePropertyAll(mySetting.getColorText()),
+      backgroundColor:
+          MaterialStatePropertyAll(mySetting.getColorDrawerSecondary()));
 
   //COLORES
   late Color textColor;
@@ -258,18 +259,18 @@ class _InfoMyClassState extends State<InfoMyClass> {
       elevation: 10,
       backgroundColor: mySetting.getColorDrawerSecondary(),
       pinned: true,
+      leading: IconButton(
+        color: mySetting.getColorText(),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: const Icon(Icons.arrow_back),
+      ),
       title: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: kBottomNavigationBarHeight,
         child: Row(
           children: [
-            IconButton(
-              color: mySetting.getColorText(),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_back),
-            ),
             Text(
               this.myClass[0]['Nombre'],
               style: TextStyle(
@@ -342,7 +343,11 @@ class _InfoMyClassState extends State<InfoMyClass> {
                       Transform.translate(
                         offset: Offset(textWidth, 0),
                         child: ElevatedButton(
-                            style: buttonStyle,
+                            style: ButtonStyle(
+                                iconColor: MaterialStatePropertyAll(
+                                    mySetting.getColorText()),
+                                backgroundColor: MaterialStatePropertyAll(
+                                    mySetting.getColorDrawerSecondary())),
                             onPressed: () {},
                             child: Row(
                               children: [
@@ -448,8 +453,8 @@ class _InfoMyClassState extends State<InfoMyClass> {
                             color: mySetting.getColorText(),
                           ),
                         ),
-                        labelStyle: TextStyle(color: mySetting.getColorText()),
-                        hintStyle: TextStyle(color: mySetting.getColorText()),
+                        labelStyle: TextStyle(color: textColor),
+                        hintStyle: TextStyle(color: textColor),
                         hintText: "Ejm: La peor materia :c",
                         hoverColor: mySetting.getColorText(),
                         labelText: "Nombre materia",

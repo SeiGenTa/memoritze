@@ -82,17 +82,23 @@ class _InfoMateriaState extends State<InfoMateria> {
     respuestaEdit.dispose();
   }
 
+  bool positionButtonActivate = false;
+
   @override
   Widget build(BuildContext context) {
+    var buttonStyle = ButtonStyle(
+        backgroundColor:
+            MaterialStatePropertyAll(setting.getColorsIconButton()),
+        minimumSize: const MaterialStatePropertyAll(Size(50, 50)),
+        shape: const MaterialStatePropertyAll(CircleBorder()));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: setting.getColorDrawerSecondary(),
-          title: Container(
+          leading: Container(
             alignment: Alignment.topLeft,
             child: IconButton(
-              iconSize: 50,
               color: setting.getColorText(),
               onPressed: () {
                 Navigator.pop(context);
@@ -153,6 +159,52 @@ class _InfoMateriaState extends State<InfoMateria> {
                                 );
                               })),
                     ],
+                  ),
+                  AnimatedPositioned(
+                      curve: Curves.easeInCirc,
+                      right: 10,
+                      bottom: positionButtonActivate ? 140 : 20,
+                      duration: const Duration(milliseconds: 300),
+                      child: ElevatedButton(
+                        style: buttonStyle,
+                        onPressed: () => setState(() {
+                          viewEraseMateria = true;
+                        }),
+                        child: Icon(Icons.delete),
+                      )),
+                  AnimatedPositioned(
+                      curve: Curves.easeInCirc,
+                      right: 10,
+                      bottom: positionButtonActivate ? 80 : 20,
+                      duration: const Duration(milliseconds: 300),
+                      child: ElevatedButton(
+                        style: buttonStyle,
+                        onPressed: () => setState(() {
+                          viewCreateNewQuest = true;
+                        }),
+                        child: Icon(Icons.add),
+                      )),
+                  Positioned(
+                    right: 10,
+                    bottom: 20,
+                    child: ElevatedButton(
+                      style: buttonStyle,
+                      onPressed: () {
+                        setState(() {
+                          positionButtonActivate = !positionButtonActivate;
+                        });
+                      },
+                      child: AnimatedCrossFade(
+                        firstCurve: Curves.bounceInOut,
+                        secondCurve: Curves.bounceInOut,
+                        crossFadeState: positionButtonActivate
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        duration: const Duration(milliseconds: 300),
+                        firstChild: const Icon(Icons.more_horiz),
+                        secondChild: const Icon(Icons.more_vert),
+                      ),
+                    ),
                   ),
                   if (viewCreateNewQuest)
                     Container(
@@ -483,38 +535,6 @@ class _InfoMateriaState extends State<InfoMateria> {
                     ),
                 ],
               ),
-        bottomNavigationBar: BottomAppBar(
-          color: setting.getColorDrawerSecondary(),
-          child: charging
-              ? Container(
-                  height: 0,
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      onPressed: () => setState(() {
-                        viewEraseMateria = true;
-                      }),
-                      icon: Icon(
-                        Icons.delete,
-                        color: setting.getColorText(),
-                      ),
-                      iconSize: 40,
-                    ),
-                    IconButton(
-                      onPressed: () => setState(() {
-                        viewCreateNewQuest = true;
-                      }),
-                      icon: Icon(
-                        Icons.add,
-                        color: setting.getColorText(),
-                      ),
-                      iconSize: 40,
-                    ),
-                  ],
-                ),
-        ),
       ),
     );
   }
