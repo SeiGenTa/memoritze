@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/pages/InfoMateria.dart';
@@ -38,33 +39,18 @@ class _InfoMyClassState extends State<InfoMyClass> {
     super.initState();
     chargerData();
     _scrollController.addListener(_updateAppBarStretchRatio);
+    textColor = mySetting.getColorText();
   }
 
   void _updateAppBarStretchRatio() {
-    setState(() {
-      _appBarStretchRatio = _scrollController.offset;
-    });
+    _appBarStretchRatio = _scrollController.offset;
+    print(_appBarStretchRatio);
   }
 
-  void createNewMateria() {
-    setState(() {
-      _showCreate = !_showCreate;
-    });
-  }
-
-  void pressX() {
-    setState(() {
-      _showCreate = !_showCreate;
-    });
-    _nameMaterial.clear();
-  }
-
-  void saveMaterial() async {
+  void saveMaterial(context) async {
     _formKey.currentState!.validate();
     if (_nameMaterial.text.isEmpty) return;
-    setState(() {
-      _showCreate = !_showCreate;
-    });
+    Navigator.pop(context);
     // ignore: await_only_futures
     await dataBase.createNewMateriaDB(_nameMaterial.text, widget.id_class);
     _nameMaterial.clear();
@@ -107,7 +93,6 @@ class _InfoMyClassState extends State<InfoMyClass> {
   final TextEditingController _nameMaterial = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  bool _showCreate = false;
   bool chargeMaterial = false;
 
   late List<Map<String, dynamic>> myClass;
@@ -116,6 +101,13 @@ class _InfoMyClassState extends State<InfoMyClass> {
 
   bool _charge = false;
   Setting mySetting = Setting();
+
+  late ButtonStyle buttonStyle = ButtonStyle(
+    iconColor: MaterialStatePropertyAll(mySetting.getColorText()),
+  );
+
+  //COLORES
+  late Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -159,143 +151,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
                     CustomScrollView(
                       controller: _scrollController,
                       slivers: [
-                        SliverAppBar(
-                          elevation: 100,
-                          pinned: true,
-                          backgroundColor: mySetting.getColorDrawerSecondary(),
-                          leading: IconButton(
-                            color: mySetting.getColorText(),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.arrow_back),
-                          ),
-                          expandedHeight: 200,
-                          flexibleSpace: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 300,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    child: Container(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: (_appBarStretchRatio < 100)
-                                                ? _appBarStretchRatio
-                                                : 100,
-                                          ),
-                                          Container(
-                                            alignment: Alignment.bottomLeft,
-                                            height: (_appBarStretchRatio < 100)
-                                                ? 100 -
-                                                    (_appBarStretchRatio / 2)
-                                                : 50,
-                                            child: Hero(
-                                              tag:
-                                                  "class_${this.myClass[0]['ID']}",
-                                              child: Text(
-                                                this.myClass[0]['Nombre'],
-                                                style: TextStyle(
-                                                  color:
-                                                      mySetting.getColorText(),
-                                                  fontSize: 30,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: "Raleway",
-                                                ),
-                                                overflow: TextOverflow.clip,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Expanded(
-                                        child: Opacity(
-                                          opacity: (_appBarStretchRatio > 120)
-                                              ? 0
-                                              : (120 - _appBarStretchRatio) /
-                                                  120,
-                                          child: Text(
-                                            "Descripcion: ${this.myClass[0]['Descripcion']} ",
-                                            overflow: TextOverflow.fade,
-                                            style: TextStyle(
-                                                color:
-                                                    mySetting.getColorText()),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )),
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      !(_appBarStretchRatio > 250)
-                                          ? MainAxisAlignment.end
-                                          : MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(child: Container()),
-                                    Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: ElevatedButton(
-                                        style: ButtonStyle(
-                                          shape: MaterialStatePropertyAll(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    (_appBarStretchRatio < 100)
-                                                        ? BorderRadius.circular(
-                                                            10)
-                                                        : BorderRadius.circular(
-                                                            25)),
-                                          ),
-                                          elevation:
-                                              MaterialStatePropertyAll(5),
-                                          iconColor: MaterialStatePropertyAll(
-                                              mySetting.getColorText()),
-                                          backgroundColor:
-                                              MaterialStatePropertyAll(
-                                                  mySetting.getColorPaper()),
-                                        ),
-                                        onPressed: () => setState(() {
-                                          _showCreate = true;
-                                        }),
-                                        child: Row(
-                                          children: [
-                                            const Icon(Icons.add),
-                                            AnimatedContainer(
-                                              duration: const Duration(
-                                                  milliseconds: 300),
-                                              constraints: BoxConstraints(
-                                                maxWidth:
-                                                    (_appBarStretchRatio > 100)
-                                                        ? 0
-                                                        : 200,
-                                              ),
-                                              child: Text(
-                                                "Agregar materia",
-                                                style: TextStyle(
-                                                  color:
-                                                      mySetting.getColorText(),
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
+                        appBarOfInfoMyClass(context),
                         SliverList.builder(
                             itemCount: material.length,
                             itemBuilder: (context, index) {
@@ -391,95 +247,244 @@ class _InfoMyClassState extends State<InfoMyClass> {
                           icon: const Icon(Icons.play_circle_fill),
                         ),
                       ),
-                    if (_showCreate) createNewMaterial(context),
                     if (_showAccept) initClassUniq,
                   ],
                 ),
         ));
   }
 
-  Container createNewMaterial(BuildContext context) {
-    return Container(
-        alignment: Alignment.center,
-        height: MediaQuery.of(context).size.height,
+  SliverAppBar appBarOfInfoMyClass(BuildContext context) {
+    return SliverAppBar(
+      elevation: 10,
+      backgroundColor: mySetting.getColorDrawerSecondary(),
+      pinned: true,
+      title: SizedBox(
         width: MediaQuery.of(context).size.width,
-        color: const Color.fromARGB(48, 0, 0, 0),
-        child: Container(
-          color: mySetting.getBackgroundColor(),
-          constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height / 3,
-          ),
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Form(
-                key: _formKey,
-                child: Container(
-                  constraints: const BoxConstraints(
-                    maxWidth: 500,
+        height: kBottomNavigationBarHeight,
+        child: Row(
+          children: [
+            IconButton(
+              color: mySetting.getColorText(),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back),
+            ),
+            Text(
+              this.myClass[0]['Nombre'],
+              style: TextStyle(
+                color: mySetting.getColorText(),
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                fontFamily: "Raleway",
+              ),
+              overflow: TextOverflow.clip,
+            ),
+            Expanded(child: Container()),
+            AnimatedBuilder(
+              animation: _scrollController,
+              builder: (context, child) {
+                double position = -125 + _scrollController.offset;
+                if (position > 0) position = 0;
+                return Transform.translate(
+                  offset:
+                      Offset(0, _scrollController.offset < 75 ? -50 : position),
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.share, color: textColor)),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.settings, color: textColor)),
+                      IconButton(
+                          onPressed: () {
+                            generateNewmateria(context);
+                          },
+                          icon: Icon(Icons.add, color: textColor))
+                    ],
                   ),
-                  child: TextFormField(
-                    autofocus: true,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return '¿Como sabremos que estamos estudiando?';
-                      }
-                      return null;
-                    },
-                    controller: _nameMaterial,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: mySetting.getColorText(),
+                );
+              },
+            )
+          ],
+        ),
+      ),
+      expandedHeight: 150,
+      flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.none,
+        background: AnimatedBuilder(
+          animation: _scrollController,
+          builder: (context, child) {
+            double textWidth =
+                130 * (_scrollController.offset) / kToolbarHeight;
+            if (textWidth <= 0) textWidth = 0;
+            double opacityText = (150 - _scrollController.offset) / 150;
+            if (opacityText < 0) opacityText = 0;
+
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Opacity(
+                  opacity: opacityText,
+                  child: Container(
+                      child: Text(
+                    "Descripcion: ${this.myClass[0]['Descripcion']} ",
+                    overflow: TextOverflow.fade,
+                    style: TextStyle(color: mySetting.getColorText()),
+                  )),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Transform.translate(
+                        offset: Offset(textWidth, 0),
+                        child: ElevatedButton(
+                            style: buttonStyle,
+                            onPressed: () {},
+                            child: Row(
+                              children: [
+                                const Icon(Icons.share),
+                                SizedBox(
+                                  width: 80,
+                                  child: Text(" Compartir",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: mySetting.getColorText())),
+                                ),
+                              ],
+                            )),
+                      ),
+                      Transform.translate(
+                        offset: Offset(textWidth, 0),
+                        child: ElevatedButton(
+                            style: buttonStyle,
+                            onPressed: () {},
+                            child: Row(
+                              children: [
+                                const Icon(Icons.settings),
+                                SizedBox(
+                                  width: 80,
+                                  child: Text(
+                                    " Configurar",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        color: mySetting.getColorText()),
+                                  ),
+                                ),
+                              ],
+                            )),
+                      ),
+                      Transform.translate(
+                        offset: Offset(textWidth, 0),
+                        child: ElevatedButton(
+                            style: buttonStyle,
+                            onPressed: () {
+                              generateNewmateria(context);
+                            },
+                            child: Row(
+                              children: [
+                                const Icon(Icons.add),
+                                SizedBox(
+                                    width: 80,
+                                    child: Text("Agregar",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: mySetting.getColorText())))
+                              ],
+                            )),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<dynamic> generateNewmateria(BuildContext context) {
+    return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            iconColor: mySetting.getColorText(),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Form(
+                  key: _formKey,
+                  child: Container(
+                    constraints: const BoxConstraints(
+                      maxWidth: 500,
                     ),
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: mySetting.getColorText(),
-                        ),
-                      ),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: mySetting.getColorText(),
-                        ),
-                      ),
-                      labelStyle: TextStyle(color: mySetting.getColorText()),
-                      hintStyle: TextStyle(color: mySetting.getColorText()),
-                      hintText: "Ejm: La peor materia :c",
-                      hoverColor: mySetting.getColorText(),
-                      labelText: "Nombre materia",
-                      icon: Icon(
-                        Icons.width_normal_rounded,
+                    child: TextFormField(
+                      autofocus: true,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return '¿Como sabremos que estamos estudiando?';
+                        }
+                        return null;
+                      },
+                      controller: _nameMaterial,
+                      style: TextStyle(
+                        fontSize: 15,
                         color: mySetting.getColorText(),
                       ),
+                      decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: mySetting.getColorText(),
+                          ),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: mySetting.getColorText(),
+                          ),
+                        ),
+                        labelStyle: TextStyle(color: mySetting.getColorText()),
+                        hintStyle: TextStyle(color: mySetting.getColorText()),
+                        hintText: "Ejm: La peor materia :c",
+                        hoverColor: mySetting.getColorText(),
+                        labelText: "Nombre materia",
+                        icon: Icon(
+                          Icons.width_normal_rounded,
+                          color: mySetting.getColorText(),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Container(
-                constraints: BoxConstraints(
-                  minWidth: 700,
+                Container(
+                  constraints: BoxConstraints(
+                    minWidth: 700,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close),
+                        color: mySetting.getColorText(),
+                      ),
+                      IconButton(
+                        onPressed: () => saveMaterial(context),
+                        icon: const Icon(Icons.check),
+                        color: mySetting.getColorText(),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: () => pressX(),
-                      icon: const Icon(Icons.close),
-                      color: mySetting.getColorText(),
-                    ),
-                    IconButton(
-                      onPressed: () => saveMaterial(),
-                      icon: const Icon(Icons.check),
-                      color: mySetting.getColorText(),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
+              ],
+            ),
+          );
+        });
   }
 }
