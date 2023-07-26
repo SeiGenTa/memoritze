@@ -21,7 +21,7 @@ class Setting {
     //stateNight = config['NightMode'];
     stateNight = config['NightMode'];
     print(config['Version']);
-    if (version0 != config['Version']){
+    if (version0 != config['Version']) {
       await database.changeSetting(stateNight, version0, languaje);
       print(config['Version']);
     }
@@ -59,7 +59,25 @@ class Setting {
     Color.fromRGBO(44, 44, 44, 1),
   ];
 
-  Color getColorsIconButton(){
+  static const List<Color> _colorsPage = [
+    Color.fromRGBO(255, 255, 255, 1),
+    Color.fromRGBO(44, 44, 44, 1),
+  ];
+
+  static const List<Color> _colorsOpos = [
+    Color.fromRGBO(44, 44, 44, 1),
+    Color.fromRGBO(255, 255, 255, 1),
+  ];
+
+  Color getColorsOpos() {
+    return _colorsOpos[stateNight];
+  }
+
+  Color getColorPager() {
+    return _colorsPage[stateNight];
+  }
+
+  Color getColorsIconButton() {
     return _colorsIconButton[stateNight];
   }
 

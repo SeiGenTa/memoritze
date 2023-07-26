@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/pages/InfoMateria.dart';
@@ -18,6 +18,8 @@ class InfoMyClass extends StatefulWidget {
 }
 
 class _InfoMyClassState extends State<InfoMyClass> {
+  //Para las funciones de la modificacion de clases//
+
   List<int> _selected = [];
 
   ConnectionDataBase dataBase = ConnectionDataBase();
@@ -75,6 +77,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
   }
 
   void chargerData() async {
+    print("iniciando");
     this.myClass = await dataBase.getClass(widget.id_class);
     setState(() {
       _charge = true;
@@ -84,6 +87,8 @@ class _InfoMyClassState extends State<InfoMyClass> {
 
   @override
   void dispose() {
+    _nameEditController.dispose();
+    _descriptionEditController.dispose();
     // TODO: implement dispose
     super.dispose();
     _scrollController.dispose();
@@ -92,6 +97,9 @@ class _InfoMyClassState extends State<InfoMyClass> {
 
   final TextEditingController _nameMaterial = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameEditController = TextEditingController();
+  final TextEditingController _descriptionEditController =
+      TextEditingController();
 
   bool chargeMaterial = false;
 
@@ -163,19 +171,69 @@ class _InfoMyClassState extends State<InfoMyClass> {
                                       color: mySetting.getColorText(),
                                     ),
                                   ListTile(
+                                    leading: Stack(
+                                      children: [
+                                        Transform.translate(
+                                          offset: Offset(20.0, -27.0),
+                                          child: Transform(
+                                            transform: Matrix4.identity()
+                                              ..rotateZ(4 / 20 * pi)
+                                              ..scale(1.3),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: mySetting
+                                                          .getColorsOpos(),
+                                                      width: 0.5),
+                                                  color:
+                                                      mySetting.getColorPager(),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              height: 90,
+                                              width: 40,
+                                            ),
+                                          ),
+                                        ),
+                                        Transform.translate(
+                                          offset: Offset(5.0, -23.0),
+                                          child: Transform(
+                                            transform: Matrix4.identity()
+                                              ..rotateZ(3 / 20 * pi)
+                                              ..scale(1.3),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: mySetting
+                                                          .getColorsOpos(),
+                                                      width: 0.5),
+                                                  color:
+                                                      mySetting.getColorPager(),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              height: 90,
+                                              width: 40,
+                                              child: Text(
+                                                "${material[index]['Nombre']}",
+                                                overflow: TextOverflow.clip,
+                                                style: TextStyle(
+                                                    color: mySetting
+                                                        .getColorText(),
+                                                    fontSize: 10),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                     textColor: mySetting.getColorText(),
                                     iconColor: mySetting.getColorText(),
-                                    subtitle: Text(
-                                      "   Cantidad de preguntas: ${material[index]['cantPreg']}",
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
                                     title: Container(
                                       height: 50,
                                       child: Row(
                                         children: [
                                           Expanded(
                                               child: Text(
-                                            "  Materia:  ${material[index]['Nombre']}",
+                                            "   Cantidad de preguntas: ${material[index]['cantPreg']}",
                                             overflow: TextOverflow.ellipsis,
                                           )),
                                           IconButton(
@@ -271,15 +329,19 @@ class _InfoMyClassState extends State<InfoMyClass> {
         height: kBottomNavigationBarHeight,
         child: Row(
           children: [
-            Text(
-              this.myClass[0]['Nombre'],
-              style: TextStyle(
-                color: mySetting.getColorText(),
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                fontFamily: "Raleway",
+            Container(
+              constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width - 240),
+              child: Text(
+                this.myClass[0]['Nombre'],
+                style: TextStyle(
+                  color: mySetting.getColorText(),
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Raleway",
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-              overflow: TextOverflow.clip,
             ),
             Expanded(child: Container()),
             AnimatedBuilder(
@@ -296,11 +358,14 @@ class _InfoMyClassState extends State<InfoMyClass> {
                           onPressed: () {},
                           icon: Icon(Icons.share, color: textColor)),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await setClass(context);
+                            chargerData();
+                          },
                           icon: Icon(Icons.settings, color: textColor)),
                       IconButton(
                           onPressed: () {
-                            generateNewmateria(context);
+                            generateNewMateria(context);
                           },
                           icon: Icon(Icons.add, color: textColor))
                     ],
@@ -366,7 +431,10 @@ class _InfoMyClassState extends State<InfoMyClass> {
                         offset: Offset(textWidth, 0),
                         child: ElevatedButton(
                             style: buttonStyle,
-                            onPressed: () {},
+                            onPressed: () async {
+                              await setClass(context);
+                              chargerData();
+                            },
                             child: Row(
                               children: [
                                 const Icon(Icons.settings),
@@ -387,7 +455,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
                         child: ElevatedButton(
                             style: buttonStyle,
                             onPressed: () {
-                              generateNewmateria(context);
+                              generateNewMateria(context);
                             },
                             child: Row(
                               children: [
@@ -412,12 +480,129 @@ class _InfoMyClassState extends State<InfoMyClass> {
     );
   }
 
-  Future<dynamic> generateNewmateria(BuildContext context) {
+  Future<dynamic> setClass(BuildContext context) {
+    bool acceptName = true;
+    bool acceptDescription = true;
+
+    return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          _nameEditController.text = this.myClass[0]['Nombre'];
+          _descriptionEditController.text = this.myClass[0]['Descripcion'];
+          return AlertDialog(
+            actionsAlignment: MainAxisAlignment.center,
+            titleTextStyle:
+                TextStyle(color: mySetting.getColorText(), fontSize: 20),
+            backgroundColor: mySetting.getBackgroundColor(),
+            actionsOverflowAlignment: OverflowBarAlignment.center,
+            iconColor: mySetting.getColorText(),
+            title: const Text(
+              "Configuración de clase",
+              textAlign: TextAlign.center,
+            ),
+            content: Form(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _nameEditController,
+                    autofocus: true,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        acceptName = false;
+                        return "Inserte un nombre valido";
+                      }
+                      acceptName = true;
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    decoration: InputDecoration(
+                        labelText: "Nombre de clase",
+                        hoverColor: mySetting.getColorText(),
+                        fillColor: mySetting.getColorText(),
+                        focusColor: mySetting.getColorText(),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: mySetting.getColorText())),
+                        labelStyle: TextStyle(color: mySetting.getColorText())),
+                    style: TextStyle(color: mySetting.getColorText()),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: _descriptionEditController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        acceptDescription = false;
+                        return "Inserte un nombre valido";
+                      }
+                      acceptDescription = true;
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                        labelText: "Descripcion de clase",
+                        hoverColor: mySetting.getColorText(),
+                        fillColor: mySetting.getColorText(),
+                        focusColor: mySetting.getColorText(),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: mySetting.getColorText())),
+                        labelStyle: TextStyle(color: mySetting.getColorText())),
+                    style: TextStyle(color: mySetting.getColorText()),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(context);
+                  },
+                  icon: Icon(
+                    Icons.cancel,
+                    color: mySetting.getColorText(),
+                  )),
+              IconButton(
+                  onPressed: () async {
+                    print(acceptDescription);
+                    print(acceptName);
+                    if (!(acceptName || acceptDescription)) {
+                      showDialog(
+                          context: context,
+                          builder: ((context) {
+                            return AlertDialog(
+                              backgroundColor: mySetting.getBackgroundColor(),
+                              title: Text(
+                                "Inserte valores validos",
+                                style:
+                                    TextStyle(color: mySetting.getColorText()),
+                              ),
+                            );
+                          }));
+                      return;
+                    }
+                    await dataBase.changeInfoClass(_nameEditController.text,
+                        _descriptionEditController.text, this.myClass[0]["ID"]);
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.check_circle,
+                    color: mySetting.getColorText(),
+                  )),
+            ],
+          );
+        });
+  }
+
+  Future<dynamic> generateNewMateria(BuildContext context) {
     return showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) {
           return AlertDialog(
+            backgroundColor: mySetting.getBackgroundColor(),
             iconColor: mySetting.getColorText(),
             content: Column(
               mainAxisSize: MainAxisSize.min,

@@ -111,6 +111,15 @@ class ConnectionDataBase {
     return true;
   }
 
+  Future<bool> changeInfoClass(
+      String newName, String newDescription, int id) async {
+    Database data = await _connect();
+    data.update("clase", {"Nombre": newName, "Descripcion": newDescription},
+        where: "ID == $id");
+    _close(data);
+    return true;
+  }
+
   Future<bool> createClass(String name, String description) async {
     Database data = await _connect();
     data.insert("clase", {
@@ -129,6 +138,9 @@ class ConnectionDataBase {
     if (id != -1) {
       info = await data.query('clase',
           where: 'ID = ${id.toString()}', orderBy: 'FechPrio DESC');
+      await data.update("clase",
+          {"FechPrio": DateTime.now().difference(DateTime(1970)).inSeconds},
+          where: "ID = $id");
     } else {
       info = await data.query('clase', orderBy: 'FechPrio DESC');
     }
