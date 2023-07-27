@@ -4,9 +4,7 @@ import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/pages/Configuraciones.dart';
 import 'package:memoritze/pages/menus/SeeFavClass.dart';
 import 'package:memoritze/pages/menus/SeeMyClass.dart';
-import 'package:memoritze/partes/BarLeft.dart';
 import 'package:memoritze/settings.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 // ignore: must_be_immutable
 class MenuInit extends StatefulWidget {
