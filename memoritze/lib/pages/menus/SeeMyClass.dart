@@ -172,27 +172,12 @@ class _MyClassState extends State<MyClass> {
   }
 
   Widget myBook(int index) {
-    bool _entering = false;
     return GestureDetector(
-      onSecondaryTap: () async {
-        print("se precioso");
-        setState(() {
-          _entering = true;
-        });
-        await Future.delayed(Duration(seconds: 1));
-        setState(() {
-          _entering = false;
-        });
-      },
       onLongPress: () {
         addDelete(myDataBase[index]['ID']);
       },
       onTap: () async {
-        print("Algo");
         if (state == 0) {
-          setState(() {
-            _entering = true;
-          });
           await Navigator.push(
             context,
             PageRouteBuilder(
@@ -202,7 +187,7 @@ class _MyClassState extends State<MyClass> {
                   (context, animation, secondaryAnimation, child) {
                 var begin = const Offset(-1.0, 0.0);
                 var end = Offset.zero;
-                var curve = Curves.ease;
+                var curve = Curves.easeInOutBack;
                 var tween = Tween(begin: begin, end: end)
                     .chain(CurveTween(curve: curve));
                 var offsetAnimation = animation.drive(tween);
@@ -213,9 +198,6 @@ class _MyClassState extends State<MyClass> {
               },
             ),
           );
-          setState(() {
-            _entering = false;
-          });
           myDataBase = await myData.getClass(-1);
           setState(() {
             charge = true;
@@ -226,7 +208,10 @@ class _MyClassState extends State<MyClass> {
       },
       child: Container(
         decoration: BoxDecoration(
-          border: deleteIds.contains(myDataBase[index]['ID'])? Border.all(color: const Color.fromARGB(255, 255, 255, 255), width: 1): null,
+          border: deleteIds.contains(myDataBase[index]['ID'])
+              ? Border.all(
+                  color: const Color.fromARGB(255, 255, 255, 255), width: 1)
+              : null,
           color: deleteIds.contains(myDataBase[index]['ID'])
               ? mySetting.getColorDrawerSecondary()
               : const Color(0),
@@ -236,7 +221,7 @@ class _MyClassState extends State<MyClass> {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: mySetting.getColorDrawerSecondary(),
+                color: mySetting.getColorBook().withOpacity(0.8),
               ),
               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             ),
@@ -245,7 +230,7 @@ class _MyClassState extends State<MyClass> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  color: Colors.white,
+                  color: mySetting.getColorPager().withOpacity(0.8),
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
               ),
@@ -253,13 +238,12 @@ class _MyClassState extends State<MyClass> {
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               child: Transform(
-                transform: !_entering
-                    ? (Matrix4.identity()..rotateY((2 / 5) * (1 / 2) * pi))
-                    : (Matrix4.identity()..rotateY((3 / 5) * (1 / 2) * pi)),
+                transform: (Matrix4.identity()
+                  ..rotateY((2 / 5) * (1 / 2) * pi)),
                 child: Card(
                   elevation: 5,
                   surfaceTintColor: Colors.blue,
-                  color: mySetting.getColorPaper(),
+                  color: mySetting.getColorBook(),
                   child: Stack(
                     children: [
                       Padding(

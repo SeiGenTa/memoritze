@@ -30,8 +30,8 @@ class Setting {
   }
 
   static const List<Color> _backGroundColor = [
-    Color.fromRGBO(167, 220, 178, 1),
-    Color.fromRGBO(3, 33, 7, 1),
+    Color.fromRGBO(255, 255, 255, 1),
+    Color.fromRGBO(0, 0, 0, 1),
   ];
 
   static const List<Color> _colorsText = [
@@ -39,9 +39,9 @@ class Setting {
     Colors.white,
   ];
 
-  static const List<Color> _colorsDrawer = [
-    Color.fromRGBO(10, 73, 10, 1),
-    Color.fromRGBO(10, 10, 10, 1),
+  static const List<Color> _colorsMore = [
+    Color.fromRGBO(255, 255, 255, 1),
+    Color.fromARGB(255, 26, 26, 26),
   ];
 
   static const List<Color> _colorsDrawerSecondary = [
@@ -51,16 +51,16 @@ class Setting {
 
   static const List<Color> _colorsPaper = [
     Color.fromRGBO(129, 190, 77, 1),
-    Color.fromRGBO(58, 118, 88, 1),
+    Color(0xFF3A7658),
   ];
 
   static const List<Color> _colorsIconButton = [
-    Color.fromRGBO(255, 255, 255, 1),
-    Color.fromRGBO(44, 44, 44, 1),
+    Color.fromRGBO(48, 185, 82, 1),
+    Color.fromRGBO(48, 185, 82, 1),
   ];
 
   static const List<Color> _colorsPage = [
-    Color.fromRGBO(255, 255, 255, 1),
+    Color.fromRGBO(240, 240, 240, 1),
     Color.fromRGBO(44, 44, 44, 1),
   ];
 
@@ -68,6 +68,33 @@ class Setting {
     Color.fromRGBO(44, 44, 44, 1),
     Color.fromRGBO(255, 255, 255, 1),
   ];
+
+  static const List<Color> _colorsBook = [
+    Color.fromARGB(255, 237, 55, 55),
+    Color.fromARGB(255, 161, 45, 45),
+  ];
+
+  static const List<Color> _colorsNavBarSup = [
+    Color.fromRGBO(48, 185, 82, 1),
+    Color.fromARGB(255, 26, 26, 26),
+  ];
+
+  static const List<Color> _colorsNavBarBot = [
+    Color.fromRGBO(255, 255, 255, 1),
+    Color.fromARGB(255, 49, 49, 49),
+  ];
+
+  Color getColorNavBot() {
+    return _colorsNavBarBot[stateNight];
+  }
+
+  Color getColorNavSup() {
+    return _colorsNavBarSup[stateNight];
+  }
+
+  Color getColorBook() {
+    return _colorsBook[stateNight];
+  }
 
   Color getColorsOpos() {
     return _colorsOpos[stateNight];
@@ -89,8 +116,8 @@ class Setting {
     return _colorsText[stateNight];
   }
 
-  Color getColorDrawer() {
-    return _colorsDrawer[stateNight];
+  Color getColorMore() {
+    return _colorsMore[stateNight];
   }
 
   Color getColorDrawerSecondary() {

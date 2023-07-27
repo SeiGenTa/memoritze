@@ -25,7 +25,7 @@ class _ConfigurablePageState extends State<ConfigurablePage> {
     return Scaffold(
       backgroundColor: setting.getBackgroundColor(),
       appBar: AppBar(
-        backgroundColor: setting.getColorDrawerSecondary(),
+        backgroundColor: setting.getColorNavSup(),
         leading: IconButton(
           onPressed: () {
             Navigator.pushAndRemoveUntil(

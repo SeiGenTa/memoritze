@@ -298,12 +298,19 @@ class _InfoMyClassState extends State<InfoMyClass> {
                     ),
                     if (_selected.isNotEmpty)
                       Container(
+                        padding: const EdgeInsets.only(bottom: 30),
                         alignment: Alignment.bottomRight,
-                        child: IconButton(
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                              shape: const MaterialStatePropertyAll(
+                                  CircleBorder()),
+                              iconColor: MaterialStatePropertyAll(
+                                  mySetting.getColorText()),
+                              iconSize: const MaterialStatePropertyAll(50),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  mySetting.getColorsIconButton())),
                           onPressed: () => initQuest(),
-                          color: mySetting.getColorDrawerSecondary(),
-                          iconSize: 50,
-                          icon: const Icon(Icons.play_circle_fill),
+                          child: const Icon(Icons.play_arrow_outlined),
                         ),
                       ),
                     if (_showAccept) initClassUniq,
