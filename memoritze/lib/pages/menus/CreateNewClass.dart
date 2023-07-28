@@ -42,8 +42,8 @@ class _CreateClassState extends State<CreateClass> {
     return Scaffold(
         backgroundColor: mySetting.getBackgroundColor(),
         appBar: AppBar(
-          backgroundColor: mySetting.getColorDrawerSecondary(),
-          iconTheme: IconThemeData(color: mySetting.getColorText()),
+          backgroundColor: mySetting.getColorNavSup(),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: Stack(children: [
           ListView(

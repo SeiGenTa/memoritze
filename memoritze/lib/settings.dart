@@ -55,8 +55,8 @@ class Setting {
   ];
 
   static const List<Color> _colorsIconButton = [
-    Color.fromRGBO(48, 185, 82, 1),
-    Color.fromRGBO(48, 185, 82, 1),
+    Color.fromRGBO(0, 122, 31, 1),
+    Color.fromRGBO(0, 122, 31, 1),
   ];
 
   static const List<Color> _colorsPage = [
@@ -75,7 +75,7 @@ class Setting {
   ];
 
   static const List<Color> _colorsNavBarSup = [
-    Color.fromRGBO(48, 185, 82, 1),
+    Color.fromRGBO(0, 122, 31, 1),
     Color.fromARGB(255, 26, 26, 26),
   ];
 

@@ -105,9 +105,8 @@ class _MyClassState extends State<MyClass> {
                             const MaterialStatePropertyAll(EdgeInsets.all(8)),
                         shape: const MaterialStatePropertyAll(CircleBorder()),
                         backgroundColor: MaterialStatePropertyAll(
-                            mySetting.getColorDrawerSecondary()),
-                        iconColor:
-                            MaterialStatePropertyAll(mySetting.getColorText()),
+                            mySetting.getColorsIconButton()),
+                        iconColor: MaterialStatePropertyAll(Colors.white),
                         iconSize: const MaterialStatePropertyAll(40),
                       ),
                       child: const Icon(

@@ -105,9 +105,18 @@ class MenuInitState extends State<MenuInit>
                             0.0),
                         child: FavClass(),
                       ),
+                      if (stateMore)
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              stateMore = false;
+                            });
+                          },
+                        ),
                       AnimatedPositioned(
-                          duration: Duration(milliseconds: 300),
-                          top: stateMore ? 5 : -100,
+                          curve: Curves.easeInOut,
+                          duration: const Duration(milliseconds: 300),
+                          top: stateMore ? 5 : -50,
                           right: 5,
                           child: FittedBox(
                             child: Container(
@@ -150,14 +159,6 @@ class MenuInitState extends State<MenuInit>
                               ),
                             ),
                           )),
-                      if (stateMore)
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stateMore = false;
-                            });
-                          },
-                        )
                     ],
                   );
                 },

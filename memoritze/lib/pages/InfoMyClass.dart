@@ -17,7 +17,8 @@ class InfoMyClass extends StatefulWidget {
   State<InfoMyClass> createState() => _InfoMyClassState();
 }
 
-class _InfoMyClassState extends State<InfoMyClass> {
+class _InfoMyClassState extends State<InfoMyClass>
+    with SingleTickerProviderStateMixin {
   //Para las funciones de la modificacion de clases//
 
   List<int> _selected = [];
@@ -27,13 +28,14 @@ class _InfoMyClassState extends State<InfoMyClass> {
   bool _showAccept = false;
 
   late ScrollController _scrollController = ScrollController();
-  double _appBarStretchRatio = 0.0;
 
   void initQuest() {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return InitQuest(IdsMaterials: _selected);
     }));
   }
+
+  bool extend = true;
 
   Widget initClassUniq = Container();
   @override
@@ -42,11 +44,25 @@ class _InfoMyClassState extends State<InfoMyClass> {
     chargerData();
     _scrollController.addListener(_updateAppBarStretchRatio);
     textColor = mySetting.getColorText();
+    _controllerAnimateAppBar = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 200));
+    animateAppBar =
+        Tween(begin: 0.0, end: 1.0).animate(_controllerAnimateAppBar);
   }
 
-  void _updateAppBarStretchRatio() {
-    _appBarStretchRatio = _scrollController.offset;
-    print(_appBarStretchRatio);
+  late final AnimationController _controllerAnimateAppBar;
+  late final Animation<double> animateAppBar;
+
+  void _updateAppBarStretchRatio() async {
+    if (_scrollController.offset > 60 && extend == false) {
+      print("cambio: extendido");
+      _controllerAnimateAppBar.forward();
+      extend = true;
+    } else if (_scrollController.offset < 60 && extend == true) {
+      print("cambio: contraer");
+      _controllerAnimateAppBar.reverse();
+      extend = false;
+    }
   }
 
   void saveMaterial(context) async {
@@ -77,7 +93,6 @@ class _InfoMyClassState extends State<InfoMyClass> {
   }
 
   void chargerData() async {
-    print("iniciando");
     this.myClass = await dataBase.getClass(widget.id_class);
     setState(() {
       _charge = true;
@@ -93,6 +108,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
     super.dispose();
     _scrollController.dispose();
     _nameMaterial.dispose();
+    _controllerAnimateAppBar.dispose();
   }
 
   final TextEditingController _nameMaterial = TextEditingController();
@@ -111,9 +127,9 @@ class _InfoMyClassState extends State<InfoMyClass> {
   Setting mySetting = Setting();
 
   late ButtonStyle buttonStyle = ButtonStyle(
-      iconColor: MaterialStatePropertyAll(mySetting.getColorText()),
+      iconColor: const MaterialStatePropertyAll(Colors.white),
       backgroundColor:
-          MaterialStatePropertyAll(mySetting.getColorDrawerSecondary()));
+          MaterialStatePropertyAll(mySetting.getColorsIconButton()));
 
   //COLORES
   late Color textColor;
@@ -126,7 +142,7 @@ class _InfoMyClassState extends State<InfoMyClass> {
           backgroundColor: mySetting.getBackgroundColor(),
           appBar: AppBar(
             toolbarHeight: 0,
-            backgroundColor: mySetting.getColorDrawerSecondary(),
+            backgroundColor: mySetting.getColorNavSup(),
           ),
           body: !_charge
               ? Column(
@@ -296,23 +312,24 @@ class _InfoMyClassState extends State<InfoMyClass> {
                             })
                       ],
                     ),
-                    if (_selected.isNotEmpty)
-                      Container(
-                        padding: const EdgeInsets.only(bottom: 30),
-                        alignment: Alignment.bottomRight,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                              shape: const MaterialStatePropertyAll(
-                                  CircleBorder()),
-                              iconColor: MaterialStatePropertyAll(
-                                  mySetting.getColorText()),
-                              iconSize: const MaterialStatePropertyAll(50),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  mySetting.getColorsIconButton())),
-                          onPressed: () => initQuest(),
-                          child: const Icon(Icons.play_arrow_outlined),
-                        ),
+                    AnimatedPositioned(
+                      curve: Curves.easeInOut,
+                      right: _selected.isEmpty ? -100 : 10,
+                      bottom: 10,
+                      duration: Duration(milliseconds: 500),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                            shape:
+                                const MaterialStatePropertyAll(CircleBorder()),
+                            iconColor: MaterialStatePropertyAll(
+                                mySetting.getColorText()),
+                            iconSize: const MaterialStatePropertyAll(50),
+                            backgroundColor: MaterialStatePropertyAll(
+                                mySetting.getColorsIconButton())),
+                        onPressed: () => initQuest(),
+                        child: const Icon(Icons.play_arrow_outlined),
                       ),
+                    ),
                     if (_showAccept) initClassUniq,
                   ],
                 ),
@@ -322,10 +339,10 @@ class _InfoMyClassState extends State<InfoMyClass> {
   SliverAppBar appBarOfInfoMyClass(BuildContext context) {
     return SliverAppBar(
       elevation: 10,
-      backgroundColor: mySetting.getColorDrawerSecondary(),
+      backgroundColor: mySetting.getColorNavSup(),
       pinned: true,
       leading: IconButton(
-        color: mySetting.getColorText(),
+        color: Colors.white,
         onPressed: () {
           Navigator.pop(context);
         },
@@ -340,9 +357,9 @@ class _InfoMyClassState extends State<InfoMyClass> {
               constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width - 240),
               child: Text(
-                this.myClass[0]['Nombre'],
-                style: TextStyle(
-                  color: mySetting.getColorText(),
+                myClass[0]['Nombre'],
+                style: const TextStyle(
+                  color: Colors.white,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   fontFamily: "Raleway",
@@ -352,29 +369,28 @@ class _InfoMyClassState extends State<InfoMyClass> {
             ),
             Expanded(child: Container()),
             AnimatedBuilder(
-              animation: _scrollController,
+              animation: animateAppBar,
               builder: (context, child) {
-                double position = -125 + _scrollController.offset;
-                if (position > 0) position = 0;
+                print(animateAppBar.value);
                 return Transform.translate(
-                  offset:
-                      Offset(0, _scrollController.offset < 75 ? -50 : position),
+                  offset: Offset(0, -50 * (1 - animateAppBar.value)),
                   child: Row(
                     children: [
                       IconButton(
                           onPressed: () {},
-                          icon: Icon(Icons.share, color: textColor)),
+                          icon: const Icon(Icons.share, color: Colors.white)),
                       IconButton(
                           onPressed: () async {
                             await setClass(context);
                             chargerData();
                           },
-                          icon: Icon(Icons.settings, color: textColor)),
+                          icon:
+                              const Icon(Icons.settings, color: Colors.white)),
                       IconButton(
                           onPressed: () {
                             generateNewMateria(context);
                           },
-                          icon: Icon(Icons.add, color: textColor))
+                          icon: const Icon(Icons.add, color: Colors.white))
                     ],
                   ),
                 );
@@ -387,95 +403,77 @@ class _InfoMyClassState extends State<InfoMyClass> {
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.none,
         background: AnimatedBuilder(
-          animation: _scrollController,
+          animation: animateAppBar,
           builder: (context, child) {
-            double textWidth =
-                130 * (_scrollController.offset) / kToolbarHeight;
-            if (textWidth <= 0) textWidth = 0;
-            double opacityText = (150 - _scrollController.offset) / 150;
-            if (opacityText < 0) opacityText = 0;
-
             return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Opacity(
-                  opacity: opacityText,
-                  child: Container(
+                  opacity: (1 - animateAppBar.value),
+                  child: SizedBox(
+                      width: MediaQuery.of(context).size.width - 150,
                       child: Text(
-                    "Descripcion: ${this.myClass[0]['Descripcion']} ",
-                    overflow: TextOverflow.fade,
-                    style: TextStyle(color: mySetting.getColorText()),
-                  )),
+                        "Descripcion: ${this.myClass[0]['Descripcion']} ",
+                        overflow: TextOverflow.fade,
+                        style: const TextStyle(color: Colors.white),
+                      )),
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                Transform.translate(
+                  offset: Offset(200 * animateAppBar.value, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Transform.translate(
-                        offset: Offset(textWidth, 0),
-                        child: ElevatedButton(
-                            style: ButtonStyle(
-                                iconColor: MaterialStatePropertyAll(
-                                    mySetting.getColorText()),
-                                backgroundColor: MaterialStatePropertyAll(
-                                    mySetting.getColorDrawerSecondary())),
-                            onPressed: () {},
-                            child: Row(
-                              children: [
-                                const Icon(Icons.share),
-                                SizedBox(
-                                  width: 80,
-                                  child: Text(" Compartir",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: mySetting.getColorText())),
-                                ),
-                              ],
-                            )),
-                      ),
-                      Transform.translate(
-                        offset: Offset(textWidth, 0),
-                        child: ElevatedButton(
-                            style: buttonStyle,
-                            onPressed: () async {
-                              await setClass(context);
-                              chargerData();
-                            },
-                            child: Row(
-                              children: [
-                                const Icon(Icons.settings),
-                                SizedBox(
-                                  width: 80,
-                                  child: Text(
-                                    " Configurar",
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              iconColor:
+                                  const MaterialStatePropertyAll(Colors.white),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  mySetting.getColorsIconButton())),
+                          onPressed: () {},
+                          child: const Row(
+                            children: [
+                              Icon(Icons.share),
+                              SizedBox(
+                                width: 80,
+                                child: Text(" Compartir",
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: mySetting.getColorText()),
-                                  ),
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            ],
+                          )),
+                      ElevatedButton(
+                          style: buttonStyle,
+                          onPressed: () async {
+                            await setClass(context);
+                            chargerData();
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.settings),
+                              SizedBox(
+                                width: 80,
+                                child: Text(
+                                  " Configurar",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: Colors.white),
                                 ),
-                              ],
-                            )),
-                      ),
-                      Transform.translate(
-                        offset: Offset(textWidth, 0),
-                        child: ElevatedButton(
-                            style: buttonStyle,
-                            onPressed: () {
-                              generateNewMateria(context);
-                            },
-                            child: Row(
-                              children: [
-                                const Icon(Icons.add),
-                                SizedBox(
-                                    width: 80,
-                                    child: Text("Agregar",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            color: mySetting.getColorText())))
-                              ],
-                            )),
-                      )
+                              ),
+                            ],
+                          )),
+                      ElevatedButton(
+                          style: buttonStyle,
+                          onPressed: () {
+                            generateNewMateria(context);
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.add),
+                              SizedBox(
+                                  width: 80,
+                                  child: Text("Agregar",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(color: Colors.white)))
+                            ],
+                          ))
                     ],
                   ),
                 )
@@ -573,8 +571,6 @@ class _InfoMyClassState extends State<InfoMyClass> {
                   )),
               IconButton(
                   onPressed: () async {
-                    print(acceptDescription);
-                    print(acceptName);
                     if (!(acceptName || acceptDescription)) {
                       showDialog(
                           context: context,
