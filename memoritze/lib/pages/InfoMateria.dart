@@ -95,11 +95,13 @@ class _InfoMateriaState extends State<InfoMateria> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: setting.getColorDrawerSecondary(),
+          backgroundColor: setting.getColorNavSup(),
+          shape: BorderDirectional(
+              bottom: BorderSide(color: setting.getColorText(), width: 0.4)),
           leading: Container(
             alignment: Alignment.topLeft,
             child: IconButton(
-              color: setting.getColorText(),
+              color: Colors.white,
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -160,6 +162,12 @@ class _InfoMateriaState extends State<InfoMateria> {
                               })),
                     ],
                   ),
+                  if (positionButtonActivate)
+                    GestureDetector(
+                      onTap: () => setState(() {
+                        positionButtonActivate = false;
+                      }),
+                    ),
                   AnimatedPositioned(
                       curve: Curves.easeInCirc,
                       right: 10,

@@ -186,7 +186,8 @@ class MenuInitState extends State<MenuInit>
             ))
       ],
       backgroundColor: mySetting.getColorNavSup(),
-      shape: Border.all(color: mySetting.getColorText(), width: 0.4),
+      shape: BorderDirectional(
+          bottom: BorderSide(color: mySetting.getColorText(), width: 0.4)),
       title: Row(
         children: [
           Image.asset(

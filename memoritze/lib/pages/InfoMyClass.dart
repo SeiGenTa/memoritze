@@ -19,6 +19,8 @@ class InfoMyClass extends StatefulWidget {
 
 class _InfoMyClassState extends State<InfoMyClass>
     with SingleTickerProviderStateMixin {
+  @override
+
   //Para las funciones de la modificacion de clases//
 
   List<int> _selected = [];
@@ -499,7 +501,7 @@ class _InfoMyClassState extends State<InfoMyClass>
             actionsAlignment: MainAxisAlignment.center,
             titleTextStyle:
                 TextStyle(color: mySetting.getColorText(), fontSize: 20),
-            backgroundColor: mySetting.getBackgroundColor(),
+            backgroundColor: mySetting.getColorNavSup(),
             actionsOverflowAlignment: OverflowBarAlignment.center,
             iconColor: mySetting.getColorText(),
             title: const Text(
@@ -605,7 +607,7 @@ class _InfoMyClassState extends State<InfoMyClass>
         context: context,
         builder: (context) {
           return AlertDialog(
-            backgroundColor: mySetting.getBackgroundColor(),
+            backgroundColor: mySetting.getColorNavSup(),
             iconColor: mySetting.getColorText(),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -613,67 +615,56 @@ class _InfoMyClassState extends State<InfoMyClass>
               children: [
                 Form(
                   key: _formKey,
-                  child: Container(
-                    constraints: const BoxConstraints(
-                      maxWidth: 500,
+                  child: TextFormField(
+                    autofocus: true,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return '¿Como sabremos que estamos estudiando?';
+                      }
+                      return null;
+                    },
+                    controller: _nameMaterial,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: mySetting.getColorText(),
                     ),
-                    child: TextFormField(
-                      autofocus: true,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return '¿Como sabremos que estamos estudiando?';
-                        }
-                        return null;
-                      },
-                      controller: _nameMaterial,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: mySetting.getColorText(),
-                      ),
-                      decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: mySetting.getColorText(),
-                          ),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: mySetting.getColorText(),
-                          ),
-                        ),
-                        labelStyle: TextStyle(color: textColor),
-                        hintStyle: TextStyle(color: textColor),
-                        hintText: "Ejm: La peor materia :c",
-                        hoverColor: mySetting.getColorText(),
-                        labelText: "Nombre materia",
-                        icon: Icon(
-                          Icons.width_normal_rounded,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
                           color: mySetting.getColorText(),
                         ),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: mySetting.getColorText(),
+                        ),
+                      ),
+                      labelStyle: TextStyle(color: textColor),
+                      hintStyle: TextStyle(color: textColor),
+                      hintText: "Ejm: La peor materia :c",
+                      hoverColor: mySetting.getColorText(),
+                      labelText: "Nombre materia",
+                      icon: Icon(
+                        Icons.width_normal_rounded,
+                        color: mySetting.getColorText(),
                       ),
                     ),
                   ),
                 ),
-                Container(
-                  constraints: BoxConstraints(
-                    minWidth: 700,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close),
-                        color: mySetting.getColorText(),
-                      ),
-                      IconButton(
-                        onPressed: () => saveMaterial(context),
-                        icon: const Icon(Icons.check),
-                        color: mySetting.getColorText(),
-                      ),
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
+                      color: mySetting.getColorText(),
+                    ),
+                    IconButton(
+                      onPressed: () => saveMaterial(context),
+                      icon: const Icon(Icons.check),
+                      color: mySetting.getColorText(),
+                    ),
+                  ],
                 ),
               ],
             ),

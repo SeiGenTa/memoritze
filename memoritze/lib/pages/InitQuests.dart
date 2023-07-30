@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/settings.dart';
 
@@ -24,22 +26,26 @@ class _InitQuestState extends State<InitQuest> {
   late final List<Map<String, dynamic>> myQuests;
   List<Map<String, int>> probQuest = [];
   int amountProbs = 0;
-  late String preg;
+  late String pred;
   late String resp;
   late int myIndex;
   int lastQuest = -1;
 
-  void setPreg() {
+  int countResp = 0;
+
+  void setPred() {
     int indexSelected = ra.nextInt(amountProbs);
     myIndex = probQuest[indexSelected]['index']!;
     if (lastQuest == myIndex) {
-      return setPreg();
+      return setPred();
     }
+
+    countResp++;
 
     lastQuest = myIndex;
 
     setState(() {
-      preg = myQuests[myIndex]['Pregunta'];
+      pred = myQuests[myIndex]['Pregunta'];
       resp = myQuests[myIndex]['respuesta'];
       charged = true;
     });
@@ -72,10 +78,11 @@ class _InitQuestState extends State<InitQuest> {
     }
     amountProbs = probQuest.length;
 
-    setPreg();
+    setPred();
   }
 
   void setUpEval(int indexQuest) {
+    print("setUp");
     int amountQuest =
         (probQuest.where((element) => element['index'] == indexQuest).toList())
             .length;
@@ -88,10 +95,11 @@ class _InitQuestState extends State<InitQuest> {
       charged = false;
       seeResp = false;
     });
-    setPreg();
+    setPred();
   }
 
   void setDowEval(int indexQuest) {
+    print("setDown");
     List<Map<String, int>> amountQuest =
         (probQuest.where((element) => element['index'] == indexQuest).toList());
     if (amountQuest.length != 1) {
@@ -103,13 +111,36 @@ class _InitQuestState extends State<InitQuest> {
       charged = false;
       seeResp = false;
     });
-    setPreg();
+    setPred();
+  }
+
+  Widget generate(pred, resp) {
+    return SlimyCardProp(
+      firstText: pred,
+      secondText: resp,
+      showSecondText: false,
+      width: MediaQuery.of(context).size.width - 100,
+      height: MediaQuery.of(context).size.height - 250,
+      colorCards: setting.getColorNavSup(),
+      textColors: setting.getColorText(),
+      onUseButton: () {
+        setState(() {
+          seeResp = true;
+        });
+        print("si funciona");
+      },
+      key: ValueKey(countResp),
+    );
   }
 
   @override
   void initState() {
     super.initState();
     chargeData();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp, // Bloquea orientación vertical
+    ]);
   }
 
   @override
@@ -155,112 +186,252 @@ class _InitQuestState extends State<InitQuest> {
                           ),
                         ),
                       )
-                    : Expanded(
+                    : SafeArea(
                         child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(child: Container()),
-                            Container(
-                              constraints: BoxConstraints(
-                                maxHeight:
-                                    MediaQuery.of(context).size.height / 3 - 25,
-                                maxWidth: 500,
-                              ),
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: setting.getColorPaper(),
-                              ),
-                              child: ListView(
-                                shrinkWrap: true,
-                                children: [
-                                  Text(
-                                    preg,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 40,
-                            ),
-                            if (!seeResp)
-                              IconButton(
-                                onPressed: () => setState(() {
+                        children: [
+                          if (charged)
+                            SlimyCardProp(
+                              firstText: pred,
+                              secondText: resp,
+                              showSecondText: false,
+                              width: MediaQuery.of(context).size.width - 100,
+                              height: MediaQuery.of(context).size.height - 250,
+                              colorCards: setting.getColorNavSup(),
+                              textColors: setting.getColorText(),
+                              onUseButton: () {
+                                setState(() {
                                   seeResp = true;
-                                }),
-                                icon: const Icon(Icons.remove_red_eye),
-                                color: setting.getColorText(),
-                              ),
-                            Container(
-                                height: (seeResp) ? null : 0,
-                                constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height / 3 -
-                                          25,
-                                  maxWidth: 500,
-                                ),
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: setting.getColorPaper(),
-                                ),
-                                child: ListView(
-                                  shrinkWrap: true,
-                                  children: [
-                                    Text(
-                                      resp,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                )),
-                            const SizedBox(
-                              height: 40,
+                                });
+                                print("si funciona");
+                              },
+                              key: ValueKey(countResp),
                             ),
-                            if (seeResp)
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  ElevatedButton(
-                                      style: ButtonStyle(
-                                          padding: MaterialStateProperty.all(
-                                              const EdgeInsets.all(30)),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.red)),
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                AnimatedOpacity(
+                                  duration: Duration(milliseconds: 300),
+                                  opacity: seeResp ? 1 : 0,
+                                  child: ElevatedButton(
+                                      style: const ButtonStyle(
+                                        padding: MaterialStatePropertyAll(
+                                            EdgeInsets.all(20)),
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(
+                                                Colors.green),
+                                      ),
                                       onPressed: () {
-                                        setUpEval(myIndex);
+                                        if (seeResp) setUpEval(myIndex);
                                       },
-                                      child: Text("Falla..")),
-                                  ElevatedButton(
-                                      style: ButtonStyle(
-                                          padding: MaterialStateProperty.all(
-                                              const EdgeInsets.all(30)),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.green)),
+                                      child: Text("Acertado")),
+                                ),
+                                AnimatedOpacity(
+                                  duration: const Duration(milliseconds: 300),
+                                  opacity: seeResp ? 1 : 0,
+                                  child: ElevatedButton(
+                                      style: const ButtonStyle(
+                                        padding: MaterialStatePropertyAll(
+                                            EdgeInsets.all(20)),
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(
+                                                Colors.red),
+                                      ),
                                       onPressed: () {
-                                        setDowEval(myIndex);
+                                        if (seeResp) setDowEval(myIndex);
                                       },
-                                      child: const Text("Acerté!")),
-                                ],
-                              ),
-                            Expanded(child: Container()),
-                          ],
-                        ),
-                      ),
+                                      child: Text("  Erronea  ")),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ))
           ],
         ),
       ),
     );
+  }
+}
+
+class SlimyCardProp extends StatefulWidget {
+  final Function()? onUseButton;
+
+  late String firstText;
+  late String secondText;
+  late bool showSecondText;
+  late double width;
+  late double height;
+  late Color colorCards;
+  late Color textColors;
+  late Color colorButton;
+  late Color colorIconButton;
+  late double separated;
+  late double iconSize;
+  EdgeInsets margin = const EdgeInsets.all(20);
+
+  SlimyCardProp({
+    super.key,
+    required this.firstText,
+    required this.secondText,
+    required this.showSecondText,
+    required this.width,
+    required this.height,
+    required this.colorCards,
+    required this.textColors,
+    EdgeInsets? padding,
+    this.onUseButton,
+    this.colorButton = Colors.white,
+    this.colorIconButton = Colors.black,
+    this.separated = 20.0,
+    this.iconSize = 40,
+  }) {
+    if (padding != null) {
+      this.margin = padding;
+    }
+  }
+
+  @override
+  State<SlimyCardProp> createState() => _SlimyCardPropState();
+}
+
+class _SlimyCardPropState extends State<SlimyCardProp>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  late final Animation<double> _generateAnimation;
+
+  late final Animation<double> _curveAnimation;
+
+  late String firstText;
+  late String secondText;
+  late bool showSecondText;
+  late double width;
+  late double height;
+  late Color colorCards;
+  late Color textColors;
+  late EdgeInsets padding;
+  late Color colorButton;
+  late Color colorIconButton;
+  late double iconSize;
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300), value: 0);
+    firstText = widget.firstText;
+    secondText = widget.secondText;
+    showSecondText = widget.showSecondText;
+    width = widget.width;
+    height = widget.height;
+    colorCards = widget.colorCards;
+    textColors = widget.textColors;
+    padding = widget.margin;
+    colorButton = widget.colorButton;
+    colorIconButton = widget.colorIconButton;
+    _generateAnimation = Tween<double>(begin: 0, end: 1).animate(_controller);
+    _curveAnimation =
+        CurvedAnimation(parent: _generateAnimation, curve: Curves.easeOut);
+    iconSize = widget.iconSize;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.reset();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void activateButton() {
+    if (_controller.value == 1) {
+      return;
+    }
+    widget.onUseButton?.call();
+    _controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: _curveAnimation,
+        builder: (context, child) {
+          return Container(
+            height: height,
+            child: Stack(
+              children: [
+                Transform.translate(
+                  offset: Offset(
+                      0,
+                      height / 4 +
+                          (widget.separated / 2 + height / 4) *
+                              _curveAnimation.value),
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: width,
+                    height: height / 2 - widget.separated / 2,
+                    padding: padding,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(30)),
+                      color: colorCards,
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: SingleChildScrollView(
+                      padding: padding,
+                      child: Text(
+                        secondText,
+                        style: TextStyle(color: textColors, fontSize: 20),
+                      ),
+                    ),
+                  ),
+                ),
+                Transform.translate(
+                  offset: Offset(
+                      0, height / 4 - (height / 4) * _curveAnimation.value),
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: width,
+                    height: height / 2 - widget.separated / 2,
+                    padding: padding,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(30)),
+                      color: colorCards,
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: SingleChildScrollView(
+                      padding: padding,
+                      child: Text(
+                        firstText,
+                        style: TextStyle(color: textColors, fontSize: 20),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: width / 2 - iconSize / 2,
+                  bottom: 0,
+                  child: Opacity(
+                    opacity: (1 - _generateAnimation.value),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        activateButton();
+                      },
+                      style: ButtonStyle(
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(iconSize, iconSize)),
+                        iconColor: MaterialStatePropertyAll(colorIconButton),
+                        backgroundColor: MaterialStatePropertyAll(colorButton),
+                      ),
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 }
