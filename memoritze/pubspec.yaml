@@ -1,7 +1,7 @@
 name: memoritze
 description: A new Flutter project.
 publish_to: 'none'
-version: 0.10.0
+version: 0.20.0
 
 environment:
   sdk: '>=3.0.5 < 4.0.0'
@@ -15,8 +15,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_hooks: ^0.18.0
-  curved_navigation_bar: ^1.0.3
-  flutter_slimy_card: ^1.0.2
 
 dev_dependencies:
   flutter_test:
@@ -28,11 +26,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/img/
-    - windows/
 
 msix_config:
   display_name: Memoritze
   publisher_display_name: SeitCom
   identity_name: Seit.MySuite.mem
-  msix_version: 1.0.0.0
+  msix_version: 1.1.0.0
   capabilities: " internetClient,privateNetworkClientServer,internetClientServer,enterpriseAuthentication,documentsLibrary,broadFileSystemAccess"

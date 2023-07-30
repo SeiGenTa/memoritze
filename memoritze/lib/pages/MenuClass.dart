@@ -116,7 +116,7 @@ class MenuInitState extends State<MenuInit>
                       AnimatedPositioned(
                           curve: Curves.easeInOut,
                           duration: const Duration(milliseconds: 300),
-                          top: stateMore ? 5 : -50,
+                          top: stateMore ? 5 : -100,
                           right: 5,
                           child: FittedBox(
                             child: Container(
@@ -154,6 +154,18 @@ class MenuInitState extends State<MenuInit>
                                         "Configuraciones",
                                         style: TextStyle(
                                             color: mySetting.getColorText()),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          stateMore = false;
+                                        });
+                                        mensaje(context);
+                                      },
+                                      child: Text(
+                                        "Informacion",
+                                        style: TextStyle(
+                                            color: mySetting.getColorText()),
                                       ))
                                 ],
                               ),
@@ -166,6 +178,40 @@ class MenuInitState extends State<MenuInit>
               bottomNavigationBar: MyBottomBar(),
             ),
     );
+  }
+
+  Future<dynamic> mensaje(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: mySetting.getColorNavSup(),
+            content: const SingleChildScrollView(
+              child: Text(
+                '''
+Estimados usuarios,
+
+En primer lugar, permítanme expresar mi más sincero agradecimiento a cada uno de ustedes por utilizar nuestra aplicación. Como creador y desarrollador de esta plataforma, es un honor ver cómo mi trabajo es apreciado y utilizado por personas como ustedes.
+
+Esta aplicación es el resultado de una ardua labor y dedicación de una sola persona: yo mismo. Desde el inicio de este proyecto, mi objetivo siempre fue proporcionar una herramienta intuitiva y eficiente para el estudio personal. Quería ofrecer a los estudiantes y usuarios en general una manera única de aprender y crecer académicamente, permitiéndoles crear sus propias preguntas y establecer el momento más adecuado para abordarlas.
+
+Ver cómo cada uno de ustedes ha utilizado la aplicación para su propio crecimiento personal y desarrollo académico me llena de gratitud y satisfacción. Sus comentarios positivos y sugerencias constructivas han sido una fuente de inspiración para seguir mejorando y expandiendo la aplicación.
+
+Es esencial recordar que esta aplicación no sería nada sin su valioso apoyo y confianza en mi trabajo. Cada vez que la utilizan y la integran en su rutina de estudio, me motivan a esforzarme aún más para hacerla aún mejor.
+
+Como creador, es emocionante saber que mi aplicación está desempeñando un papel en su búsqueda del conocimiento y en su camino hacia el éxito. Mi objetivo siempre ha sido facilitar su proceso de aprendizaje y proporcionarles una experiencia enriquecedora y personalizada.
+
+Por lo tanto, permítanme reiterar mi profundo agradecimiento por ser parte de esta comunidad de usuarios. Su apoyo y retroalimentación son invaluables y me impulsan a seguir trabajando arduamente para mejorar y enriquecer la aplicación con nuevas funcionalidades y características.
+
+Siempre estoy abierto a sus ideas y sugerencias, así que no duden en compartir cualquier comentario que tengan para ayudarme a hacer de esta aplicación un recurso aún más valioso para todos ustedes.
+
+Una vez más, gracias por ser parte de esta emocionante travesía educativa y por confiar en mi aplicación para impulsar su crecimiento académico. Espero que continúen disfrutando de la experiencia de aprender de manera personalizada y a su propio ritmo.
+''',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        });
   }
 
   AppBar appBarClass() {

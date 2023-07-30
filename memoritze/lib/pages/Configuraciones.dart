@@ -48,73 +48,68 @@ class _ConfigurablePageState extends State<ConfigurablePage> {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: Center(
-        child: Container(
-            padding: const EdgeInsets.all(10),
-            constraints: const BoxConstraints(
-              maxWidth: 600,
+      body: SafeArea(
+          child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Configuraciones",
+              style: TextStyle(
+                  color: setting.getColorText(),
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
-            child: ListView(
+            Divider(color: setting.getColorText()),
+            Text(
+              "Cambios visuales",
+              style: TextStyle(
+                  color: setting.getColorText(), fontWeight: FontWeight.bold),
+            ),
+            Row(
               children: [
+                Switch(
+                    value: modeNight,
+                    onChanged: (bool newValue) {
+                      setState(() {
+                        setting.setStateNight();
+                        modeNight = !modeNight;
+                        newValue = modeNight;
+                      });
+                    }),
                 Text(
-                  "Configuraciones",
-                  style: TextStyle(
-                      color: setting.getColorText(),
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                Divider(color: setting.getColorText()),
-                Text(
-                  "Cambios visuales",
-                  style: TextStyle(
-                      color: setting.getColorText(),
-                      fontWeight: FontWeight.bold),
-                ),
-                Row(
-                  children: [
-                    Switch(
-                        value: modeNight,
-                        onChanged: (bool newValue) {
-                          setState(() {
-                            setting.setStateNight();
-                            modeNight = !modeNight;
-                            newValue = modeNight;
-                          });
-                        }),
-                    Text(
-                      "Modo nocturna",
-                      style: TextStyle(color: setting.getColorText()),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Switch(
-                        value: false,
-                        onChanged: (bool newValue) {
-                          //setState(() {
-                          //  setting.setStateNight();
-                          //  modeNight = !modeNight;
-                          //  newValue = modeNight;
-                          //});
-                        }),
-                    Text(
-                      "Temas personalizados (PRONTO)",
-                      style: TextStyle(color: setting.getColorText()),
-                    ),
-                  ],
-                ),
-                Divider(color: setting.getColorText()),
-                Text(
-                  "Ajustes a las clases (Proximamente)",
-                  style: TextStyle(
-                      color: setting.getColorText(),
-                      fontWeight: FontWeight.bold),
+                  "Modo nocturna",
+                  style: TextStyle(color: setting.getColorText()),
                 ),
               ],
-            )),
-      ),
+            ),
+            Row(
+              children: [
+                Switch(
+                    value: false,
+                    onChanged: (bool newValue) {
+                      //setState(() {
+                      //  setting.setStateNight();
+                      //  modeNight = !modeNight;
+                      //  newValue = modeNight;
+                      //});
+                    }),
+                Text(
+                  "Temas personalizados (PRONTO)",
+                  style: TextStyle(color: setting.getColorText()),
+                ),
+              ],
+            ),
+            Divider(color: setting.getColorText()),
+            Text(
+              "Ajustes a las clases (Proximamente)",
+              style: TextStyle(
+                  color: setting.getColorText(), fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      )),
     );
   }
 }

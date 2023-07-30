@@ -223,7 +223,7 @@ class _InitQuestState extends State<InitQuest> {
                                                 Colors.green),
                                       ),
                                       onPressed: () {
-                                        if (seeResp) setUpEval(myIndex);
+                                        if (seeResp) setDowEval(myIndex);
                                       },
                                       child: Text("Acertado")),
                                 ),
@@ -239,7 +239,7 @@ class _InitQuestState extends State<InitQuest> {
                                                 Colors.red),
                                       ),
                                       onPressed: () {
-                                        if (seeResp) setDowEval(myIndex);
+                                        if (seeResp) setUpEval(myIndex);
                                       },
                                       child: Text("  Erronea  ")),
                                 )
@@ -255,6 +255,7 @@ class _InitQuestState extends State<InitQuest> {
   }
 }
 
+// ignore: must_be_immutable
 class SlimyCardProp extends StatefulWidget {
   final Function()? onUseButton;
 

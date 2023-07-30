@@ -39,14 +39,29 @@ class _CreateClassState extends State<CreateClass> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: mySetting.getBackgroundColor(),
-        appBar: AppBar(
-          backgroundColor: mySetting.getColorNavSup(),
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
-        body: Stack(children: [
-          ListView(
+    return AlertDialog(
+      title: Row(
+        children: [
+          IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.close,
+                color: Colors.white,
+              )),
+          const Text(
+            "Crear clase",
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+      backgroundColor: mySetting.getColorNavSup(),
+      actions: [],
+      content: Stack(
+        children: [
+          SingleChildScrollView(
+              child: Column(
             children: [
               Form(
                   key: _formKey,
@@ -55,25 +70,61 @@ class _CreateClassState extends State<CreateClass> {
                       const SizedBox(
                         height: 25,
                       ),
-                      Container(
-                        padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.height / 10,
-                          right: MediaQuery.of(context).size.height / 10,
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Todo ramo tiene un nombre';
+                          }
+                          return null;
+                        },
+                        controller: nameClass,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: mySetting.getColorText(),
                         ),
-                        child: TextFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Todo ramo tiene un nombre';
-                            }
-                            return null;
-                          },
-                          controller: nameClass,
-                          style: TextStyle(
-                            fontSize: 15,
+                        decoration: InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: mySetting.getColorText(),
+                            ),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: mySetting.getColorText(),
+                            ),
+                          ),
+                          labelStyle:
+                              TextStyle(color: mySetting.getColorText()),
+                          hintStyle: TextStyle(color: mySetting.getColorText()),
+                          hintText: "Un buen nombre organizara nuestro estudio",
+                          hoverColor: mySetting.getColorText(),
+                          labelText: "Nombre de la clase",
+                          icon: Icon(
+                            Icons.near_me,
                             color: mySetting.getColorText(),
                           ),
-                          decoration: InputDecoration(
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        minLines: 1,
+                        maxLines: 5,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Debes añadir alguna descripcion, ¿no?";
+                          }
+                          return null;
+                        },
+                        controller: descriptionClass,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: mySetting.getColorText(),
+                        ),
+                        decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: mySetting.getColorText(),
@@ -89,62 +140,12 @@ class _CreateClassState extends State<CreateClass> {
                             hintStyle:
                                 TextStyle(color: mySetting.getColorText()),
                             hintText:
-                                "Un buen nombre organizara nuestro estudio",
-                            hoverColor: mySetting.getColorText(),
-                            labelText: "Nombre de la clase",
+                                "Esto es un cuestionario de una de mis clases favoritas",
+                            labelText: "Descripcion",
                             icon: Icon(
-                              Icons.near_me,
+                              Icons.description_sharp,
                               color: mySetting.getColorText(),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 25,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.height / 10,
-                          right: MediaQuery.of(context).size.height / 10,
-                        ),
-                        child: TextFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          minLines: 1,
-                          maxLines: 5,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Debes añadir alguna descripcion, ¿no?";
-                            }
-                            return null;
-                          },
-                          controller: descriptionClass,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: mySetting.getColorText(),
-                          ),
-                          decoration: InputDecoration(
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: mySetting.getColorText(),
-                                ),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: mySetting.getColorText(),
-                                ),
-                              ),
-                              labelStyle:
-                                  TextStyle(color: mySetting.getColorText()),
-                              hintStyle:
-                                  TextStyle(color: mySetting.getColorText()),
-                              hintText:
-                                  "Esto es un cuestionario de una de mis clases favoritas",
-                              labelText: "Descripcion",
-                              icon: Icon(
-                                Icons.description_sharp,
-                                color: mySetting.getColorText(),
-                              )),
-                        ),
+                            )),
                       ),
                       const SizedBox(
                         height: 25,
@@ -183,14 +184,9 @@ class _CreateClassState extends State<CreateClass> {
                     ],
                   ))
             ],
-          ),
-          Container(
-            alignment: Alignment.bottomRight,
-            child: Text(
-              "version: 0.${mySetting.version0.toString()}",
-              style: TextStyle(color: mySetting.getColorText()),
-            ),
-          )
-        ]));
+          ))
+        ],
+      ),
+    );
   }
 }

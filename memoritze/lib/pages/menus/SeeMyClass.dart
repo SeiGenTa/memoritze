@@ -94,10 +94,12 @@ class _MyClassState extends State<MyClass> {
                 child: AnimatedCrossFade(
                     firstChild: ElevatedButton(
                       onPressed: () async {
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CreateClass()));
+                        await showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CreateClass();
+                          },
+                        );
                         init();
                       },
                       style: ButtonStyle(
@@ -106,7 +108,7 @@ class _MyClassState extends State<MyClass> {
                         shape: const MaterialStatePropertyAll(CircleBorder()),
                         backgroundColor: MaterialStatePropertyAll(
                             mySetting.getColorsIconButton()),
-                        iconColor: MaterialStatePropertyAll(Colors.white),
+                        iconColor: const MaterialStatePropertyAll(Colors.white),
                         iconSize: const MaterialStatePropertyAll(40),
                       ),
                       child: const Icon(
@@ -268,6 +270,16 @@ class _MyClassState extends State<MyClass> {
                 ),
               ),
             ),
+            Positioned(
+                top: 0,
+                left: 0,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.star_border,
+                  ),
+                  onPressed: () {},
+                  color: Colors.white,
+                ))
           ],
         ),
       ),
