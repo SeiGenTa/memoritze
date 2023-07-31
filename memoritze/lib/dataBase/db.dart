@@ -285,4 +285,26 @@ class ConnectionDataBase {
     _close(data);
     return true;
   }
+
+  Future<Map<String, dynamic>> createJson(
+      int idClass, List<int> listIndex) async {
+    Map<String, dynamic> myClass = (await getClass(idClass))[0];
+    var myJson = {
+      "name": myClass["Nombre"],
+    };
+    var material = [];
+    for (int i = 0; i < listIndex.length; i++) {
+      Map<String, dynamic> myMaterial = (await getMaterialID(listIndex[i]));
+      Database data = await _connect();
+      List<Map<String, dynamic>> myQuest = await data.query('pregunta',
+          where: 'ID_subclass = ${listIndex[i].toString()}',
+          columns: ["Pregunta", "respuesta"]);
+      _close(data);
+      material
+          .add({"name_materia": myMaterial["Nombre"], "preguntas": myQuest});
+    }
+    myJson.addAll({"Material": material});
+
+    return myJson;
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/pages/InfoMateria.dart';
 import 'package:memoritze/pages/InitQuests.dart';
+import 'package:memoritze/pages/infoDeClases/ShareInfo.dart';
 import 'package:memoritze/settings.dart';
 
 // ignore: must_be_immutable
@@ -19,17 +20,13 @@ class InfoMyClass extends StatefulWidget {
 
 class _InfoMyClassState extends State<InfoMyClass>
     with SingleTickerProviderStateMixin {
-  @override
-
-  //Para las funciones de la modificacion de clases//
-
-  List<int> _selected = [];
+  final List<int> _selected = [];
 
   ConnectionDataBase dataBase = ConnectionDataBase();
 
-  bool _showAccept = false;
+  final bool _showAccept = false;
 
-  late ScrollController _scrollController = ScrollController();
+  late final ScrollController _scrollController = ScrollController();
 
   void initQuest() {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -332,12 +329,13 @@ class _InfoMyClassState extends State<InfoMyClass>
                         child: const Icon(Icons.play_arrow_outlined),
                       ),
                     ),
-                    if (_showAccept) initClassUniq,
                   ],
                 ),
         ));
   }
 
+  // ignore: non_constant_identifier_names
+//Diseño de appBarSuperior de la aplicacion
   SliverAppBar appBarOfInfoMyClass(BuildContext context) {
     return SliverAppBar(
       elevation: 10,
@@ -379,7 +377,17 @@ class _InfoMyClassState extends State<InfoMyClass>
                   child: Row(
                     children: [
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () => showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) {
+                                return ShareFile(
+                                  material: material,
+                                  mySetting: mySetting,
+                                  context: context,
+                                  idClass: widget.id_class,
+                                );
+                              }),
                           icon: const Icon(Icons.share, color: Colors.white)),
                       IconButton(
                           onPressed: () async {
@@ -430,7 +438,17 @@ class _InfoMyClassState extends State<InfoMyClass>
                                   const MaterialStatePropertyAll(Colors.white),
                               backgroundColor: MaterialStatePropertyAll(
                                   mySetting.getColorsIconButton())),
-                          onPressed: () {},
+                          onPressed: () => showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) {
+                                return ShareFile(
+                                  material: material,
+                                  mySetting: mySetting,
+                                  context: context,
+                                  idClass: widget.id_class,
+                                );
+                              }),
                           child: const Row(
                             children: [
                               Icon(Icons.share),
@@ -487,6 +505,7 @@ class _InfoMyClassState extends State<InfoMyClass>
     );
   }
 
+//Logica para modificar la informacion de una clase
   Future<dynamic> setClass(BuildContext context) {
     bool acceptName = true;
     bool acceptDescription = true;
@@ -499,11 +518,10 @@ class _InfoMyClassState extends State<InfoMyClass>
           _descriptionEditController.text = this.myClass[0]['Descripcion'];
           return AlertDialog(
             actionsAlignment: MainAxisAlignment.center,
-            titleTextStyle:
-                TextStyle(color: mySetting.getColorText(), fontSize: 20),
+            titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
             backgroundColor: mySetting.getColorNavSup(),
             actionsOverflowAlignment: OverflowBarAlignment.center,
-            iconColor: mySetting.getColorText(),
+            iconColor: Colors.white,
             title: const Text(
               "Configuración de clase",
               textAlign: TextAlign.center,
@@ -523,16 +541,16 @@ class _InfoMyClassState extends State<InfoMyClass>
                       acceptName = true;
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: "Nombre de clase",
-                        hoverColor: mySetting.getColorText(),
-                        fillColor: mySetting.getColorText(),
-                        focusColor: mySetting.getColorText(),
+                        prefixIconColor: Colors.white,
+                        hoverColor: Colors.white,
+                        fillColor: Colors.white,
+                        focusColor: Colors.white,
                         focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: mySetting.getColorText())),
-                        labelStyle: TextStyle(color: mySetting.getColorText())),
-                    style: TextStyle(color: mySetting.getColorText()),
+                            borderSide: BorderSide(color: Colors.white)),
+                        labelStyle: TextStyle(color: Colors.white)),
+                    style: const TextStyle(color: Colors.white),
                   ),
                   const SizedBox(
                     height: 20,
@@ -548,16 +566,15 @@ class _InfoMyClassState extends State<InfoMyClass>
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     autofocus: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: "Descripcion de clase",
-                        hoverColor: mySetting.getColorText(),
-                        fillColor: mySetting.getColorText(),
-                        focusColor: mySetting.getColorText(),
+                        hoverColor: Colors.white,
+                        fillColor: Colors.white,
+                        focusColor: Colors.white,
                         focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: mySetting.getColorText())),
-                        labelStyle: TextStyle(color: mySetting.getColorText())),
-                    style: TextStyle(color: mySetting.getColorText()),
+                            borderSide: BorderSide(color: Colors.white)),
+                        labelStyle: TextStyle(color: Colors.white)),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
               ),
@@ -567,9 +584,9 @@ class _InfoMyClassState extends State<InfoMyClass>
                   onPressed: () {
                     Navigator.of(context).pop(context);
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.cancel,
-                    color: mySetting.getColorText(),
+                    color: Colors.white,
                   )),
               IconButton(
                   onPressed: () async {
@@ -579,28 +596,29 @@ class _InfoMyClassState extends State<InfoMyClass>
                           builder: ((context) {
                             return AlertDialog(
                               backgroundColor: mySetting.getBackgroundColor(),
-                              title: Text(
+                              title: const Text(
                                 "Inserte valores validos",
-                                style:
-                                    TextStyle(color: mySetting.getColorText()),
+                                style: TextStyle(color: Colors.white),
                               ),
                             );
                           }));
                       return;
                     }
                     await dataBase.changeInfoClass(_nameEditController.text,
-                        _descriptionEditController.text, this.myClass[0]["ID"]);
+                        _descriptionEditController.text, myClass[0]["ID"]);
+                    // ignore: use_build_context_synchronously
                     Navigator.pop(context);
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.check_circle,
-                    color: mySetting.getColorText(),
+                    color: Colors.white,
                   )),
             ],
           );
         });
   }
 
+//Logica que permite la generacion de una nueva materia
   Future<dynamic> generateNewMateria(BuildContext context) {
     return showDialog(
         barrierDismissible: false,
@@ -608,7 +626,7 @@ class _InfoMyClassState extends State<InfoMyClass>
         builder: (context) {
           return AlertDialog(
             backgroundColor: mySetting.getColorNavSup(),
-            iconColor: mySetting.getColorText(),
+            iconColor: Colors.white,
             content: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -624,29 +642,29 @@ class _InfoMyClassState extends State<InfoMyClass>
                       return null;
                     },
                     controller: _nameMaterial,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
-                      color: mySetting.getColorText(),
+                      color: Colors.white,
                     ),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: mySetting.getColorText(),
+                          color: Colors.white,
                         ),
                       ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: mySetting.getColorText(),
+                          color: Colors.white,
                         ),
                       ),
-                      labelStyle: TextStyle(color: textColor),
-                      hintStyle: TextStyle(color: textColor),
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
                       hintText: "Ejm: La peor materia :c",
-                      hoverColor: mySetting.getColorText(),
+                      hoverColor: Colors.white,
                       labelText: "Nombre materia",
                       icon: Icon(
                         Icons.width_normal_rounded,
-                        color: mySetting.getColorText(),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -657,12 +675,12 @@ class _InfoMyClassState extends State<InfoMyClass>
                     IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(Icons.close),
-                      color: mySetting.getColorText(),
+                      color: Colors.white,
                     ),
                     IconButton(
                       onPressed: () => saveMaterial(context),
                       icon: const Icon(Icons.check),
-                      color: mySetting.getColorText(),
+                      color: Colors.white,
                     ),
                   ],
                 ),
