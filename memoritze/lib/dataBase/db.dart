@@ -1,6 +1,10 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'package:memoritze/pages/InfoMateria.dart';
+import 'package:memoritze/settings.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -122,6 +126,10 @@ class ConnectionDataBase {
 
   Future<bool> createClass(String name, String description) async {
     Database data = await _connect();
+    var exist = await data.query("clase", where: "Nombre = '$name'");
+    if (exist.length != 0) {
+      return false;
+    }
     data.insert("clase", {
       "Nombre": name,
       "Descripcion": description,
@@ -152,6 +160,11 @@ class ConnectionDataBase {
   Future<bool> createNewMateriaDB(String name, int id) async {
     List<Map<String, dynamic>> myMateria = await getClass(id);
     Database data = await _connect();
+    var exist =
+        await data.query("materia", where: "Nombre = '$name' ;ID = '$id'");
+    if (exist.length != 0) {
+      return false;
+    }
     await data.insert("materia", {
       "ID": id,
       "Nombre": name,
@@ -222,6 +235,12 @@ class ConnectionDataBase {
   Future<bool> createPreg(
       int idClass, int idMateria, String pregunta, String respuesta) async {
     Database data = await _connect();
+    List<Map<String, Object?>> pregs = await data.query('pregunta',
+        where: "Pregunta = '$pregunta' and ID_subclass = $idMateria");
+
+    if (pregs.isNotEmpty) {
+      return false;
+    }
     List<Map<String, dynamic>> materia = await data.query('materia',
         where: 'ID_subclass = ${idMateria.toString()}',
         orderBy: 'FechPrio DESC');
@@ -289,7 +308,9 @@ class ConnectionDataBase {
   Future<Map<String, dynamic>> createJson(
       int idClass, List<int> listIndex) async {
     Map<String, dynamic> myClass = (await getClass(idClass))[0];
+    Setting mySetting = Setting();
     var myJson = {
+      "versionCreate": mySetting.version0,
       "name": myClass["Nombre"],
     };
     var material = [];
@@ -306,5 +327,42 @@ class ConnectionDataBase {
     myJson.addAll({"Material": material});
 
     return myJson;
+  }
+
+  Future<String> chargeNewInfo(Map<String, dynamic> info) async {
+    if (info.keys.toString() != "(versionCreate, name, Material)") {
+      return "Algo anda mal con el archivo";
+    }
+    if (16 < info["versionCreate"] || 16 < info["versionCreate"]) {
+      return "La version de creacion no es valida";
+    }
+
+    String name = info["name"];
+    await createClass(name, "Actualizar");
+
+    Database data = await _connect();
+    Map<String, Object?> infoClass =
+        (await data.query("clase", where: "Nombre = '$name'"))[0];
+    //print("info: ${infoClass}");
+    int idClass = infoClass['ID'] as int;
+    var material = info["Material"];
+    print(material);
+    for (int i = 0; i < material.length; i++) {
+      String nameMateria = material[i]["name_materia"];
+      await createNewMateriaDB(nameMateria, idClass);
+
+      Database data = await _connect();
+      final int IdMateria = (await data.query("materia",
+          where: "Nombre = '$nameMateria'"))[0]['ID_subclass'] as int;
+      _close(data);
+
+      List<dynamic> myQuests = material[i]["preguntas"];
+      for (int j = 0; j < myQuests.length; j++) {
+        print(myQuests[j]);
+        await createPreg(idClass, IdMateria, myQuests[j]["Pregunta"] as String,
+            myQuests[j]["respuesta"] as String);
+      }
+    }
+    return "Carga exitosa";
   }
 }

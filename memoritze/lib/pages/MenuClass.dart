@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/pages/Configuraciones.dart';
 import 'package:memoritze/pages/menus/SeeFavClass.dart';
 import 'package:memoritze/pages/menus/SeeMyClass.dart';
 import 'package:memoritze/settings.dart';
+import 'package:file_picker/file_picker.dart';
 
 // ignore: must_be_immutable
 class MenuInit extends StatefulWidget {
@@ -116,7 +119,7 @@ class MenuInitState extends State<MenuInit>
                       AnimatedPositioned(
                           curve: Curves.easeInOut,
                           duration: const Duration(milliseconds: 300),
-                          top: stateMore ? 5 : -100,
+                          top: stateMore ? 5 : -150,
                           right: 5,
                           child: FittedBox(
                             child: Container(
@@ -125,8 +128,8 @@ class MenuInitState extends State<MenuInit>
                                   border: Border.all(
                                       color: mySetting.getColorText(),
                                       width: 0.3),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10))),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -166,6 +169,18 @@ class MenuInitState extends State<MenuInit>
                                         "Informacion",
                                         style: TextStyle(
                                             color: mySetting.getColorText()),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          stateMore = false;
+                                        });
+                                        cargateLogic();
+                                      },
+                                      child: Text(
+                                        "Cargar/Actualizar clase",
+                                        style: TextStyle(
+                                            color: mySetting.getColorText()),
                                       ))
                                 ],
                               ),
@@ -180,6 +195,7 @@ class MenuInitState extends State<MenuInit>
     );
   }
 
+//Informacion de cuando precionen el boton de "informacion"
   Future<dynamic> mensaje(BuildContext context) {
     return showDialog(
         context: context,
@@ -214,6 +230,7 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
         });
   }
 
+//AppBAR
   AppBar appBarClass() {
     return AppBar(
       iconTheme: IconThemeData(
@@ -249,6 +266,7 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
     );
   }
 
+  //Diseño de la AppBarButton
   // ignore: non_constant_identifier_names
   Widget MyBottomBar() {
     final Animation<double> curve =
@@ -344,5 +362,39 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
         ],
       ),
     );
+  }
+
+  void cargateLogic() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
+
+    if (result == null) {
+      return;
+    }
+
+    File file = File(result.files.single.path as String);
+
+    Map<String, dynamic> info = json.decode(file.readAsStringSync());
+    String ast = await connection.chargeNewInfo(info);
+    if (ast == "Carga exitosa") {
+      // ignore: use_build_context_synchronously
+      await Navigator.pushAndRemoveUntil(
+        context,
+        PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => MenuInit(
+                  prepared: true,
+                ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            }),
+        (route) => false,
+      );
+    }
   }
 }

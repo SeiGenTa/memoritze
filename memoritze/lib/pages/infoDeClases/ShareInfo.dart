@@ -27,6 +27,7 @@ class ShareFile extends StatefulWidget {
 
 class _ShareFileState extends State<ShareFile> {
   ConnectionDataBase myConnection = ConnectionDataBase();
+  Setting mySetting = Setting();
   final List<int> _mySelects = [];
 
   @override
@@ -70,8 +71,29 @@ class _ShareFileState extends State<ShareFile> {
             onPressed: () async {
               Map<String, dynamic> mapInfo =
                   await myConnection.createJson(widget.idClass, _mySelects);
-              //print(mapInfo);
+
               String myJson = json.encode(mapInfo);
+
+              if (Platform.isWindows || Platform.isLinux) {
+                var _dowloadDirectory = await getDownloadsDirectory();
+                File myFIle =
+                    File("${_dowloadDirectory!.path}/miMaterial.json");
+                await myFIle.writeAsString(myJson);
+                // ignore: use_build_context_synchronously
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor: mySetting.getColorNavSup(),
+                        content: const Text(
+                          "Se a guardado en tu carpeta de descargas",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      );
+                    });
+                return;
+              }
+
               var _tempDirectory = await getTemporaryDirectory();
 
               File myFIle = File("${_tempDirectory.path}/miMaterial.json");

@@ -69,7 +69,19 @@ class _InfoMyClassState extends State<InfoMyClass>
     if (_nameMaterial.text.isEmpty) return;
     Navigator.pop(context);
     // ignore: await_only_futures
-    await dataBase.createNewMateriaDB(_nameMaterial.text, widget.id_class);
+    bool result =
+        await dataBase.createNewMateriaDB(_nameMaterial.text, widget.id_class);
+    if (result == false) {
+      showDialog(
+          context: context,
+          builder: ((context) {
+            return AlertDialog(
+              backgroundColor: mySetting.getColorNavSup(),
+              titleTextStyle: const TextStyle(color: Colors.white),
+              title: const Text("Ya existe una materia con este nombre"),
+            );
+          }));
+    }
     _nameMaterial.clear();
     chargerMaterial();
   }

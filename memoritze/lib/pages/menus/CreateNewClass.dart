@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
@@ -176,6 +178,19 @@ class _CreateClassState extends State<CreateClass> {
                               if (request) {
                                 // ignore: use_build_context_synchronously
                                 Navigator.pop(context);
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        backgroundColor:
+                                            mySetting.getColorNavSup(),
+                                        title: const Text(
+                                          "Ya existe una clase con ese nombre",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      );
+                                    });
                               }
                             }
                           },
