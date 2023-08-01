@@ -213,9 +213,6 @@ class _MyClassState extends State<MyClass> {
               ? Border.all(
                   color: const Color.fromARGB(255, 255, 255, 255), width: 1)
               : null,
-          color: deleteIds.contains(myDataBase[index]['ID'])
-              ? mySetting.getColorDrawerSecondary()
-              : const Color(0),
         ),
         child: Stack(
           children: [
