@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
+import 'package:memoritze/observers/notificationMenu.dart';
 import 'package:memoritze/pages/Configuraciones.dart';
 import 'package:memoritze/pages/menus/SeeFavClass.dart';
 import 'package:memoritze/pages/menus/SeeMyClass.dart';
@@ -33,10 +34,7 @@ class MenuInitState extends State<MenuInit>
 
   bool stateMore = false;
 
-  List<Widget> myStates = [
-    const MyClass(),
-    const FavClass(),
-  ];
+  final Observer _observer = Observer();
 
   void subscribeToStream(Stream<String> stream) {
     stream.listen((data) => setState(() {
@@ -46,6 +44,7 @@ class MenuInitState extends State<MenuInit>
 
   bool charge = false;
   bool boolChangePage = false;
+  bool disablePage = false;
 
   void initPage() async {
     if (!widget.prepared) {
@@ -70,8 +69,11 @@ class MenuInitState extends State<MenuInit>
 
   void dispose() {
     animationController.dispose();
+    _observer.dispose();
     super.dispose();
   }
+
+  FavClass favClass = FavClass();
 
   @override
   Widget build(BuildContext context) {
@@ -99,14 +101,16 @@ class MenuInitState extends State<MenuInit>
                     children: [
                       Transform.translate(
                         offset: Offset(-animationOfMenu.value, 0.0),
-                        child: MyClass(),
+                        child: MyClass(
+                          observer: _observer,
+                        ),
                       ),
                       Transform.translate(
                         offset: Offset(
                             MediaQuery.of(context).size.width -
                                 animationOfMenu.value,
                             0.0),
-                        child: FavClass(),
+                        child: favClass,
                       ),
                       if (stateMore)
                         GestureDetector(
@@ -186,6 +190,10 @@ class MenuInitState extends State<MenuInit>
                               ),
                             ),
                           )),
+                      if (disablePage)
+                        Container(
+                          color: Colors.black26,
+                        ),
                     ],
                   );
                 },
@@ -376,25 +384,20 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
 
     File file = File(result.files.single.path as String);
 
-    Map<String, dynamic> info = json.decode(file.readAsStringSync());
-    String ast = await connection.chargeNewInfo(info);
-    if (ast == "Carga exitosa") {
-      // ignore: use_build_context_synchronously
-      await Navigator.pushAndRemoveUntil(
-        context,
-        PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => MenuInit(
-                  prepared: true,
-                ),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            }),
-        (route) => false,
-      );
+    setState(() {
+      disablePage = true;
+    });
+
+    try {
+      Map<String, dynamic> info = json.decode(file.readAsStringSync());
+      await connection.chargeNewInfo(info);
+    } finally {
+      _observer.notify("recargar");
     }
+    //ReloadNotifier.observer.notify();
+
+    setState(() {
+      disablePage = false;
+    });
   }
 }

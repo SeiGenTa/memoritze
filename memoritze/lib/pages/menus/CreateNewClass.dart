@@ -176,7 +176,6 @@ class _CreateClassState extends State<CreateClass> {
                               bool request = await _dataBase.createClass(
                                   nameClass.text, descriptionClass.text);
                               if (request) {
-                                // ignore: use_build_context_synchronously
                                 Navigator.pop(context);
                               } else {
                                 showDialog(

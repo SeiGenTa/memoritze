@@ -2,18 +2,22 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
+import 'package:memoritze/observers/notificationMenu.dart';
 import 'package:memoritze/pages/infoDeClases/InfoMyClass.dart';
 import 'package:memoritze/pages/menus/CreateNewClass.dart';
 import 'package:memoritze/settings.dart';
 
 class MyClass extends StatefulWidget {
-  const MyClass({super.key});
+  late final Observer observer;
+  MyClass({super.key, required this.observer});
 
   @override
   State<MyClass> createState() => _MyClassState();
 }
 
 class _MyClassState extends State<MyClass> {
+  //ObserverMenu
+
   int state = 0; // 0 normalState// 1 EditState
 
   //Info in delete State
@@ -37,8 +41,18 @@ class _MyClassState extends State<MyClass> {
 
   @override
   void initState() {
+    widget.observer.onChanged.listen((event) {
+      init();
+      print("fui notificado");
+    });
     super.initState();
     init();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   void addDelete(int id) {
@@ -251,8 +265,8 @@ class _MyClassState extends State<MyClass> {
                           children: [
                             Text(
                               myDataBase[index]['Nombre'],
-                              style: TextStyle(
-                                color: mySetting.getColorText(),
+                              style: const TextStyle(
+                                color: Colors.white,
                               ),
                               textAlign: TextAlign.center,
                             ),
