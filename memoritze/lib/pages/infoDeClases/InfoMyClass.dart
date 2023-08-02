@@ -54,11 +54,9 @@ class _InfoMyClassState extends State<InfoMyClass>
 
   void _updateAppBarStretchRatio() async {
     if (_scrollController.offset > 60 && extend == false) {
-      print("cambio: extendido");
       _controllerAnimateAppBar.forward();
       extend = true;
     } else if (_scrollController.offset < 60 && extend == true) {
-      print("cambio: contraer");
       _controllerAnimateAppBar.reverse();
       extend = false;
     }
@@ -68,19 +66,19 @@ class _InfoMyClassState extends State<InfoMyClass>
     _formKey.currentState!.validate();
     if (_nameMaterial.text.isEmpty) return;
     Navigator.pop(context);
-    // ignore: await_only_futures
     bool result =
         await dataBase.createNewMateriaDB(_nameMaterial.text, widget.id_class);
     if (result == false) {
       showDialog(
-          context: context,
-          builder: ((context) {
-            return AlertDialog(
-              backgroundColor: mySetting.getColorNavSup(),
-              titleTextStyle: const TextStyle(color: Colors.white),
-              title: const Text("Ya existe una materia con este nombre"),
-            );
-          }));
+        context: context,
+        builder: ((context) {
+          return AlertDialog(
+            backgroundColor: mySetting.getColorNavSup(),
+            titleTextStyle: const TextStyle(color: Colors.white),
+            title: const Text("Ya existe una materia con ese nombre"),
+          );
+        }),
+      );
     }
     _nameMaterial.clear();
     chargerMaterial();
@@ -191,134 +189,142 @@ class _InfoMyClassState extends State<InfoMyClass>
                         SliverList.builder(
                             itemCount: material.length,
                             itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  if (index == 0)
-                                    Divider(
-                                      color: mySetting.getColorText(),
-                                    ),
-                                  ListTile(
-                                    leading: Stack(
-                                      children: [
-                                        Transform.translate(
-                                          offset: Offset(20.0, -27.0),
-                                          child: Transform(
-                                            transform: Matrix4.identity()
-                                              ..rotateZ(4 / 20 * pi)
-                                              ..scale(1.3),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: mySetting
-                                                          .getColorsOpos(),
-                                                      width: 0.5),
-                                                  color:
-                                                      mySetting.getColorPager(),
-                                                  borderRadius:
-                                                      BorderRadius.circular(5)),
-                                              height: 90,
-                                              width: 40,
-                                            ),
-                                          ),
-                                        ),
-                                        Transform.translate(
-                                          offset: Offset(5.0, -23.0),
-                                          child: Transform(
-                                            transform: Matrix4.identity()
-                                              ..rotateZ(3 / 20 * pi)
-                                              ..scale(1.3),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: mySetting
-                                                          .getColorsOpos(),
-                                                      width: 0.5),
-                                                  color:
-                                                      mySetting.getColorPager(),
-                                                  borderRadius:
-                                                      BorderRadius.circular(5)),
-                                              height: 90,
-                                              width: 40,
-                                              child: Text(
-                                                "${material[index]['Nombre']}",
-                                                overflow: TextOverflow.clip,
-                                                style: TextStyle(
+                              return GestureDetector(
+                                onTap: () {
+                                  if (_selected.isEmpty) {
+                                    return;
+                                  }
+                                  if (!_selected.any((element) =>
+                                      element ==
+                                      material[index]['ID_subclass'])) {
+                                    setState(() {
+                                      _selected
+                                          .add(material[index]['ID_subclass']);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _selected.remove(
+                                          material[index]['ID_subclass']);
+                                    });
+                                  }
+                                },
+                                onLongPress: () {
+                                  if (!_selected.any((element) =>
+                                      element ==
+                                      material[index]['ID_subclass'])) {
+                                    setState(() {
+                                      _selected
+                                          .add(material[index]['ID_subclass']);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _selected.remove(
+                                          material[index]['ID_subclass']);
+                                    });
+                                  }
+                                },
+                                child: ListTile(
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 5),
+                                  shape: Border.symmetric(
+                                      horizontal: BorderSide(
+                                          color: mySetting.getColorText())),
+                                  leading: Stack(
+                                    children: [
+                                      Transform.translate(
+                                        offset: const Offset(30.0, -5.0),
+                                        child: Transform(
+                                          transform: Matrix4.identity()
+                                            ..rotateZ(4 / 20 * pi)
+                                            ..scale(0.95),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
                                                     color: mySetting
-                                                        .getColorText(),
-                                                    fontSize: 10),
-                                              ),
+                                                        .getColorsOpos(),
+                                                    width: 0.5),
+                                                color:
+                                                    mySetting.getColorPager(),
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            height: 90,
+                                            width: 40,
+                                          ),
+                                        ),
+                                      ),
+                                      Transform.translate(
+                                        offset: Offset(15.0, -6.0),
+                                        child: Transform(
+                                          transform: Matrix4.identity()
+                                            ..rotateZ(3 / 20 * pi)
+                                            ..scale(0.95),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: mySetting
+                                                        .getColorsOpos(),
+                                                    width: 0.5),
+                                                color:
+                                                    mySetting.getColorPager(),
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            height: 90,
+                                            width: 40,
+                                            child: Text(
+                                              "${material[index]['Nombre']}",
+                                              overflow: TextOverflow.clip,
+                                              style: TextStyle(
+                                                  color:
+                                                      mySetting.getColorText(),
+                                                  fontSize: 10),
                                             ),
                                           ),
                                         ),
+                                      ),
+                                      if (_selected.any((element) =>
+                                          element ==
+                                          material[index]['ID_subclass']))
+                                        const Positioned(
+                                            right: 0,
+                                            bottom: 0,
+                                            child: Icon(Icons.check_circle))
+                                    ],
+                                  ),
+                                  textColor: mySetting.getColorText(),
+                                  iconColor: mySetting.getColorText(),
+                                  title: SizedBox(
+                                    height: 50,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            child: Text(
+                                          "   Cantidad de preguntas: ${material[index]['cantPreg']}",
+                                          overflow: TextOverflow.ellipsis,
+                                        )),
+                                        IconButton(
+                                            onPressed: () {
+                                              initSettingMateria(material[index]
+                                                  ['ID_subclass']);
+                                            },
+                                            icon: const Icon(Icons.settings)),
+                                        IconButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        InitQuest(
+                                                            IdsMaterials: [
+                                                              material[index][
+                                                                  'ID_subclass']
+                                                            ])),
+                                              );
+                                            },
+                                            icon: const Icon(Icons.play_arrow))
                                       ],
                                     ),
-                                    textColor: mySetting.getColorText(),
-                                    iconColor: mySetting.getColorText(),
-                                    title: Container(
-                                      height: 50,
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                              child: Text(
-                                            "   Cantidad de preguntas: ${material[index]['cantPreg']}",
-                                            overflow: TextOverflow.ellipsis,
-                                          )),
-                                          IconButton(
-                                              onPressed: () {
-                                                if (!_selected.any((element) =>
-                                                    element ==
-                                                    material[index]
-                                                        ['ID_subclass'])) {
-                                                  setState(() {
-                                                    _selected.add(
-                                                        material[index]
-                                                            ['ID_subclass']);
-                                                  });
-                                                } else {
-                                                  setState(() {
-                                                    _selected.remove(
-                                                        material[index]
-                                                            ['ID_subclass']);
-                                                  });
-                                                }
-                                              },
-                                              icon: (_selected.any((element) =>
-                                                      element ==
-                                                      material[index]
-                                                          ['ID_subclass']))
-                                                  ? const Icon(Icons.check_box)
-                                                  : const Icon(Icons.add_box)),
-                                          IconButton(
-                                              onPressed: () {
-                                                initSettingMateria(
-                                                    material[index]
-                                                        ['ID_subclass']);
-                                              },
-                                              icon: const Icon(Icons.settings)),
-                                          IconButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          InitQuest(
-                                                              IdsMaterials: [
-                                                                material[index][
-                                                                    'ID_subclass']
-                                                              ])),
-                                                );
-                                              },
-                                              icon:
-                                                  const Icon(Icons.play_arrow))
-                                        ],
-                                      ),
-                                    ),
                                   ),
-                                  if (index != material.length)
-                                    Divider(
-                                      color: mySetting.getColorText(),
-                                    ),
-                                ],
+                                ),
                               );
                             })
                       ],
@@ -383,7 +389,6 @@ class _InfoMyClassState extends State<InfoMyClass>
             AnimatedBuilder(
               animation: animateAppBar,
               builder: (context, child) {
-                print(animateAppBar.value);
                 return Transform.translate(
                   offset: Offset(0, -50 * (1 - animateAppBar.value)),
                   child: Row(

@@ -73,7 +73,7 @@ class Setting {
 
   static const List<Color> _colorsNavBarSup = [
     Color.fromRGBO(0, 122, 31, 1),
-    Color.fromARGB(255, 26, 26, 26),
+    Color.fromARGB(255, 24, 30, 24),
   ];
 
   static const List<Color> _colorsNavBarBot = [

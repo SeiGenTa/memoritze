@@ -167,7 +167,7 @@ class MenuInitState extends State<MenuInit>
                                         setState(() {
                                           stateMore = false;
                                         });
-                                        mensaje(context);
+                                        messageOfInformation(context);
                                       },
                                       child: Text(
                                         "Informacion",
@@ -204,7 +204,7 @@ class MenuInitState extends State<MenuInit>
   }
 
 //Informacion de cuando precionen el boton de "informacion"
-  Future<dynamic> mensaje(BuildContext context) {
+  Future<dynamic> messageOfInformation(BuildContext context) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -258,7 +258,7 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
       ],
       backgroundColor: mySetting.getColorNavSup(),
       shape: BorderDirectional(
-          bottom: BorderSide(color: mySetting.getColorText(), width: 0.4)),
+          bottom: BorderSide(color: mySetting.getColorText(), width: 0.2)),
       title: Row(
         children: [
           Image.asset(
@@ -388,13 +388,16 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
       disablePage = true;
     });
 
+    String textResponse = "";
+
     try {
       Map<String, dynamic> info = json.decode(file.readAsStringSync());
-      await connection.chargeNewInfo(info);
+      textResponse = await connection.chargeNewInfo(info);
     } finally {
-      _observer.notify("recargar");
+      _observer.notify(textResponse);
     }
-    //ReloadNotifier.observer.notify();
+
+    // ignore: use_build_context_synchronously
 
     setState(() {
       disablePage = false;

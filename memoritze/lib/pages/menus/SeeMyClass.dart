@@ -43,6 +43,17 @@ class _MyClassState extends State<MyClass> {
   void initState() {
     widget.observer.onChanged.listen((event) {
       init();
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              backgroundColor: mySetting.getColorNavSup(),
+              title: Text(
+                event,
+                style: const TextStyle(color: Colors.white),
+              ),
+            );
+          });
       print("fui notificado");
     });
     super.initState();

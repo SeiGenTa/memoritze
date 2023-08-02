@@ -12,6 +12,8 @@ class InfoMateria extends StatefulWidget {
 }
 
 class _InfoMateriaState extends State<InfoMateria> {
+  late final ScrollController _scrollController;
+
   late int idClass;
   late List<Map<String, dynamic>> infPregMateria;
   late Map<String, dynamic> infMateria;
@@ -25,10 +27,9 @@ class _InfoMateriaState extends State<InfoMateria> {
   final pregunta = TextEditingController();
   final respuesta = TextEditingController();
 
-  bool viewEditQuest = false;
   final _formEditQuest = GlobalKey<FormState>();
-  final preguntaEdit = TextEditingController();
-  final respuestaEdit = TextEditingController();
+  final answerEdit = TextEditingController();
+  final questEdit = TextEditingController();
   int indexQuest = 0;
   bool viewCreateNewQuest = false;
 
@@ -44,29 +45,169 @@ class _InfoMateriaState extends State<InfoMateria> {
     return true;
   }
 
+  //Logica detras de la edicion de quest
   initEditQuest(int ubq) {
     Map<String, dynamic> myPreg = infPregMateria[ubq];
     indexQuest = ubq;
-    preguntaEdit.text = myPreg['Pregunta'];
-    respuestaEdit.text = myPreg['respuesta'];
-    setState(() {
-      viewEditQuest = true;
-    });
+    answerEdit.text = myPreg['Pregunta'];
+    questEdit.text = myPreg['respuesta'];
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: setting.getColorNavSup(),
+            title: Row(
+              children: [
+                IconButton(
+                  onPressed: () => setState(() {
+                    answerEdit.clear();
+                    questEdit.clear();
+                    Navigator.pop(context);
+                  }),
+                  icon: const Icon(Icons.arrow_back),
+                  color: Colors.white,
+                ),
+              ],
+            ),
+            content: Form(
+              key: _formEditQuest,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    //* INPUT DE PREGUNTA
+                    TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Debes colocar una buena pregunta.';
+                        }
+                        return null;
+                      },
+                      controller: answerEdit,
+                      maxLines: 5,
+                      minLines: 1,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
+                      decoration: const InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        labelStyle: TextStyle(color: Colors.white),
+                        hintStyle: TextStyle(color: Colors.white),
+                        hintText:
+                            "Ejm: ¿cual es estado mas comun en las estrellas?",
+                        hoverColor: Colors.white,
+                        labelText: "Pregunta",
+                        icon: Icon(
+                          Icons.question_mark,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    //* INPUT DE RESPUESTA
+                    TextFormField(
+                      maxLines: 5,
+                      minLines: 1,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Debes colocar una respuesta.';
+                        }
+                        return null;
+                      },
+                      controller: questEdit,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
+                      decoration: const InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        labelStyle: TextStyle(color: Colors.white),
+                        hintStyle: TextStyle(color: Colors.white),
+                        hintText:
+                            "Ejm: Debe ser la respuesta mas descriptiva o certera posible",
+                        hoverColor: Colors.white,
+                        labelText: "Respuesta",
+                        icon: Icon(
+                          Icons.question_answer,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            _formEditQuest.currentState!.validate();
+                            if (answerEdit.text.isEmpty ||
+                                questEdit.text.isEmpty) return;
+                            saveChangeQuest();
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.check_circle),
+                          iconSize: 40,
+                          color: Colors.white,
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            await dataBase
+                                .deletedQuest(infPregMateria[indexQuest]['ID']);
+                            setState(() {
+                              pregunta.clear();
+                              respuesta.clear();
+                              chargePage();
+                              Navigator.pop(context);
+                            });
+                          },
+                          icon: const Icon(Icons.delete_forever),
+                          iconSize: 40,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   void saveChangeQuest() {
-    dataBase.setQuestID(infPregMateria[indexQuest]['ID'], preguntaEdit.text,
-        respuestaEdit.text);
+    dataBase.setQuestID(
+        infPregMateria[indexQuest]['ID'], answerEdit.text, questEdit.text);
     chargePage();
-    setState(() {
-      viewEditQuest = false;
-    });
   }
-
-  saveEditQuest() {}
 
   @override
   void initState() {
+    _scrollController = ScrollController();
     super.initState();
     textColor = setting.getColorText();
     chargePage();
@@ -74,18 +215,22 @@ class _InfoMateriaState extends State<InfoMateria> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
+
     // TODO: implement dispose
     super.dispose();
     pregunta.dispose();
     respuesta.dispose();
-    preguntaEdit.dispose();
-    respuestaEdit.dispose();
+    answerEdit.dispose();
+    questEdit.dispose();
   }
 
   bool positionButtonActivate = false;
 
   @override
   Widget build(BuildContext context) {
+    double heightPage = MediaQuery.of(context).size.height - kToolbarHeight;
+
     var buttonStyle = ButtonStyle(
         backgroundColor:
             MaterialStatePropertyAll(setting.getColorsIconButton()),
@@ -95,6 +240,7 @@ class _InfoMateriaState extends State<InfoMateria> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
+          toolbarHeight: kToolbarHeight,
           backgroundColor: setting.getColorNavSup(),
           shape: BorderDirectional(
               bottom: BorderSide(color: setting.getColorText(), width: 0.4)),
@@ -129,36 +275,10 @@ class _InfoMateriaState extends State<InfoMateria> {
                     children: [
                       Expanded(
                           child: ListView.builder(
+                              controller: _scrollController,
                               itemCount: infPregMateria.length,
                               itemBuilder: (context, index) {
-                                return ListTile(
-                                  onTap: () => initEditQuest(index),
-                                  hoverColor: setting.getColorPaper(),
-                                  textColor: setting.getColorText(),
-                                  title: Container(
-                                    constraints: const BoxConstraints(
-                                      maxHeight: 30,
-                                    ),
-                                    child: Text(
-                                      infPregMateria[index]['Pregunta'],
-                                      style: TextStyle(
-                                        color: setting.getColorText(),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  subtitle: Container(
-                                    constraints: const BoxConstraints(
-                                      maxHeight: 50,
-                                    ),
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      infPregMateria[index]['respuesta'],
-                                      overflow: TextOverflow.fade,
-                                    ),
-                                  ),
-                                );
+                                return cartsOfQuests(heightPage, index);
                               })),
                     ],
                   ),
@@ -175,10 +295,13 @@ class _InfoMateriaState extends State<InfoMateria> {
                       duration: const Duration(milliseconds: 300),
                       child: ElevatedButton(
                         style: buttonStyle,
-                        onPressed: () => setState(() {
-                          viewEraseMateria = true;
-                        }),
-                        child: Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            positionButtonActivate = !positionButtonActivate;
+                          });
+                          eraseMaterial(context);
+                        },
+                        child: const Icon(Icons.delete),
                       )),
                   AnimatedPositioned(
                       curve: Curves.easeInCirc,
@@ -187,9 +310,12 @@ class _InfoMateriaState extends State<InfoMateria> {
                       duration: const Duration(milliseconds: 300),
                       child: ElevatedButton(
                         style: buttonStyle,
-                        onPressed: () => setState(() {
-                          viewCreateNewQuest = true;
-                        }),
+                        onPressed: () {
+                          addQuest(context);
+                          setState(() {
+                            positionButtonActivate = !positionButtonActivate;
+                          });
+                        },
                         child: Icon(Icons.add),
                       )),
                   Positioned(
@@ -214,336 +340,294 @@ class _InfoMateriaState extends State<InfoMateria> {
                       ),
                     ),
                   ),
-                  if (viewCreateNewQuest)
-                    Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      color: Colors.black26,
-                      child: Container(
-                        constraints: BoxConstraints(
-                          minHeight: MediaQuery.of(context).size.height / 2,
-                        ),
-                        color: setting.getBackgroundColor(),
-                        padding: EdgeInsets.all(30),
-                        child: Form(
-                          key: _formNewQuest,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              //* INPUT DE PREGUNTA
-                              TextFormField(
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Debes colocar una buena pregunta.';
-                                  }
-                                  return null;
-                                },
-                                controller: pregunta,
-                                maxLines: 5,
-                                minLines: 1,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: textColor,
-                                ),
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  labelStyle: TextStyle(color: textColor),
-                                  hintStyle: TextStyle(color: textColor),
-                                  hintText:
-                                      "Ejm: ¿cual es estado mas comun en las estrellas?",
-                                  hoverColor: textColor,
-                                  labelText: "Pregunta",
-                                  icon: Icon(
-                                    Icons.question_mark,
-                                    color: textColor,
-                                  ),
-                                ),
-                              ),
-                              //* INPUT DE RESPUESTA
-                              TextFormField(
-                                maxLines: 5,
-                                minLines: 1,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Debes colocar una respuesta.';
-                                  }
-                                  return null;
-                                },
-                                controller: respuesta,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: textColor,
-                                ),
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  labelStyle: TextStyle(color: textColor),
-                                  hintStyle: TextStyle(color: textColor),
-                                  hintText:
-                                      "Ejm: Debe ser la respuesta mas descriptiva o certera posible",
-                                  hoverColor: textColor,
-                                  labelText: "Respuesta",
-                                  icon: Icon(
-                                    Icons.question_answer,
-                                    color: textColor,
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  IconButton(
-                                    onPressed: () => setState(() {
-                                      pregunta.clear();
-                                      respuesta.clear();
-                                      viewCreateNewQuest = false;
-                                    }),
-                                    icon: const Icon(Icons.cancel),
-                                    iconSize: 40,
-                                    color: textColor,
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      _formNewQuest.currentState!.validate();
-                                      if (pregunta.text.isEmpty ||
-                                          respuesta.text.isEmpty) return;
-                                      await dataBase.createPreg(
-                                          idClass,
-                                          widget.idMateria,
-                                          pregunta.text.toString(),
-                                          respuesta.text.toString());
-                                      pregunta.clear();
-                                      respuesta.clear();
-                                      viewCreateNewQuest = false;
-                                      chargePage();
-                                    },
-                                    icon: const Icon(Icons.check_circle),
-                                    iconSize: 40,
-                                    color: textColor,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (viewEraseMateria)
-                    Container(
-                      color: Colors.black26,
-                      alignment: Alignment.center,
-                      child: Container(
-                        color: setting.getBackgroundColor(),
-                        padding: EdgeInsets.all(20),
-                        constraints: BoxConstraints(
-                          minHeight: MediaQuery.of(context).size.height / 3,
-                          minWidth: MediaQuery.of(context).size.width / 3,
-                        ),
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "¿Estas seguro de querer eliminar esta materia?",
-                                style: TextStyle(color: setting.getColorText()),
-                              ),
-                              Container(
-                                constraints: BoxConstraints(
-                                  minWidth:
-                                      MediaQuery.of(context).size.width / 3,
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () => setState(() {
-                                        viewEraseMateria = false;
-                                      }),
-                                      icon: const Icon(Icons.cancel_rounded),
-                                      color: setting.getColorText(),
-                                    ),
-                                    IconButton(
-                                      onPressed: () async {
-                                        await dataBase.deleteMateria(
-                                            widget.idMateria, idClass);
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pop(context);
-                                      },
-                                      icon: const Icon(Icons.check_circle),
-                                      color: setting.getColorText(),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ]),
-                      ),
-                    ),
-                  if (viewEditQuest)
-                    Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      color: Colors.black26,
-                      child: Container(
-                        constraints: BoxConstraints(
-                          minHeight: MediaQuery.of(context).size.height / 2,
-                        ),
-                        color: setting.getBackgroundColor(),
-                        padding: EdgeInsets.all(30),
-                        child: Form(
-                          key: _formEditQuest,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              //* INPUT DE PREGUNTA
-                              TextFormField(
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Debes colocar una buena pregunta.';
-                                  }
-                                  return null;
-                                },
-                                controller: preguntaEdit,
-                                maxLines: 5,
-                                minLines: 1,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: textColor,
-                                ),
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  labelStyle: TextStyle(color: textColor),
-                                  hintStyle: TextStyle(color: textColor),
-                                  hintText:
-                                      "Ejm: ¿cual es estado mas comun en las estrellas?",
-                                  hoverColor: textColor,
-                                  labelText: "Pregunta",
-                                  icon: Icon(
-                                    Icons.question_mark,
-                                    color: textColor,
-                                  ),
-                                ),
-                              ),
-                              //* INPUT DE RESPUESTA
-                              TextFormField(
-                                maxLines: 5,
-                                minLines: 1,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Debes colocar una respuesta.';
-                                  }
-                                  return null;
-                                },
-                                controller: respuestaEdit,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: textColor,
-                                ),
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  labelStyle: TextStyle(color: textColor),
-                                  hintStyle: TextStyle(color: textColor),
-                                  hintText:
-                                      "Ejm: Debe ser la respuesta mas descriptiva o certera posible",
-                                  hoverColor: textColor,
-                                  labelText: "Respuesta",
-                                  icon: Icon(
-                                    Icons.question_answer,
-                                    color: textColor,
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  IconButton(
-                                    onPressed: () => setState(() {
-                                      preguntaEdit.clear();
-                                      respuestaEdit.clear();
-                                      viewEditQuest = false;
-                                    }),
-                                    icon: const Icon(Icons.cancel),
-                                    iconSize: 40,
-                                    color: textColor,
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      await dataBase.deletedQuest(
-                                          infPregMateria[indexQuest]['ID']);
-                                      setState(() {
-                                        pregunta.clear();
-                                        respuesta.clear();
-                                        chargePage();
-                                        viewEditQuest = false;
-                                      });
-                                    },
-                                    icon: Icon(Icons.delete_forever),
-                                    iconSize: 40,
-                                    color: textColor,
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      _formEditQuest.currentState!.validate();
-                                      if (preguntaEdit.text.isEmpty ||
-                                          respuestaEdit.text.isEmpty) return;
-                                      saveChangeQuest();
-                                    },
-                                    icon: const Icon(Icons.check_circle),
-                                    iconSize: 40,
-                                    color: textColor,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
                 ],
               ),
       ),
     );
+  }
+
+  //Logica de como borrar la materia en la que estas
+  Future<dynamic> eraseMaterial(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: setting.getColorNavSup(),
+            content: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "¿Estas seguro de querer eliminar esta materia?",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Container(
+                    constraints: BoxConstraints(
+                      minWidth: MediaQuery.of(context).size.width / 3,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            await dataBase.deleteMateria(
+                                widget.idMateria, idClass);
+                            // ignore: use_build_context_synchronously
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.check_circle),
+                          color: Colors.white,
+                        ),
+                        IconButton(
+                          onPressed: () => setState(() {
+                            viewEraseMateria = false;
+                          }),
+                          icon: const Icon(Icons.cancel_rounded),
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  )
+                ]),
+          );
+        });
+  }
+
+  // Logica detras de agregar preguntas y el diseño de esta
+  Future<dynamic> addQuest(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: ((context) {
+          return AlertDialog(
+            backgroundColor: setting.getColorNavSup(),
+            content: Form(
+              key: _formNewQuest,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    //* INPUT DE PREGUNTA
+                    TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Debes colocar una buena pregunta.';
+                        }
+                        return null;
+                      },
+                      controller: pregunta,
+                      maxLines: 5,
+                      minLines: 1,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
+                      decoration: const InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        labelStyle: TextStyle(color: Colors.white),
+                        hintStyle: TextStyle(color: Colors.white),
+                        hintText:
+                            "Ejm: ¿cual es estado mas comun en las estrellas?",
+                        hoverColor: Colors.white,
+                        labelText: "Pregunta",
+                        icon: Icon(
+                          Icons.question_mark,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    //* INPUT DE RESPUESTA
+                    TextFormField(
+                      maxLines: 5,
+                      minLines: 1,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Debes colocar una respuesta.';
+                        }
+                        return null;
+                      },
+                      controller: respuesta,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
+                      decoration: const InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        labelStyle: TextStyle(color: Colors.white),
+                        hintStyle: TextStyle(color: Colors.white),
+                        hintText:
+                            "Ejm: Debe ser la respuesta mas descriptiva o certera posible",
+                        hoverColor: Colors.white,
+                        labelText: "Respuesta",
+                        icon: Icon(
+                          Icons.question_answer,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            _formNewQuest.currentState!.validate();
+                            if (pregunta.text.isEmpty || respuesta.text.isEmpty)
+                              return;
+                            await dataBase.createPreg(
+                                idClass,
+                                widget.idMateria,
+                                pregunta.text.toString(),
+                                respuesta.text.toString());
+                            pregunta.clear();
+                            respuesta.clear();
+                            viewCreateNewQuest = false;
+                            // ignore: use_build_context_synchronously
+                            Navigator.pop(context);
+                            chargePage();
+                          },
+                          icon: const Icon(Icons.check_circle),
+                          iconSize: 40,
+                          color: Colors.white,
+                        ),
+                        IconButton(
+                          onPressed: () => setState(() {
+                            pregunta.clear();
+                            respuesta.clear();
+                            Navigator.pop(context);
+                          }),
+                          icon: const Icon(Icons.cancel),
+                          iconSize: 40,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }));
+  }
+
+  //! Aqui podremos ver el diseño de las cartas de las preguntas además de su logia
+  AnimatedBuilder cartsOfQuests(double sizeScroll, int index) {
+    return AnimatedBuilder(
+        animation: _scrollController,
+        builder: (context, child) {
+          double scaleWidget;
+
+          if (_scrollController.offset + 50 > (220) * (index + 1)) {
+            scaleWidget = ((220) * (index + 1) - _scrollController.offset) / 50;
+          } else if (_scrollController.offset + sizeScroll + 120 <
+              (220) * (index + 1)) {
+            scaleWidget =
+                -((220) * (index) - (_scrollController.offset + sizeScroll)) /
+                    (100);
+          } else {
+            scaleWidget = 1;
+          }
+
+          return Transform.scale(
+            scale: scaleWidget,
+            child: Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              height: 200,
+              child: Card(
+                elevation: 2,
+                color: setting.getColorNavSup(),
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 30,
+                            child: Text(
+                              "Pregunta:",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 60,
+                            child: Text(
+                              infPregMateria[index]['Pregunta'],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 30,
+                            child: Text(
+                              "Respuesta:",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 60,
+                            child: Text(
+                              infPregMateria[index]['respuesta'],
+                              overflow: TextOverflow.fade,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                        right: 0,
+                        top: 0,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.settings,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => initEditQuest(index),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

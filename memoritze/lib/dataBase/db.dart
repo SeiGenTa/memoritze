@@ -343,10 +343,10 @@ class ConnectionDataBase {
     Database data = await _connect();
     Map<String, Object?> infoClass =
         (await data.query("clase", where: "Nombre = '$name'"))[0];
-    //print("info: ${infoClass}");
+
     int idClass = infoClass['ID'] as int;
     var material = info["Material"];
-    print(material);
+
     for (int i = 0; i < material.length; i++) {
       String nameMateria = material[i]["name_materia"];
       await createNewMateriaDB(nameMateria, idClass);
@@ -358,7 +358,6 @@ class ConnectionDataBase {
 
       List<dynamic> myQuests = material[i]["preguntas"];
       for (int j = 0; j < myQuests.length; j++) {
-        print(myQuests[j]);
         await createPreg(idClass, IdMateria, myQuests[j]["Pregunta"] as String,
             myQuests[j]["respuesta"] as String);
       }

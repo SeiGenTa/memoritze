@@ -8,8 +8,8 @@ class Observer {
 
   Stream<String> get onChanged => _controller.stream;
 
-  void notify(String data) {
-    _controller.add(data);
+  void notify(String event) {
+    _controller.add(event);
   }
 
   void dispose() {
