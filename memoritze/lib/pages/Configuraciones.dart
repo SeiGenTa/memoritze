@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:memoritze/Pages/MenuClass.dart';
+import 'package:memoritze/pages/MenuClass.dart';
+
 import 'package:memoritze/settings.dart';
 
 class ConfigurablePage extends StatefulWidget {

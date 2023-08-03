@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-class Observer {
+class ObserverOnMenu {
   final StreamController<String> _controller =
       StreamController<String>.broadcast();
 

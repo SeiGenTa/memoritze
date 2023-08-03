@@ -34,7 +34,7 @@ class MenuInitState extends State<MenuInit>
 
   bool stateMore = false;
 
-  final Observer _observer = Observer();
+  final ObserverOnMenu _observer = ObserverOnMenu();
 
   void subscribeToStream(Stream<String> stream) {
     stream.listen((data) => setState(() {

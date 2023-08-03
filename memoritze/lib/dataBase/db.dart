@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'package:memoritze/pages/InfoMateria.dart';
 import 'package:memoritze/settings.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -32,7 +31,8 @@ class ConnectionDataBase {
   }
 
   Future<void> init() async {
-    if (Platform.isWindows) {
+    if (Platform.isWindows || Platform.isLinux) {
+      print("Activo");
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
     }

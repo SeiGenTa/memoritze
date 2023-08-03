@@ -6,7 +6,7 @@ import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/settings.dart';
 
 class CreateClass extends StatefulWidget {
-  CreateClass({super.key});
+  const CreateClass({super.key});
 
   @override
   State<CreateClass> createState() => _CreateClassState();
@@ -83,28 +83,28 @@ class _CreateClassState extends State<CreateClass> {
                         controller: nameClass,
                         style: TextStyle(
                           fontSize: 15,
-                          color: mySetting.getColorText(),
+                          color: Colors.white,
                         ),
                         decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: mySetting.getColorText(),
+                              color: Colors.white,
                             ),
                           ),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: mySetting.getColorText(),
+                              color: Colors.white,
                             ),
                           ),
                           labelStyle:
-                              TextStyle(color: mySetting.getColorText()),
-                          hintStyle: TextStyle(color: mySetting.getColorText()),
+                              TextStyle(color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.white),
                           hintText: "Un buen nombre organizara nuestro estudio",
-                          hoverColor: mySetting.getColorText(),
+                          hoverColor: Colors.white,
                           labelText: "Nombre de la clase",
                           icon: Icon(
                             Icons.near_me,
-                            color: mySetting.getColorText(),
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -124,29 +124,29 @@ class _CreateClassState extends State<CreateClass> {
                         controller: descriptionClass,
                         style: TextStyle(
                           fontSize: 15,
-                          color: mySetting.getColorText(),
+                          color: Colors.white,
                         ),
                         decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: mySetting.getColorText(),
+                                color: Colors.white,
                               ),
                             ),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
-                                color: mySetting.getColorText(),
+                                color: Colors.white,
                               ),
                             ),
                             labelStyle:
-                                TextStyle(color: mySetting.getColorText()),
+                                TextStyle(color: Colors.white),
                             hintStyle:
-                                TextStyle(color: mySetting.getColorText()),
+                                TextStyle(color: Colors.white),
                             hintText:
                                 "Esto es un cuestionario de una de mis clases favoritas",
                             labelText: "Descripcion",
                             icon: Icon(
                               Icons.description_sharp,
-                              color: mySetting.getColorText(),
+                              color: Colors.white,
                             )),
                       ),
                       const SizedBox(
@@ -156,9 +156,9 @@ class _CreateClassState extends State<CreateClass> {
                         duration: const Duration(seconds: 1),
                         alignment: Alignment.center,
                         child: IconButton(
-                          color: mySetting.getColorText(),
+                          color: Colors.white,
                           iconSize: 30,
-                          hoverColor: mySetting.getColorDrawerSecondary(),
+                          hoverColor: Colors.white.withOpacity(0.5),
                           icon: const Icon(
                             Icons.save,
                           ),

@@ -8,7 +8,7 @@ import 'package:memoritze/pages/menus/CreateNewClass.dart';
 import 'package:memoritze/settings.dart';
 
 class MyClass extends StatefulWidget {
-  late final Observer observer;
+  late final ObserverOnMenu observer;
   MyClass({super.key, required this.observer});
 
   @override
@@ -103,6 +103,24 @@ class _MyClassState extends State<MyClass> {
         ? const CircularProgressIndicator()
         : Stack(
             children: [
+              (myDataBase.isEmpty)? Positioned(
+                left: 0,
+                right: 60,
+                bottom: 60,
+                child: Container(
+                  color: Colors.white24,
+                  child: Column(mainAxisSize: MainAxisSize.min,children: [
+                    Text("Parece que no posees nada, que tal si \n ¿agregamos una clase nueva?",
+                    textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: mySetting.getColorText(),
+                      ),
+                    )
+                    ]
+                    ,),
+                ),
+              )
+          :
               GridView.builder(
                 itemCount: myDataBase.length,
                 itemBuilder: (context, index) {
@@ -213,7 +231,7 @@ class _MyClassState extends State<MyClass> {
                   (context, animation, secondaryAnimation, child) {
                 var begin = const Offset(-1.0, 0.0);
                 var end = Offset.zero;
-                var curve = Curves.easeInOutBack;
+                var curve = Curves.easeInOut;
                 var tween = Tween(begin: begin, end: end)
                     .chain(CurveTween(curve: curve));
                 var offsetAnimation = animation.drive(tween);
