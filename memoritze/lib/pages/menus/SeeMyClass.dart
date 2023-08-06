@@ -103,34 +103,37 @@ class _MyClassState extends State<MyClass> {
         ? const CircularProgressIndicator()
         : Stack(
             children: [
-              (myDataBase.isEmpty)? Positioned(
-                left: 0,
-                right: 60,
-                bottom: 60,
-                child: Container(
-                  color: Colors.white24,
-                  child: Column(mainAxisSize: MainAxisSize.min,children: [
-                    Text("Parece que no posees nada, que tal si \n ¿agregamos una clase nueva?",
-                    textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: mySetting.getColorText(),
+              (myDataBase.isEmpty)
+                  ? Positioned(
+                      left: 0,
+                      right: 60,
+                      bottom: 60,
+                      child: Container(
+                        color: Colors.white24,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Parece que no posees nada, que tal si \n ¿agregamos una clase nueva?",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: mySetting.getColorText(),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     )
-                    ]
-                    ,),
-                ),
-              )
-          :
-              GridView.builder(
-                itemCount: myDataBase.length,
-                itemBuilder: (context, index) {
-                  return myBook(index);
-                },
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: (deviceWidth / 100).floor(),
-                  mainAxisExtent: 150,
-                ),
-              ),
+                  : GridView.builder(
+                      itemCount: myDataBase.length,
+                      itemBuilder: (context, index) {
+                        return myBook(index);
+                      },
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: (deviceWidth / 100).floor(),
+                        mainAxisExtent: 150,
+                      ),
+                    ),
               Container(
                 alignment: Alignment.bottomRight,
                 padding: const EdgeInsets.all(10),

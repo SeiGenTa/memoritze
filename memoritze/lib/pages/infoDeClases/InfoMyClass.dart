@@ -24,8 +24,6 @@ class _InfoMyClassState extends State<InfoMyClass>
 
   ConnectionDataBase dataBase = ConnectionDataBase();
 
-  final bool _showAccept = false;
-
   late final ScrollController _scrollController = ScrollController();
 
   void initQuest() {
@@ -232,11 +230,11 @@ class _InfoMyClassState extends State<InfoMyClass>
                                   leading: Stack(
                                     children: [
                                       Transform.translate(
-                                        offset: const Offset(30.0, -5.0),
+                                        offset: const Offset(30.0, -13.0),
                                         child: Transform(
                                           transform: Matrix4.identity()
                                             ..rotateZ(4 / 20 * pi)
-                                            ..scale(0.95),
+                                            ..scale(1.2),
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 border: Border.all(
@@ -253,11 +251,11 @@ class _InfoMyClassState extends State<InfoMyClass>
                                         ),
                                       ),
                                       Transform.translate(
-                                        offset: Offset(15.0, -6.0),
+                                        offset: Offset(15.0, -12.0),
                                         child: Transform(
                                           transform: Matrix4.identity()
                                             ..rotateZ(3 / 20 * pi)
-                                            ..scale(0.95),
+                                            ..scale(1.3),
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 border: Border.all(
@@ -301,6 +299,9 @@ class _InfoMyClassState extends State<InfoMyClass>
                                           "   Cantidad de preguntas: ${material[index]['cantPreg']}",
                                           overflow: TextOverflow.ellipsis,
                                         )),
+                                        IconButton(
+                                            onPressed: () {},
+                                            icon: const Icon(Icons.add)),
                                         IconButton(
                                             onPressed: () {
                                               initSettingMateria(material[index]

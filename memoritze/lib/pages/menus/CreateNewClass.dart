@@ -81,11 +81,11 @@ class _CreateClassState extends State<CreateClass> {
                           return null;
                         },
                         controller: nameClass,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                           color: Colors.white,
                         ),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.white,
@@ -96,8 +96,7 @@ class _CreateClassState extends State<CreateClass> {
                               color: Colors.white,
                             ),
                           ),
-                          labelStyle:
-                              TextStyle(color: Colors.white),
+                          labelStyle: TextStyle(color: Colors.white),
                           hintStyle: TextStyle(color: Colors.white),
                           hintText: "Un buen nombre organizara nuestro estudio",
                           hoverColor: Colors.white,
@@ -137,10 +136,8 @@ class _CreateClassState extends State<CreateClass> {
                                 color: Colors.white,
                               ),
                             ),
-                            labelStyle:
-                                TextStyle(color: Colors.white),
-                            hintStyle:
-                                TextStyle(color: Colors.white),
+                            labelStyle: TextStyle(color: Colors.white),
+                            hintStyle: TextStyle(color: Colors.white),
                             hintText:
                                 "Esto es un cuestionario de una de mis clases favoritas",
                             labelText: "Descripcion",

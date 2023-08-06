@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -62,7 +61,7 @@ class MenuInitState extends State<MenuInit>
     super.initState();
     animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
     );
     initPage();
   }
@@ -73,7 +72,7 @@ class MenuInitState extends State<MenuInit>
     super.dispose();
   }
 
-  FavClass favClass = FavClass();
+  FavClass favClass = const FavClass();
 
   @override
   Widget build(BuildContext context) {
@@ -125,69 +124,73 @@ class MenuInitState extends State<MenuInit>
                           duration: const Duration(milliseconds: 300),
                           top: stateMore ? 5 : -150,
                           right: 5,
-                          child: FittedBox(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: mySetting.getColorMore(),
-                                  border: Border.all(
-                                      color: mySetting.getColorText(),
-                                      width: 0.3),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(10))),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  TextButton(
-                                      onPressed: () async {
-                                        await Navigator.pushAndRemoveUntil(
-                                          context,
-                                          PageRouteBuilder(
-                                              pageBuilder: (context, animation,
-                                                      secondaryAnimation) =>
-                                                  const ConfigurablePage(),
-                                              transitionsBuilder: (context,
-                                                  animation,
-                                                  secondaryAnimation,
-                                                  child) {
-                                                return FadeTransition(
-                                                  opacity: animation,
-                                                  child: child,
-                                                );
-                                              }),
-                                          (route) => false,
-                                        );
-                                      },
-                                      child: Text(
-                                        "Configuraciones",
-                                        style: TextStyle(
-                                            color: mySetting.getColorText()),
-                                      )),
-                                  TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          stateMore = false;
-                                        });
-                                        messageOfInformation(context);
-                                      },
-                                      child: Text(
-                                        "Informacion",
-                                        style: TextStyle(
-                                            color: mySetting.getColorText()),
-                                      )),
-                                  TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          stateMore = false;
-                                        });
-                                        cargateLogic();
-                                      },
-                                      child: Text(
-                                        "Cargar/Actualizar clase",
-                                        style: TextStyle(
-                                            color: mySetting.getColorText()),
-                                      ))
-                                ],
-                              ),
+                          child: Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                color: mySetting.getColorMore(),
+                                border: Border.all(
+                                    color: mySetting.getColorText(),
+                                    width: 0.3),
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextButton(
+                                    onPressed: () async {
+                                      await Navigator.pushAndRemoveUntil(
+                                        context,
+                                        PageRouteBuilder(
+                                            pageBuilder: (context, animation,
+                                                    secondaryAnimation) =>
+                                                const ConfigurablePage(),
+                                            transitionsBuilder: (context,
+                                                animation,
+                                                secondaryAnimation,
+                                                child) {
+                                              return FadeTransition(
+                                                opacity: animation,
+                                                child: child,
+                                              );
+                                            }),
+                                        (route) => false,
+                                      );
+                                    },
+                                    child: Text(
+                                      "Configuraciones",
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        color: mySetting.getColorText(),
+                                      ),
+                                    )),
+                                TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        stateMore = false;
+                                      });
+                                      messageOfInformation(context);
+                                    },
+                                    child: Text(
+                                      "Informacion",
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                          color: mySetting.getColorText()),
+                                    )),
+                                TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        stateMore = false;
+                                      });
+                                      cargateLogic();
+                                    },
+                                    child: Text(
+                                      "Cargar/Actualizar clase",
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                          color: mySetting.getColorText()),
+                                    ))
+                              ],
                             ),
                           )),
                       if (disablePage)
@@ -299,17 +302,19 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
                 offset: Offset(0.0, -30 + animationButtons.value),
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    minimumSize: MaterialStatePropertyAll(Size(30, 30)),
-                    iconSize: MaterialStatePropertyAll(30),
+                    minimumSize: const MaterialStatePropertyAll(Size(30, 30)),
+                    iconSize: const MaterialStatePropertyAll(30),
                     shape: MaterialStatePropertyAll(CircleBorder(
                         side: BorderSide(
                             style: state == 0
                                 ? BorderStyle.solid
                                 : BorderStyle.none,
                             color: mySetting.getColorText()))),
-                    backgroundColor: MaterialStatePropertyAll(
-                        mySetting.getBackgroundColor()),
-                    elevation: MaterialStatePropertyAll(0),
+                    backgroundColor: state == 0
+                        ? MaterialStatePropertyAll(
+                            mySetting.getBackgroundColor())
+                        : const MaterialStatePropertyAll(Colors.transparent),
+                    elevation: const MaterialStatePropertyAll(0),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(14.0),
@@ -344,8 +349,10 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
                                 ? BorderStyle.solid
                                 : BorderStyle.none,
                             color: mySetting.getColorText()))),
-                    backgroundColor: MaterialStatePropertyAll(
-                        mySetting.getBackgroundColor()),
+                    backgroundColor: state == 1
+                        ? MaterialStatePropertyAll(
+                            mySetting.getBackgroundColor())
+                        : const MaterialStatePropertyAll(Colors.transparent),
                     elevation: const MaterialStatePropertyAll(0),
                   ),
                   child: Padding(
@@ -393,14 +400,16 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
     try {
       Map<String, dynamic> info = json.decode(file.readAsStringSync());
       textResponse = await connection.chargeNewInfo(info);
+    } catch (e) {
+      print("error $e");
     } finally {
       _observer.notify(textResponse);
+
+      setState(() {
+        disablePage = false;
+      });
     }
 
     // ignore: use_build_context_synchronously
-
-    setState(() {
-      disablePage = false;
-    });
   }
 }
