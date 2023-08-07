@@ -66,6 +66,7 @@ class MenuInitState extends State<MenuInit>
     initPage();
   }
 
+  @override
   void dispose() {
     animationController.dispose();
     _observer.dispose();
@@ -401,8 +402,13 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
       Map<String, dynamic> info = json.decode(file.readAsStringSync());
       textResponse = await connection.chargeNewInfo(info);
     } catch (e) {
-      print("error $e");
+      print("error: $e");
+      textResponse = "detalles del error: $e";
     } finally {
+      if (textResponse == '') {
+        textResponse = "Se encontro un error";
+      }
+
       _observer.notify(textResponse);
 
       setState(() {

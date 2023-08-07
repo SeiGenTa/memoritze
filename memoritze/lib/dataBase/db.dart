@@ -81,10 +81,7 @@ class ConnectionDataBase {
           Pregunta TEXT,
           respuesta TEXT,
           eval INTEGER,
-          FOREIGN KEY (ID_subclass) REFERENCES materia(ID_subclass)
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: mySetting.getColorPager().withOpacity(0.8),
+          FOREIGN KEY (ID_subclass) REFERENCES materia(ID_subclass)                
           FOREIGN KEY (ID_class) REFERENCES clase(ID)
           );
           ''');
@@ -238,9 +235,11 @@ class ConnectionDataBase {
   Future<bool> createPreg(
       int idClass, int idMateria, String pregunta, String respuesta) async {
     Database data = await _connect();
-    String filt = pregunta.replaceAll("'", "!{tra}!");
+    //List<Map<String, Object?>> pregs = await data.query('pregunta',
+    //    where: "Pregunta = '$pregunta' and ID_subclass = $idMateria");
     List<Map<String, Object?>> pregs = await data.query('pregunta',
-        where: "Pregunta = '$filt' and ID_subclass = $idMateria");
+        where: "Pregunta = ? and ID_subclass = $idMateria",
+        whereArgs: [pregunta]);
 
     if (pregs.isNotEmpty) {
       return false;

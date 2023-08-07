@@ -14,7 +14,7 @@ class CreateClass extends StatefulWidget {
 
 class _CreateClassState extends State<CreateClass> {
   // Creamos un StreamController para emitir eventos y notificar a los observadores.
-  StreamController<String> _controller = StreamController<String>();
+  final StreamController<String> _controller = StreamController<String>();
 
   // Creamos un getter para el stream, para que los observadores puedan suscribirse a él.
   Stream<String> get stream => _controller.stream;
@@ -22,7 +22,7 @@ class _CreateClassState extends State<CreateClass> {
   Setting mySetting = Setting();
   final _formKey = GlobalKey<FormState>();
 
-  ConnectionDataBase _dataBase = ConnectionDataBase();
+  final ConnectionDataBase _dataBase = ConnectionDataBase();
   final nameClass = TextEditingController();
   final descriptionClass = TextEditingController();
 
@@ -121,11 +121,11 @@ class _CreateClassState extends State<CreateClass> {
                           return null;
                         },
                         controller: descriptionClass,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                           color: Colors.white,
                         ),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.white,

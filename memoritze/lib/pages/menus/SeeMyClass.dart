@@ -85,7 +85,7 @@ class _MyClassState extends State<MyClass> {
 
   void deleteClass() async {
     for (int i = 0; i < deleteIds.length; i++) {
-      myData.deletedClass(deleteIds[i]);
+      await myData.deletedClass(deleteIds[i]);
     }
     deleteIds.clear;
     setState(() {
