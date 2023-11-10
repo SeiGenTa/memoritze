@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
@@ -8,6 +9,7 @@ import 'package:memoritze/settings.dart';
 
 // ignore: must_be_immutable
 class InfoMyClass extends StatefulWidget {
+  // ignore: non_constant_identifier_names
   late int id_class;
 
   InfoMyClass({super.key, required int number}) {
@@ -100,7 +102,7 @@ class _InfoMyClassState extends State<InfoMyClass>
   }
 
   void chargerData() async {
-    this.myClass = await dataBase.getClass(widget.id_class);
+    myClass = await dataBase.getClass(widget.id_class);
     setState(() {
       _charge = true;
     });
@@ -230,11 +232,11 @@ class _InfoMyClassState extends State<InfoMyClass>
                                   leading: Stack(
                                     children: [
                                       Transform.translate(
-                                        offset: const Offset(30.0, -13.0),
+                                        offset: const Offset(30.0, -5.0),
                                         child: Transform(
                                           transform: Matrix4.identity()
                                             ..rotateZ(4 / 20 * pi)
-                                            ..scale(1.2),
+                                            ..scale(0.95),
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 border: Border.all(
@@ -251,11 +253,11 @@ class _InfoMyClassState extends State<InfoMyClass>
                                         ),
                                       ),
                                       Transform.translate(
-                                        offset: Offset(15.0, -12.0),
+                                        offset: Offset(15.0, -6.0),
                                         child: Transform(
                                           transform: Matrix4.identity()
                                             ..rotateZ(3 / 20 * pi)
-                                            ..scale(1.3),
+                                            ..scale(0.95),
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 border: Border.all(
@@ -299,9 +301,6 @@ class _InfoMyClassState extends State<InfoMyClass>
                                           "   Cantidad de preguntas: ${material[index]['cantPreg']}",
                                           overflow: TextOverflow.ellipsis,
                                         )),
-                                        IconButton(
-                                            onPressed: () {},
-                                            icon: const Icon(Icons.add)),
                                         IconButton(
                                             onPressed: () {
                                               initSettingMateria(material[index]
@@ -447,72 +446,75 @@ class _InfoMyClassState extends State<InfoMyClass>
                 ),
                 Transform.translate(
                   offset: Offset(200 * animateAppBar.value, 0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                          style: ButtonStyle(
-                              iconColor:
-                                  const MaterialStatePropertyAll(Colors.white),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  mySetting.getColorsIconButton())),
-                          onPressed: () => showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) {
-                                return ShareFile(
-                                  material: material,
-                                  mySetting: mySetting,
-                                  context: context,
-                                  idClass: widget.id_class,
-                                );
-                              }),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.share),
-                              SizedBox(
-                                width: 80,
-                                child: Text(" Compartir",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: Colors.white)),
-                              ),
-                            ],
-                          )),
-                      ElevatedButton(
-                          style: buttonStyle,
-                          onPressed: () async {
-                            await setClass(context);
-                            chargerData();
-                          },
-                          child: const Row(
-                            children: [
-                              Icon(Icons.settings),
-                              SizedBox(
-                                width: 80,
-                                child: Text(
-                                  " Configurar",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          )),
-                      ElevatedButton(
-                          style: buttonStyle,
-                          onPressed: () {
-                            generateNewMateria(context);
-                          },
-                          child: const Row(
-                            children: [
-                              Icon(Icons.add),
-                              SizedBox(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                            style: ButtonStyle(
+                                iconColor:
+                                    const MaterialStatePropertyAll(Colors.white),
+                                backgroundColor: MaterialStatePropertyAll(
+                                    mySetting.getColorsIconButton())),
+                            onPressed: () => showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) {
+                                  return ShareFile(
+                                    material: material,
+                                    mySetting: mySetting,
+                                    context: context,
+                                    idClass: widget.id_class,
+                                  );
+                                }),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.share),
+                                SizedBox(
                                   width: 80,
-                                  child: Text("Agregar",
+                                  child: Text(" Compartir",
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: Colors.white)))
-                            ],
-                          ))
-                    ],
+                                      style: TextStyle(color: Colors.white)),
+                                ),
+                              ],
+                            )),
+                        ElevatedButton(
+                            style: buttonStyle,
+                            onPressed: () async {
+                              await setClass(context);
+                              chargerData();
+                            },
+                            child: const Row(
+                              children: [
+                                Icon(Icons.settings),
+                                SizedBox(
+                                  width: 80,
+                                  child: Text(
+                                    " Configurar",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            )),
+                        ElevatedButton(
+                            style: buttonStyle,
+                            onPressed: () {
+                              generateNewMateria(context);
+                            },
+                            child: const Row(
+                              children: [
+                                Icon(Icons.add),
+                                SizedBox(
+                                    width: 80,
+                                    child: Text("Agregar",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: Colors.white)))
+                              ],
+                            ))
+                      ],
+                    ),
                   ),
                 )
               ],

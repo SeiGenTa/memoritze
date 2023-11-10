@@ -69,15 +69,14 @@ class _ShareFileState extends State<ShareFile> {
       actions: [
         IconButton(
             onPressed: () async {
-              Map<String, dynamic> mapInfo =
-                  await myConnection.createJson(widget.idClass, _mySelects);
+              Map<String, dynamic> mapInfo = await myConnection.createJson(
+                  widget.idClass, _mySelects, false);
 
               String myJson = json.encode(mapInfo);
 
               if (Platform.isWindows || Platform.isLinux) {
-                var _dowloadDirectory = await getDownloadsDirectory();
-                File myFIle =
-                    File("${_dowloadDirectory!.path}/miMaterial.json");
+                var dowloadDirectory = await getDownloadsDirectory();
+                File myFIle = File("${dowloadDirectory!.path}/miMaterial.json");
                 await myFIle.writeAsString(myJson);
                 // ignore: use_build_context_synchronously
                 showDialog(

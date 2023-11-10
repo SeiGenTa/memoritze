@@ -9,6 +9,7 @@ import 'package:memoritze/settings.dart';
 
 class MyClass extends StatefulWidget {
   late final ObserverOnMenu observer;
+  // ignore: prefer_const_constructors_in_immutables
   MyClass({super.key, required this.observer});
 
   @override
@@ -92,6 +93,7 @@ class _MyClassState extends State<MyClass> {
       init();
       state = 0;
     });
+    widget.observer.notify("se elimino correctamente");
   }
 
   @override
@@ -104,24 +106,19 @@ class _MyClassState extends State<MyClass> {
         : Stack(
             children: [
               (myDataBase.isEmpty)
-                  ? Positioned(
-                      left: 0,
-                      right: 60,
-                      bottom: 60,
-                      child: Container(
-                        color: Colors.white24,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Parece que no posees nada, que tal si \n ¿agregamos una clase nueva?",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: mySetting.getColorText(),
-                              ),
-                            )
-                          ],
-                        ),
+                  ? Container(
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Parece que en este momento no tienes ninguna clase agregada.\n ¿Qué te parece si creamos una nueva clase juntos? De esta manera, podrás empezar a aprovechar al máximo la aplicación.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: mySetting.getColorText(),
+                            ),
+                          )
+                        ],
                       ),
                     )
                   : GridView.builder(
@@ -183,7 +180,7 @@ class _MyClassState extends State<MyClass> {
                                         color: mySetting.getColorText(),
                                       )),
                                   IconButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         deleteClass();
                                         Navigator.of(context).pop();
                                       },
@@ -317,10 +314,23 @@ class _MyClassState extends State<MyClass> {
                 top: 0,
                 left: 0,
                 child: IconButton(
-                  icon: const Icon(
-                    Icons.star_border,
+                  icon: Icon(
+                    (myDataBase[index]['IsFav'] != 1)
+                        ? Icons.star_border
+                        : Icons.star,
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    var i = await myData.joinFavorite(myDataBase[index]["ID"]);
+                    if (i) {
+                      if (myDataBase[index]["IsFav"] != 1) {
+                        widget.observer.notify("se agrego un favorito");
+                      } else {
+                        widget.observer.notify("se elimino de favoritos");
+                      }
+                    } else {
+                      widget.observer.notify("A ocurrido un problema");
+                    }
+                  },
                   color: Colors.white,
                 ))
           ],

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +31,8 @@ class _InitQuestState extends State<InitQuest> {
   late String resp;
   late int myIndex;
   int lastQuest = -1;
+  late String? dirImageQ;
+  late String? dirImageA;
 
   int countResp = 0;
 
@@ -47,6 +50,8 @@ class _InitQuestState extends State<InitQuest> {
     setState(() {
       pred = myQuests[myIndex]['Pregunta'];
       resp = myQuests[myIndex]['respuesta'];
+      dirImageQ = myQuests[myIndex]['dirImagePreg'];
+      dirImageA = myQuests[myIndex]['dirImageResp'];
       charged = true;
     });
   }
@@ -114,7 +119,7 @@ class _InitQuestState extends State<InitQuest> {
     setPred();
   }
 
-  Widget generate(pred, resp) {
+  Widget generate(pred, resp, dirImageQ, dirImageA) {
     return SlimyCardProp(
       firstText: pred,
       secondText: resp,
@@ -123,6 +128,8 @@ class _InitQuestState extends State<InitQuest> {
       height: MediaQuery.of(context).size.height - 250,
       colorCards: setting.getColorNavSup(),
       textColors: setting.getColorText(),
+      firstImage: dirImageQ,
+      secondImage: dirImageA,
       onUseButton: () {
         setState(() {
           seeResp = true;
@@ -198,6 +205,8 @@ class _InitQuestState extends State<InitQuest> {
                               height: MediaQuery.of(context).size.height - 250,
                               colorCards: setting.getColorNavSup(),
                               textColors: setting.getColorText(),
+                              firstImage: dirImageQ,
+                              secondImage: dirImageA,
                               onUseButton: () {
                                 setState(() {
                                   seeResp = true;
@@ -212,7 +221,7 @@ class _InitQuestState extends State<InitQuest> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 AnimatedOpacity(
-                                  duration: Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   opacity: seeResp ? 1 : 0,
                                   child: ElevatedButton(
                                       style: const ButtonStyle(
@@ -225,7 +234,7 @@ class _InitQuestState extends State<InitQuest> {
                                       onPressed: () {
                                         if (seeResp) setDowEval(myIndex);
                                       },
-                                      child: Text("Acertado")),
+                                      child: const Text("Acertado")),
                                 ),
                                 AnimatedOpacity(
                                   duration: const Duration(milliseconds: 300),
@@ -241,7 +250,7 @@ class _InitQuestState extends State<InitQuest> {
                                       onPressed: () {
                                         if (seeResp) setUpEval(myIndex);
                                       },
-                                      child: Text("  Erronea  ")),
+                                      child: const Text("  Erronea  ")),
                                 )
                               ],
                             ),
@@ -271,6 +280,8 @@ class SlimyCardProp extends StatefulWidget {
   late double separated;
   late double iconSize;
   EdgeInsets margin = const EdgeInsets.all(20);
+  late String? firstImage;
+  late String? secondImage;
 
   SlimyCardProp({
     super.key,
@@ -281,6 +292,8 @@ class SlimyCardProp extends StatefulWidget {
     required this.height,
     required this.colorCards,
     required this.textColors,
+    required this.firstImage,
+    required this.secondImage,
     EdgeInsets? padding,
     this.onUseButton,
     this.colorButton = Colors.white,
@@ -358,7 +371,7 @@ class _SlimyCardPropState extends State<SlimyCardProp>
     return AnimatedBuilder(
         animation: _curveAnimation,
         builder: (context, child) {
-          return Container(
+          return SizedBox(
             height: height,
             child: Stack(
               children: [
@@ -380,9 +393,15 @@ class _SlimyCardPropState extends State<SlimyCardProp>
                     ),
                     child: SingleChildScrollView(
                       padding: padding,
-                      child: Text(
-                        secondText,
-                        style: TextStyle(color: textColors, fontSize: 20),
+                      child: Column(
+                        children: [
+                          Text(
+                            secondText,
+                            style: TextStyle(color: textColors, fontSize: 20),
+                          ),
+                          if (widget.secondImage != null)
+                            Image.file(File(widget.secondImage!))
+                        ],
                       ),
                     ),
                   ),
@@ -402,9 +421,15 @@ class _SlimyCardPropState extends State<SlimyCardProp>
                     ),
                     child: SingleChildScrollView(
                       padding: padding,
-                      child: Text(
-                        firstText,
-                        style: TextStyle(color: textColors, fontSize: 20),
+                      child: Column(
+                        children: [
+                          Text(
+                            firstText,
+                            style: TextStyle(color: textColors, fontSize: 20),
+                          ),
+                          if (widget.firstImage != null)
+                            Image.file(File(widget.firstImage!))
+                        ],
                       ),
                     ),
                   ),

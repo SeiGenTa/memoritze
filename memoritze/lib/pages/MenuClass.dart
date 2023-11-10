@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -47,7 +48,6 @@ class MenuInitState extends State<MenuInit>
 
   void initPage() async {
     if (!widget.prepared) {
-      print("carga inicial");
       await connection.init();
       await mySetting.chargeSetting();
     }
@@ -61,19 +61,16 @@ class MenuInitState extends State<MenuInit>
     super.initState();
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: Duration(milliseconds: 300),
     );
     initPage();
   }
 
-  @override
   void dispose() {
     animationController.dispose();
     _observer.dispose();
     super.dispose();
   }
-
-  FavClass favClass = const FavClass();
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +107,7 @@ class MenuInitState extends State<MenuInit>
                             MediaQuery.of(context).size.width -
                                 animationOfMenu.value,
                             0.0),
-                        child: favClass,
+                        child: FavClass(observer: _observer),
                       ),
                       if (stateMore)
                         GestureDetector(
@@ -125,73 +122,69 @@ class MenuInitState extends State<MenuInit>
                           duration: const Duration(milliseconds: 300),
                           top: stateMore ? 5 : -150,
                           right: 5,
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: mySetting.getColorMore(),
-                                border: Border.all(
-                                    color: mySetting.getColorText(),
-                                    width: 0.3),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(10))),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextButton(
-                                    onPressed: () async {
-                                      await Navigator.pushAndRemoveUntil(
-                                        context,
-                                        PageRouteBuilder(
-                                            pageBuilder: (context, animation,
-                                                    secondaryAnimation) =>
-                                                const ConfigurablePage(),
-                                            transitionsBuilder: (context,
-                                                animation,
-                                                secondaryAnimation,
-                                                child) {
-                                              return FadeTransition(
-                                                opacity: animation,
-                                                child: child,
-                                              );
-                                            }),
-                                        (route) => false,
-                                      );
-                                    },
-                                    child: Text(
-                                      "Configuraciones",
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        color: mySetting.getColorText(),
-                                      ),
-                                    )),
-                                TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        stateMore = false;
-                                      });
-                                      messageOfInformation(context);
-                                    },
-                                    child: Text(
-                                      "Informacion",
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: mySetting.getColorText()),
-                                    )),
-                                TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        stateMore = false;
-                                      });
-                                      cargateLogic();
-                                    },
-                                    child: Text(
-                                      "Cargar/Actualizar clase",
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: mySetting.getColorText()),
-                                    ))
-                              ],
+                          child: FittedBox(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: mySetting.getColorMore(),
+                                  border: Border.all(
+                                      color: mySetting.getColorText(),
+                                      width: 0.3),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10))),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextButton(
+                                      onPressed: () async {
+                                        await Navigator.pushAndRemoveUntil(
+                                          context,
+                                          PageRouteBuilder(
+                                              pageBuilder: (context, animation,
+                                                      secondaryAnimation) =>
+                                                  const ConfigurablePage(),
+                                              transitionsBuilder: (context,
+                                                  animation,
+                                                  secondaryAnimation,
+                                                  child) {
+                                                return FadeTransition(
+                                                  opacity: animation,
+                                                  child: child,
+                                                );
+                                              }),
+                                          (route) => false,
+                                        );
+                                      },
+                                      child: Text(
+                                        "Configuraciones",
+                                        style: TextStyle(
+                                            color: mySetting.getColorText()),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          stateMore = false;
+                                        });
+                                        messageOfInformation(context);
+                                      },
+                                      child: Text(
+                                        "Informacion",
+                                        style: TextStyle(
+                                            color: mySetting.getColorText()),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          stateMore = false;
+                                        });
+                                        cargateLogic();
+                                      },
+                                      child: Text(
+                                        "Cargar/Actualizar clase",
+                                        style: TextStyle(
+                                            color: mySetting.getColorText()),
+                                      ))
+                                ],
+                              ),
                             ),
                           )),
                       if (disablePage)
@@ -311,10 +304,8 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
                                 ? BorderStyle.solid
                                 : BorderStyle.none,
                             color: mySetting.getColorText()))),
-                    backgroundColor: state == 0
-                        ? MaterialStatePropertyAll(
-                            mySetting.getBackgroundColor())
-                        : const MaterialStatePropertyAll(Colors.transparent),
+                    backgroundColor: MaterialStatePropertyAll(
+                        mySetting.getBackgroundColor()),
                     elevation: const MaterialStatePropertyAll(0),
                   ),
                   child: Padding(
@@ -350,10 +341,8 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
                                 ? BorderStyle.solid
                                 : BorderStyle.none,
                             color: mySetting.getColorText()))),
-                    backgroundColor: state == 1
-                        ? MaterialStatePropertyAll(
-                            mySetting.getBackgroundColor())
-                        : const MaterialStatePropertyAll(Colors.transparent),
+                    backgroundColor: MaterialStatePropertyAll(
+                        mySetting.getBackgroundColor()),
                     elevation: const MaterialStatePropertyAll(0),
                   ),
                   child: Padding(
@@ -401,21 +390,14 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
     try {
       Map<String, dynamic> info = json.decode(file.readAsStringSync());
       textResponse = await connection.chargeNewInfo(info);
-    } catch (e) {
-      print("error: $e");
-      textResponse = "detalles del error: $e";
     } finally {
-      if (textResponse == '') {
-        textResponse = "Se encontro un error";
-      }
-
       _observer.notify(textResponse);
-
-      setState(() {
-        disablePage = false;
-      });
     }
 
     // ignore: use_build_context_synchronously
+
+    setState(() {
+      disablePage = false;
+    });
   }
 }

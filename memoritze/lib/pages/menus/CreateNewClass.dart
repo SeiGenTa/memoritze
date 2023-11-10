@@ -14,7 +14,7 @@ class CreateClass extends StatefulWidget {
 
 class _CreateClassState extends State<CreateClass> {
   // Creamos un StreamController para emitir eventos y notificar a los observadores.
-  final StreamController<String> _controller = StreamController<String>();
+  StreamController<String> _controller = StreamController<String>();
 
   // Creamos un getter para el stream, para que los observadores puedan suscribirse a él.
   Stream<String> get stream => _controller.stream;
@@ -22,7 +22,7 @@ class _CreateClassState extends State<CreateClass> {
   Setting mySetting = Setting();
   final _formKey = GlobalKey<FormState>();
 
-  final ConnectionDataBase _dataBase = ConnectionDataBase();
+  ConnectionDataBase _dataBase = ConnectionDataBase();
   final nameClass = TextEditingController();
   final descriptionClass = TextEditingController();
 
@@ -81,11 +81,11 @@ class _CreateClassState extends State<CreateClass> {
                           return null;
                         },
                         controller: nameClass,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           color: Colors.white,
                         ),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.white,
@@ -96,7 +96,8 @@ class _CreateClassState extends State<CreateClass> {
                               color: Colors.white,
                             ),
                           ),
-                          labelStyle: TextStyle(color: Colors.white),
+                          labelStyle:
+                              TextStyle(color: Colors.white),
                           hintStyle: TextStyle(color: Colors.white),
                           hintText: "Un buen nombre organizara nuestro estudio",
                           hoverColor: Colors.white,
@@ -121,11 +122,11 @@ class _CreateClassState extends State<CreateClass> {
                           return null;
                         },
                         controller: descriptionClass,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           color: Colors.white,
                         ),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.white,
@@ -136,8 +137,10 @@ class _CreateClassState extends State<CreateClass> {
                                 color: Colors.white,
                               ),
                             ),
-                            labelStyle: TextStyle(color: Colors.white),
-                            hintStyle: TextStyle(color: Colors.white),
+                            labelStyle:
+                                TextStyle(color: Colors.white),
+                            hintStyle:
+                                TextStyle(color: Colors.white),
                             hintText:
                                 "Esto es un cuestionario de una de mis clases favoritas",
                             labelText: "Descripcion",

@@ -6,7 +6,7 @@ class Setting {
   static final Setting _instance = Setting._internal();
 
   int stateNight = 0;
-  int version0 = 16;
+  int version0 = 18;
   String language = "ESP";
 
   factory Setting() {
@@ -18,7 +18,7 @@ class Setting {
   Future<bool> chargeSetting() async {
     Map<String, dynamic> config = await database.getSetting();
     stateNight = config['NightMode'];
-    if (version0 != config['Version']) {
+    if (version0 > config['Version']) {
       await database.changeSetting(stateNight, version0, language);
       return chargeSetting();
     }
