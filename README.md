@@ -1,5 +1,4 @@
-# README 
-- Memoritze: Tu Aplicación de Estudio Personalizada
+# README - Memoritze: Tu Aplicación de Estudio Personalizada
 ¡Bienvenido a Memoritze!
 
 # Descripción
@@ -35,3 +34,6 @@ Explora las diferentes funcionalidades de la aplicación, como el "Modo de Repas
 Si encuentras algún problema o tienes sugerencias para mejorar Memoritze, no dudes en abrir un issue en este repositorio.
 
 Esperamos que disfrutes utilizando Memoritze y que te ayude a alcanzar tus metas académicas. ¡Feliz estudio!
+
+# Intalacion facil
+La aplicacion tiene disponible una version estable en la carpeta /installers/ el cual es para dispositivos mobiles, que cumpla con las caracteristicas ya mensionadas
