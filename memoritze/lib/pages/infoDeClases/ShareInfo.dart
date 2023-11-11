@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/settings.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:path/path.dart';
 
 class ShareFile extends StatefulWidget {
   const ShareFile({
@@ -75,21 +77,12 @@ class _ShareFileState extends State<ShareFile> {
               String myJson = json.encode(mapInfo);
 
               if (Platform.isWindows || Platform.isLinux) {
-                var dowloadDirectory = await getDownloadsDirectory();
-                File myFIle = File("${dowloadDirectory!.path}/miMaterial.json");
-                await myFIle.writeAsString(myJson);
-                // ignore: use_build_context_synchronously
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        backgroundColor: mySetting.getColorNavSup(),
-                        content: const Text(
-                          "Se a guardado en tu carpeta de descargas",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      );
-                    });
+                String? result = await FilePicker.platform.getDirectoryPath();
+
+                if (result != null) {
+                  File myFIle = File(join(result, "material.json"));
+                  await myFIle.writeAsString(myJson);
+                }
                 return;
               }
 
@@ -97,14 +90,9 @@ class _ShareFileState extends State<ShareFile> {
 
               File myFIle = File("${_tempDirectory.path}/miMaterial.json");
               await myFIle.writeAsString(myJson);
-              // ignore: deprecated_member_use
 
-              // ignore: deprecated_member_use
               await Share.shareFiles(
-                  ["${_tempDirectory.path}/miMaterial.json"]);
-
-              //File mysCosas = File("${_tempDirectory?.path}/myJson.txt");
-              //print((await mysCosas.readAsString()));
+                  [join(_tempDirectory.path, "/miMaterial.json")]);
             },
             icon: const Icon(
               Icons.share,

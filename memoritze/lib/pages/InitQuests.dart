@@ -17,43 +17,80 @@ class InitQuest extends StatefulWidget {
 }
 
 class _InitQuestState extends State<InitQuest> {
-  Random ra = Random();
+  void contarRepeticiones(List lista) async {
+    print(lista);
+    Map conteo = {};
+
+    for (var elemento in lista) {
+      print(conteo.containsKey(elemento));
+      if (conteo.containsKey(elemento)) {
+        conteo[elemento] = conteo[elemento]!.toInt() + 1;
+      } else {
+        conteo[elemento] = 1;
+      }
+    }
+
+    for (var key in conteo.keys) {
+      print("{${key} ${conteo[key]}}");
+    }
+  }
+
+  Random ra = Random(3);
   Setting setting = Setting();
   ConnectionDataBase dataBase = ConnectionDataBase();
 
   bool charged = false;
   bool seeResp = false;
   bool _showCaseEspecial = false;
-  late final List<Map<String, dynamic>> myQuests;
-  List<Map<String, int>> probQuest = [];
+  late List<Map<String, dynamic>> myQuests;
   int amountProbs = 0;
   late String pred;
   late String resp;
-  late int myIndex;
-  int lastQuest = -1;
+  late int myIndex = -1;
   late String? dirImageQ;
   late String? dirImageA;
 
   int countResp = 0;
 
   void setPred() {
-    int indexSelected = ra.nextInt(amountProbs);
-    myIndex = probQuest[indexSelected]['index']!;
-    if (lastQuest == myIndex) {
-      return setPred();
+    //contarRepeticiones(probQuest);
+
+    if (myQuests.isEmpty) {
+      return null; // Manejar el caso cuando la lista es vacía
     }
 
-    countResp++;
+    // Calcular la suma total de los valores de eval
+    int sumaTotal =
+        myQuests.map((mapa) => mapa['eval'] as int).reduce((a, b) => a + b);
 
-    lastQuest = myIndex;
+    print(sumaTotal);
 
-    setState(() {
-      pred = myQuests[myIndex]['Pregunta'];
-      resp = myQuests[myIndex]['respuesta'];
-      dirImageQ = myQuests[myIndex]['dirImagePreg'];
-      dirImageA = myQuests[myIndex]['dirImageResp'];
-      charged = true;
-    });
+    // Generar un número aleatorio entre 0 y la suma total
+    int numeroAleatorio = ra.nextInt(sumaTotal);
+
+    int acumulado = 0;
+
+    // Iterar sobre la lista y seleccionar el elemento
+    for (int i = 0; i < myQuests.length; i++) {
+      acumulado += myQuests[i]['eval'] as int;
+      if (numeroAleatorio < acumulado) {
+        if (myIndex == i) {
+          return setPred();
+        }
+        setState(() {
+          myIndex = i;
+          pred = myQuests[i]['Pregunta'];
+          resp = myQuests[i]['respuesta'];
+          dirImageQ = myQuests[i]['dirImagePreg'];
+          dirImageA = myQuests[i]['dirImageResp'];
+          countResp++;
+          charged = true;
+        });
+        return;
+      }
+    }
+
+    return; // Esto no debería ocurrir, pero por si acaso
   }
 
   void chargeData() async {
@@ -73,50 +110,29 @@ class _InitQuestState extends State<InitQuest> {
       return;
     }
 
-    for (int i = 0; i < myQuests.length; i++) {
-      for (int j = 0; j < myQuests[i]['eval']; j++) {
-        probQuest = probQuest +
-            [
-              {'index': i}
-            ];
-      }
-    }
-    amountProbs = probQuest.length;
-
     setPred();
   }
 
-  void setUpEval(int indexQuest) {
-    print("setUp");
-    int amountQuest =
-        (probQuest.where((element) => element['index'] == indexQuest).toList())
-            .length;
-    if (amountQuest != 7) {
-      probQuest.add({'index': indexQuest});
-      amountProbs++;
-      dataBase.upDownEvalQuest(myQuests[indexQuest]['ID'], 1);
+  void setUpEval(int indexQuest) async {
+    if (myQuests[indexQuest]['eval'] != 7) {
+      await dataBase.upDownEvalQuest(myQuests[indexQuest]['ID'], 1);
     }
     setState(() {
       charged = false;
       seeResp = false;
     });
-    setPred();
+    chargeData();
   }
 
-  void setDowEval(int indexQuest) {
-    print("setDown");
-    List<Map<String, int>> amountQuest =
-        (probQuest.where((element) => element['index'] == indexQuest).toList());
-    if (amountQuest.length != 1) {
-      probQuest.remove(amountQuest[0]);
-      amountProbs--;
-      dataBase.upDownEvalQuest(myQuests[indexQuest]['ID'], -1);
+  void setDowEval(int indexQuest) async {
+    if (myQuests[indexQuest]['eval'] != 1) {
+      await dataBase.upDownEvalQuest(myQuests[indexQuest]['ID'], -1);
     }
     setState(() {
       charged = false;
       seeResp = false;
     });
-    setPred();
+    chargeData();
   }
 
   Widget generate(pred, resp, dirImageQ, dirImageA) {
