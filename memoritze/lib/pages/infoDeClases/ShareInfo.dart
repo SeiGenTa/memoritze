@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,6 +8,7 @@ import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/settings.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 
 class ShareFile extends StatefulWidget {
@@ -86,13 +88,13 @@ class _ShareFileState extends State<ShareFile> {
                 return;
               }
 
-              var _tempDirectory = await getTemporaryDirectory();
+              var tempDirectory = await getTemporaryDirectory();
 
-              File myFIle = File("${_tempDirectory.path}/miMaterial.json");
+              File myFIle = File("${tempDirectory.path}/miMaterial.json");
               await myFIle.writeAsString(myJson);
 
               await Share.shareFiles(
-                  [join(_tempDirectory.path, "/miMaterial.json")]);
+                  [join(tempDirectory.path, "/miMaterial.json")]);
             },
             icon: const Icon(
               Icons.share,

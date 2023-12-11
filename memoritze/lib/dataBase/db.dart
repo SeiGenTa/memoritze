@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:memoritze/settings.dart';
@@ -117,7 +116,6 @@ class ConnectionDataBase {
     Map<String, dynamic> config = await getSetting();
     Database data = await _connect();
     if (config['Version'] < 17) {
-      print("Se actualizo el data base de 16 a 17");
       await data.execute('''
         ALTER TABLE clase
         ADD COLUMN IsFav INTEGER;
@@ -125,7 +123,6 @@ class ConnectionDataBase {
       await data.update("clase", {"IsFav": 0});
     }
     if (config['Version'] < 18) {
-      print("Se actualizo la dataBase a la version 18");
       await data.execute('''
         ALTER TABLE pregunta
         ADD COLUMN dirImagePreg TEXT
@@ -260,12 +257,12 @@ class ConnectionDataBase {
   Future<bool> deleteMateria(int id, int idClass) async {
     List<Map<String, dynamic>> myClass = await getClass(idClass);
     Database data = await _connect();
-    print(await data.update(
+    await data.update(
         "clase",
         {
           "cantMateria": myClass[0]['cantMateria'] - 1,
         },
-        where: "ID = $idClass"));
+        where: "ID = $idClass");
 
     var myInfo =
         await data.query('pregunta', where: 'ID_subclass = ${id.toString()}');
@@ -308,8 +305,7 @@ class ConnectionDataBase {
           "${dirSaveImage.path}/Memoritze/${random.nextInt(99999999)}$myExtension";
 
       File filePreg = File(dirPreg.files.single.path as String);
-      await filePreg.copy("$directionNewImageQuest");
-      print("se guardo en $directionNewImageQuest");
+      await filePreg.copy(directionNewImageQuest);
     }
     String? directionNewImageAnswer;
     if (dirResp != null) {
@@ -319,7 +315,6 @@ class ConnectionDataBase {
           "${dirSaveImage.path}/Memoritze/${random.nextInt(99999999)}";
       File filePreg = File(dirResp.files.single.path as String);
       filePreg.copy(directionNewImageAnswer);
-      print("se guardo en $directionNewImageAnswer");
     }
 
     List<Map<String, dynamic>> materia = await data.query('materia',
@@ -536,7 +531,7 @@ class ConnectionDataBase {
     int idClass = infoClass['ID'] as int;
     var material = info["Material"];
 
-    late var directionDocument;
+    late Directory directionDocument;
     try {
       directionDocument = await getApplicationDocumentsDirectory();
     } catch (e) {
@@ -565,8 +560,9 @@ class ConnectionDataBase {
           String myExt = myQuests[j]["fileResp"]["extension"];
           List<dynamic> myData = myQuests[j]["fileResp"]["file"];
 
-          String path =
-              "${directionDocument.path}/Memoritze/${random.nextInt(99999999)}$myExt";
+          String path = join(directionDocument.path, "Memoritze",
+              "${random.nextInt(99999999).toString()}$myExt");
+          print(path);
 
           File myNewFile = File(path);
           myNewFile.writeAsBytesSync(List<int>.from(myData));
@@ -578,8 +574,8 @@ class ConnectionDataBase {
           String myExt = myQuests[j]["filePreg"]["extension"];
           List<dynamic> myData = myQuests[j]["filePreg"]["file"];
 
-          String path =
-              "${directionDocument.path}/Memoritze/${random.nextInt(99999999)}$myExt";
+          String path = join(directionDocument.path, "Memoritze",
+              "${random.nextInt(99999999).toString()}$myExt");
 
           File myNewFile = File(path);
           myNewFile.writeAsBytesSync(List<int>.from(myData));

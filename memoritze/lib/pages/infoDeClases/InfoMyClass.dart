@@ -1,4 +1,3 @@
-// ignore: file_names
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
@@ -225,7 +224,7 @@ class _InfoMyClassState extends State<InfoMyClass>
                                 },
                                 child: ListTile(
                                   contentPadding:
-                                      EdgeInsets.symmetric(vertical: 5),
+                                      const EdgeInsets.symmetric(vertical: 5),
                                   shape: Border.symmetric(
                                       horizontal: BorderSide(
                                           color: mySetting.getColorText())),
@@ -333,7 +332,7 @@ class _InfoMyClassState extends State<InfoMyClass>
                       curve: Curves.easeInOut,
                       right: _selected.isEmpty ? -100 : 10,
                       bottom: 10,
-                      duration: Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500),
                       child: ElevatedButton(
                         style: ButtonStyle(
                             shape:
@@ -447,14 +446,14 @@ class _InfoMyClassState extends State<InfoMyClass>
                 Transform.translate(
                   offset: Offset(200 * animateAppBar.value, 0),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ElevatedButton(
                             style: ButtonStyle(
-                                iconColor:
-                                    const MaterialStatePropertyAll(Colors.white),
+                                iconColor: const MaterialStatePropertyAll(
+                                    Colors.white),
                                 backgroundColor: MaterialStatePropertyAll(
                                     mySetting.getColorsIconButton())),
                             onPressed: () => showDialog(
@@ -534,8 +533,8 @@ class _InfoMyClassState extends State<InfoMyClass>
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          _nameEditController.text = this.myClass[0]['Nombre'];
-          _descriptionEditController.text = this.myClass[0]['Descripcion'];
+          _nameEditController.text = myClass[0]['Nombre'];
+          _descriptionEditController.text = myClass[0]['Descripcion'];
           return AlertDialog(
             actionsAlignment: MainAxisAlignment.center,
             titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
@@ -559,6 +558,7 @@ class _InfoMyClassState extends State<InfoMyClass>
                         return "Inserte un nombre valido";
                       }
                       acceptName = true;
+                      return null;
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration: const InputDecoration(
@@ -583,6 +583,7 @@ class _InfoMyClassState extends State<InfoMyClass>
                         return "Inserte un nombre valido";
                       }
                       acceptDescription = true;
+                      return null;
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     autofocus: true,

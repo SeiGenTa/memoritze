@@ -61,7 +61,7 @@ class MenuInitState extends State<MenuInit>
     super.initState();
     animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
     );
     initPage();
   }
@@ -172,11 +172,58 @@ class MenuInitState extends State<MenuInit>
                                             color: mySetting.getColorText()),
                                       )),
                                   TextButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         setState(() {
                                           stateMore = false;
                                         });
-                                        cargateLogic();
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                                backgroundColor:
+                                                    mySetting.getColorNavSup(),
+                                                title: Text(
+                                                    "Se esta cargando la informacion",style: TextStyle(color: mySetting.getColorText()),),
+                                                content: Container(
+                                                  constraints: const BoxConstraints(
+                                                      maxWidth: 70,
+                                                      maxHeight: 70,
+                                                      minHeight: 70),
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ));
+                                          },
+                                        );
+                                        FilePickerResult? result =
+                                            await FilePicker.platform.pickFiles(
+                                          type: FileType.custom,
+                                          allowedExtensions: ['json'],
+                                        );
+
+                                        if (result == null) {
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.pop(context);
+                                          return;
+                                        }
+
+                                        File file = File(
+                                            result.files.single.path as String);
+
+                                        String textResponse = "";
+
+                                        try {
+                                          Map<String, dynamic> info = json
+                                              .decode(file.readAsStringSync());
+                                          textResponse = await connection
+                                              .chargeNewInfo(info);
+                                        } finally {
+                                          // ignore: use_build_context_synchronously
+
+                                          _observer.notify(textResponse);
+                                        }
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.pop(context);
                                       },
                                       child: Text(
                                         "Cargar/Actualizar clase",
@@ -367,37 +414,5 @@ Una vez más, gracias por ser parte de esta emocionante travesía educativa y po
         ],
       ),
     );
-  }
-
-  void cargateLogic() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-    );
-
-    if (result == null) {
-      return;
-    }
-
-    File file = File(result.files.single.path as String);
-
-    setState(() {
-      disablePage = true;
-    });
-
-    String textResponse = "";
-
-    try {
-      Map<String, dynamic> info = json.decode(file.readAsStringSync());
-      textResponse = await connection.chargeNewInfo(info);
-    } finally {
-      _observer.notify(textResponse);
-    }
-
-    // ignore: use_build_context_synchronously
-
-    setState(() {
-      disablePage = false;
-    });
   }
 }
