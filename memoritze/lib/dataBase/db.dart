@@ -1,5 +1,4 @@
 // ignore_for_file: non_constant_identifier_names, depend_on_referenced_packages
-
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
@@ -9,6 +8,9 @@ import 'package:memoritze/settings.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:mutex/mutex.dart';
+
+final m = Mutex();
 
 class ConnectionDataBase {
   static final ConnectionDataBase _instance = ConnectionDataBase._internal();
@@ -97,6 +99,7 @@ class ConnectionDataBase {
   }
 
   Future<Map<String, dynamic>> getSetting() async {
+    await m.acquire();
     Database data = await _connect();
     List<Map<String, dynamic>> inf = await data.query('setting');
     if (inf.isEmpty) {
@@ -107,6 +110,7 @@ class ConnectionDataBase {
       return {'NightMode': inValueTheme, 'Version': 18, 'Lenguaje': "Esp"};
     }
     _close(data);
+    m.release();
     return inf[0];
   }
 
@@ -114,6 +118,7 @@ class ConnectionDataBase {
       int nightMode, int version, String language) async {
     //Actualizacion de la base de datos desde la version 0.16
     Map<String, dynamic> config = await getSetting();
+    await m.acquire();
     Database data = await _connect();
     if (config['Version'] < 17) {
       await data.execute('''
@@ -135,19 +140,24 @@ class ConnectionDataBase {
     data.update("setting",
         {'NightMode': nightMode, 'Version': version, 'Lenguaje': language});
     _close(data);
+    m.release();
     return true;
   }
 
   Future<bool> changeInfoClass(
       String newName, String newDescription, int id) async {
+    await m.acquire();
+
     Database data = await _connect();
     data.update("clase", {"Nombre": newName, "Descripcion": newDescription},
         where: "ID == $id");
     _close(data);
+    m.release();
     return true;
   }
 
   Future<bool> createClass(String name, String description) async {
+    await m.acquire();
     Database data = await _connect();
     var exist = await data.query("clase", where: "Nombre = '$name'");
     if (exist.isNotEmpty) {
@@ -161,19 +171,23 @@ class ConnectionDataBase {
       "IsFav": 0,
     });
     _close(data);
+    m.release();
     return true;
   }
 
   Future<List<Map<String, dynamic>>> getClassFav() async {
+    await m.acquire();
     Database data = await _connect();
     late List<Map<String, dynamic>> info;
     info =
         await data.query('clase', orderBy: 'FechPrio DESC', where: "IsFav = 1");
     _close(data);
+    m.release();
     return info;
   }
 
   Future<List<Map<String, dynamic>>> getClass(int id) async {
+    await m.acquire();
     Database data = await _connect();
     late List<Map<String, dynamic>> info;
     if (id != -1) {
@@ -188,11 +202,13 @@ class ConnectionDataBase {
     }
 
     _close(data);
+    m.release();
     return info;
   }
 
   Future<bool> createNewMateriaDB(String name, int id) async {
     List<Map<String, dynamic>> myMateria = await getClass(id);
+    await m.acquire();
     Database data = await _connect();
     var exist =
         await data.query("materia", where: "Nombre = '$name' ;ID = '$id'");
@@ -213,30 +229,37 @@ class ConnectionDataBase {
       where: "ID = ${myMateria[0]['ID']}",
     );
     _close(data);
+    m.release();
     return true;
   }
 
   Future<List<Map<String, dynamic>>> getMaterialClass(int id) async {
+    await m.acquire();
     Database data = await _connect();
     List<Map<String, dynamic>> inf = await data.query('materia',
         where: 'ID = ${id.toString()}', orderBy: 'FechPrio DESC');
     _close(data);
+    m.release();
     return inf;
   }
 
   Future<Map<String, dynamic>> getMaterialID(int id) async {
+    await m.acquire();
     Database data = await _connect();
     List<Map<String, dynamic>> inf = await data.query('materia',
         where: 'ID_subclass = ${id.toString()}', orderBy: 'FechPrio DESC');
     _close(data);
+    m.release();
     return inf[0];
   }
 
   Future<List<Map<String, dynamic>>> getQuests(int idMateria) async {
+    await m.acquire();
     Database data = await _connect();
     List<Map<String, dynamic>> myRequest = await data.query('pregunta',
         where: 'ID_subclass = ${idMateria.toString()}');
     _close(data);
+    m.release();
     return myRequest;
   }
 
