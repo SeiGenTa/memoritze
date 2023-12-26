@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:memoritze/dataBase/db.dart';
 import 'package:memoritze/observers/notificationMenu.dart';
-import 'package:memoritze/pages/infoDeClases/InfoMyClass.dart';
+import 'package:memoritze/pages/infClass/InfoMyClass.dart';
 import 'package:memoritze/pages/menus/CreateNewClass.dart';
 import 'package:memoritze/settings.dart';
 

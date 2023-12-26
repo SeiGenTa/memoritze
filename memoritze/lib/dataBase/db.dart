@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:memoritze/settings.dart';
@@ -15,7 +14,7 @@ class ConnectionDataBase {
   static final ConnectionDataBase _instance = ConnectionDataBase._internal();
 
   bool getInitiated() {
-    return initiated;
+    return _initiated;
   }
 
   factory ConnectionDataBase() {
@@ -24,7 +23,7 @@ class ConnectionDataBase {
 
   ConnectionDataBase._internal();
 
-  bool initiated = false;
+  bool _initiated = false;
 
   Future<Database> _connect() async {
     return await openDatabase(join(await getDatabasesPath(), 'memoritzeDB.db'));
@@ -93,7 +92,7 @@ class ConnectionDataBase {
         // Establece la versión. Esto ejecuta la función onCreate y proporciona una
         // ruta para realizar actualizacones y defradaciones en la base de datos.
         version: 1);
-    initiated = true;
+    _initiated = true;
     _close(database);
   }
 
