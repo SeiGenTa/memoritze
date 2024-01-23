@@ -182,7 +182,7 @@ class _InfoMateriaState extends State<InfoMateria> {
                                           chargedPreg = false;
                                         });
                                         myImagePreg = null;
-                                      pageController.notifyListeners();
+                                        pageController.notifyListeners();
                                       } else {
                                         // ignore: use_build_context_synchronously
                                         showDialog(
@@ -368,8 +368,8 @@ class _InfoMateriaState extends State<InfoMateria> {
   }
 
   final _buttonPressController = StreamController<void>();
-  void popWindow(){
-      Navigator.pop(context);
+  void popWindow() {
+    Navigator.pop(context);
   }
 
   void saveChangeQuest() async {
@@ -405,7 +405,6 @@ class _InfoMateriaState extends State<InfoMateria> {
 
   @override
   Widget build(BuildContext context) {
-
     double heightPage = MediaQuery.of(context).size.height - kToolbarHeight;
 
     var buttonStyle = ButtonStyle(
@@ -416,17 +415,21 @@ class _InfoMateriaState extends State<InfoMateria> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        
         appBar: AppBar(
-          actions: [IconButton(
-                        style: buttonStyle,
-                        onPressed: () {
-                          setState(() {
-                            positionButtonActivate = !positionButtonActivate;
-                          });
-                          eraseMaterial(context);
-                        }, icon: const Icon(Icons.delete),
-                      )],
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  positionButtonActivate = !positionButtonActivate;
+                });
+                eraseMaterial(context);
+              },
+              child: Icon(
+                Icons.delete,
+                color: setting.getColorText(),
+              ),
+            )
+          ],
           toolbarHeight: kToolbarHeight,
           backgroundColor: setting.getColorNavSup(),
           shape: BorderDirectional(
@@ -444,12 +447,12 @@ class _InfoMateriaState extends State<InfoMateria> {
         ),
         backgroundColor: setting.getBackgroundColor(),
         floatingActionButton: ElevatedButton(
-                        style: buttonStyle,
-                        onPressed: () {
-                          addQuest(context);
-                        },
-                        child: const Icon(Icons.add),
-                      ),
+          style: buttonStyle,
+          onPressed: () {
+            addQuest(context);
+          },
+          child: Icon(Icons.add,color:setting.getColorText()),
+        ),
         body: charging
             ? Stack(
                 //!Pantalla de carga
@@ -527,9 +530,7 @@ class _InfoMateriaState extends State<InfoMateria> {
                           color: Colors.white,
                         ),
                         IconButton(
-                          onPressed: () => setState(() {
-                            viewEraseMateria = false;
-                          }),
+                          onPressed: () => Navigator.pop(context),
                           icon: const Icon(Icons.cancel_rounded),
                           color: Colors.white,
                         ),
@@ -799,7 +800,8 @@ class _InfoMateriaState extends State<InfoMateria> {
               scale: scaleWidget,
               child: Container(
                 alignment: Alignment.center,
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 height: 200,
                 child: Card(
                   elevation: 2,
@@ -830,9 +832,10 @@ class _InfoMateriaState extends State<InfoMateria> {
                                     ),
                                     Container(
                                       constraints: BoxConstraints(
-                                          maxWidth:
-                                              MediaQuery.of(context).size.width -
-                                                  100),
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              100),
                                       child: SizedBox(
                                         height: 60,
                                         child: Text(
@@ -847,7 +850,8 @@ class _InfoMateriaState extends State<InfoMateria> {
                                     )
                                   ],
                                 ),
-                                if (infPregMateria[index]['dirImagePreg'] != null)
+                                if (infPregMateria[index]['dirImagePreg'] !=
+                                    null)
                                   Container(
                                     width: 150,
                                     height: 80,
@@ -855,7 +859,8 @@ class _InfoMateriaState extends State<InfoMateria> {
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(10)),
                                       child: Image.file(File(
-                                          infPregMateria[index]['dirImagePreg'])),
+                                          infPregMateria[index]
+                                              ['dirImagePreg'])),
                                     ),
                                   )
                               ],
@@ -878,9 +883,10 @@ class _InfoMateriaState extends State<InfoMateria> {
                                     ),
                                     Container(
                                       constraints: BoxConstraints(
-                                          maxWidth:
-                                              MediaQuery.of(context).size.width -
-                                                  100),
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              100),
                                       child: SizedBox(
                                         height: 60,
                                         child: Text(
@@ -895,14 +901,16 @@ class _InfoMateriaState extends State<InfoMateria> {
                                     ),
                                   ],
                                 ),
-                                if (infPregMateria[index]['dirImageResp'] != null)
+                                if (infPregMateria[index]['dirImageResp'] !=
+                                    null)
                                   SizedBox(
                                     height: 80,
                                     child: ClipRRect(
-                                      borderRadius:
-                                          const BorderRadius.all(Radius.circular(10)),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10)),
                                       child: Image.file(File(
-                                          infPregMateria[index]['dirImageResp'])),
+                                          infPregMateria[index]
+                                              ['dirImageResp'])),
                                     ),
                                   ),
                               ],

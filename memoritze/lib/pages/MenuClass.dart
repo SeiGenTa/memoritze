@@ -184,12 +184,17 @@ class MenuInitState extends State<MenuInit>
                                                 backgroundColor:
                                                     mySetting.getColorNavSup(),
                                                 title: Text(
-                                                    "Se esta cargando la informacion",style: TextStyle(color: mySetting.getColorText()),),
+                                                  "Se esta cargando la informacion",
+                                                  style: TextStyle(
+                                                      color: mySetting
+                                                          .getColorText()),
+                                                ),
                                                 content: Container(
-                                                  constraints: const BoxConstraints(
-                                                      maxWidth: 70,
-                                                      maxHeight: 70,
-                                                      minHeight: 70),
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                          maxWidth: 70,
+                                                          maxHeight: 70,
+                                                          minHeight: 70),
                                                   child:
                                                       CircularProgressIndicator(),
                                                 ));

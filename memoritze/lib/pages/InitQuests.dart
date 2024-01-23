@@ -18,20 +18,14 @@ class InitQuest extends StatefulWidget {
 
 class _InitQuestState extends State<InitQuest> {
   void contarRepeticiones(List lista) async {
-    print(lista);
     Map conteo = {};
 
     for (var elemento in lista) {
-      print(conteo.containsKey(elemento));
       if (conteo.containsKey(elemento)) {
         conteo[elemento] = conteo[elemento]!.toInt() + 1;
       } else {
         conteo[elemento] = 1;
       }
-    }
-
-    for (var key in conteo.keys) {
-      print("{${key} ${conteo[key]}}");
     }
   }
 
@@ -53,17 +47,9 @@ class _InitQuestState extends State<InitQuest> {
   int countResp = 0;
 
   void setPred() {
-    //contarRepeticiones(probQuest);
-
-    if (myQuests.isEmpty) {
-      return null; // Manejar el caso cuando la lista es vacía
-    }
-
     // Calcular la suma total de los valores de eval
     int sumaTotal =
         myQuests.map((mapa) => mapa['eval'] as int).reduce((a, b) => a + b);
-
-    print(sumaTotal);
 
     // Generar un número aleatorio entre 0 y la suma total
     int numeroAleatorio = ra.nextInt(sumaTotal);
@@ -150,7 +136,6 @@ class _InitQuestState extends State<InitQuest> {
         setState(() {
           seeResp = true;
         });
-        print("si funciona");
       },
       key: ValueKey(countResp),
     );
@@ -250,7 +235,10 @@ class _InitQuestState extends State<InitQuest> {
                                       onPressed: () {
                                         if (seeResp) setDowEval(myIndex);
                                       },
-                                      child: const Text("Acertado")),
+                                      child: const Text(
+                                        "Acertado",
+                                        style: TextStyle(color: Colors.white),
+                                      )),
                                 ),
                                 AnimatedOpacity(
                                   duration: const Duration(milliseconds: 300),
@@ -266,7 +254,10 @@ class _InitQuestState extends State<InitQuest> {
                                       onPressed: () {
                                         if (seeResp) setUpEval(myIndex);
                                       },
-                                      child: const Text("  Erronea  ")),
+                                      child: const Text(
+                                        "  Erronea  ",
+                                        style: TextStyle(color: Colors.white),
+                                      )),
                                 )
                               ],
                             ),
@@ -393,7 +384,7 @@ class _SlimyCardPropState extends State<SlimyCardProp>
               children: [
                 Transform.translate(
                   offset: Offset(
-                      0,
+                      width / 6,
                       height / 4 +
                           (widget.separated / 2 + height / 4) *
                               _curveAnimation.value),
@@ -423,8 +414,8 @@ class _SlimyCardPropState extends State<SlimyCardProp>
                   ),
                 ),
                 Transform.translate(
-                  offset: Offset(
-                      0, height / 4 - (height / 4) * _curveAnimation.value),
+                  offset: Offset(width / 6,
+                      height / 4 - (height / 4) * _curveAnimation.value),
                   child: Container(
                     alignment: Alignment.center,
                     width: width,
@@ -450,9 +441,9 @@ class _SlimyCardPropState extends State<SlimyCardProp>
                     ),
                   ),
                 ),
-                Positioned(
-                  left: width / 2 - iconSize / 2,
-                  bottom: 0,
+                Container(
+                  padding: const EdgeInsets.all(30),
+                  alignment: Alignment.bottomCenter,
                   child: Opacity(
                     opacity: (1 - _generateAnimation.value),
                     child: ElevatedButton(
@@ -465,7 +456,7 @@ class _SlimyCardPropState extends State<SlimyCardProp>
                         iconColor: MaterialStatePropertyAll(colorIconButton),
                         backgroundColor: MaterialStatePropertyAll(colorButton),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.arrow_drop_down,
                       ),
                     ),

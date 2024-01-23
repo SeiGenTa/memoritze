@@ -425,7 +425,7 @@ class _InfoMyClassState extends State<InfoMyClass>
           ],
         ),
       ),
-      expandedHeight: 150,
+      expandedHeight: 160,
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.none,
         background: AnimatedBuilder(
@@ -436,7 +436,7 @@ class _InfoMyClassState extends State<InfoMyClass>
                 Opacity(
                   opacity: (1 - animateAppBar.value),
                   child: SizedBox(
-                      width: MediaQuery.of(context).size.width - 150,
+                      width: MediaQuery.of(context).size.width - 160,
                       child: Text(
                         "Descripcion: ${this.myClass[0]['Descripcion']} ",
                         overflow: TextOverflow.fade,
